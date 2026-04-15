@@ -96,13 +96,13 @@ async function syncToCloud() {
     }
 }
 
-// Real-time cloud check - FIXED
+// Real-time cloud check - FORCE RELOAD VERSION
 async function checkForCloudUpdates() {
     if (!SUPABASE_ENABLED) return;
     
     try {
         const response = await fetch(
-            `${SUPABASE_URL}/rest/v1/${SUPABASE_TABLE}?key=eq.main_data&select=value,updated_at`,
+            `${SUPABASE_URL}/rest/v1/${SUPABASE_TABLE}?key=eq.main_data&select=updated_at`,
             {
                 headers: {
                     'apikey': SUPABASE_KEY,
@@ -113,58 +113,28 @@ async function checkForCloudUpdates() {
         
         const data = await response.json();
         
-        if (data && data[0]) {
-            const cloudTime = data[0].updated_at ? new Date(data[0].updated_at).getTime() : null;
+        if (data && data[0] && data[0].updated_at) {
+            const cloudTime = new Date(data[0].updated_at).getTime();
             
-            if (!cloudTime) return;
-            
+            // Initialize lastCloudUpdate if not set
             if (!lastCloudUpdate) {
                 lastCloudUpdate = cloudTime;
                 return;
             }
             
+            // If cloud is newer than our last known update AND the difference is more than 1 second
             if (cloudTime > lastCloudUpdate) {
-                console.log('🔄 Cloud changed, reloading data...');
-                lastCloudUpdate = cloudTime;
+                console.log('🔄 Cloud changed! Force reloading page...');
                 
-                // Load cloud data into localStorage
-                if (data[0].value) {
-                    const cloudData = JSON.parse(data[0].value);
-                    
-                    // Clear existing Quran data first
-                    for (let i = localStorage.length - 1; i >= 0; i--) {
-                        const k = localStorage.key(i);
-                        if (k.startsWith('quran_') || k.startsWith('studentCount_')) {
-                            localStorage.removeItem(k);
-                        }
-                    }
-                    
-                    // Load new data
-                    for (const key in cloudData) {
-                        localStorage.setItem(key, cloudData[key]);
-                    }
-                } else {
-                    // Cloud is empty - clear everything
-                    for (let i = localStorage.length - 1; i >= 0; i--) {
-                        const k = localStorage.key(i);
-                        if (k.startsWith('quran_') || k.startsWith('studentCount_')) {
-                            localStorage.removeItem(k);
-                        }
-                    }
-                    localStorage.setItem('studentCount_highschool', '50');
-                    localStorage.setItem('studentCount_middleschool', '50');
-                    localStorage.setItem('studentCount_elementary', '50');
-                }
-                
-                // Refresh the entire UI
-                location.reload();
+                // Instead of trying to update the UI piece by piece (which is failing),
+                // we FORCE the entire page to reload from the cloud.
+                location.reload(true);
             }
         }
     } catch (e) {
         console.error('Check updates error:', e);
     }
 }
-
 // Start real-time checking every 3 seconds
 setInterval(checkForCloudUpdates, 3000);
 
