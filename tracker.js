@@ -56,9 +56,7 @@ async function syncToCloud() {
     } catch (e) {
         console.error('Sync error:', e);
     }
-}
-
-async function loadFromCloud() {
+}async function loadFromCloud() {
     if (!SUPABASE_ENABLED) {
         console.log('☁️ Supabase sync disabled');
         return false;
@@ -98,13 +96,13 @@ async function loadFromCloud() {
     }
 }
 
-// Real-time cloud check
+// Real-time cloud check - FIXED
 async function checkForCloudUpdates() {
     if (!SUPABASE_ENABLED) return;
     
     try {
         const response = await fetch(
-            `${SUPABASE_URL}/rest/v1/${SUPABASE_TABLE}?key=eq.main_data&select=updated_at`,
+            `${SUPABASE_URL}/rest/v1/${SUPABASE_TABLE}?key=eq.main_data&select=value,updated_at`,
             {
                 headers: {
                     'apikey': SUPABASE_KEY,
@@ -115,25 +113,51 @@ async function checkForCloudUpdates() {
         
         const data = await response.json();
         
-        if (data && data[0] && data[0].updated_at) {
-            const cloudTime = new Date(data[0].updated_at).getTime();
+        if (data && data[0]) {
+            const cloudTime = data[0].updated_at ? new Date(data[0].updated_at).getTime() : null;
+            
+            if (!cloudTime) return;
             
             if (!lastCloudUpdate) {
                 lastCloudUpdate = cloudTime;
-            } else if (cloudTime > lastCloudUpdate) {
-                console.log('🔄 Cloud updated, reloading...');
+                return;
+            }
+            
+            if (cloudTime > lastCloudUpdate) {
+                console.log('🔄 Cloud changed, reloading data...');
                 lastCloudUpdate = cloudTime;
-                await loadFromCloud();
                 
-                if (currentSection === 'reports') {
-                    loadReportsData();
-                    loadDailyReport();
-                    loadPointsReport();
+                // Load cloud data into localStorage
+                if (data[0].value) {
+                    const cloudData = JSON.parse(data[0].value);
+                    
+                    // Clear existing Quran data first
+                    for (let i = localStorage.length - 1; i >= 0; i--) {
+                        const k = localStorage.key(i);
+                        if (k.startsWith('quran_') || k.startsWith('studentCount_')) {
+                            localStorage.removeItem(k);
+                        }
+                    }
+                    
+                    // Load new data
+                    for (const key in cloudData) {
+                        localStorage.setItem(key, cloudData[key]);
+                    }
                 } else {
-                    loadStudentCounts();
-                    updateStudentDropdown();
-                    loadStudent(currentStudentIndex + 1);
+                    // Cloud is empty - clear everything
+                    for (let i = localStorage.length - 1; i >= 0; i--) {
+                        const k = localStorage.key(i);
+                        if (k.startsWith('quran_') || k.startsWith('studentCount_')) {
+                            localStorage.removeItem(k);
+                        }
+                    }
+                    localStorage.setItem('studentCount_highschool', '50');
+                    localStorage.setItem('studentCount_middleschool', '50');
+                    localStorage.setItem('studentCount_elementary', '50');
                 }
+                
+                // Refresh the entire UI
+                location.reload();
             }
         }
     } catch (e) {
