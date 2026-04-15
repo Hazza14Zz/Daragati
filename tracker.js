@@ -6,6 +6,9 @@ const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 const SUPABASE_TABLE = "quran_data";
 const SUPABASE_ENABLED = true;
 
+// Real-time sync variables
+let lastCloudUpdate = null;
+
 // Supabase Sync Functions
 async function syncToCloud() {
     if (!SUPABASE_ENABLED) {
@@ -13,7 +16,6 @@ async function syncToCloud() {
         return;
     }
     
-    // Collect all data from localStorage
     const allData = {};
     for (let i = 0; i < localStorage.length; i++) {
         const key = localStorage.key(i);
@@ -23,7 +25,6 @@ async function syncToCloud() {
     }
     
     try {
-        // First, delete old data
         await fetch(`${SUPABASE_URL}/rest/v1/${SUPABASE_TABLE}?key=eq.main_data`, {
             method: 'DELETE',
             headers: {
@@ -32,7 +33,6 @@ async function syncToCloud() {
             }
         });
         
-        // Then, insert new data
         const response = await fetch(`${SUPABASE_URL}/rest/v1/${SUPABASE_TABLE}`, {
             method: 'POST',
             headers: {
@@ -43,14 +43,15 @@ async function syncToCloud() {
             },
             body: JSON.stringify({
                 key: 'main_data',
-                value: JSON.stringify(allData)
+                value: JSON.stringify(allData),
+                updated_at: new Date().toISOString()
             })
         });
         
+        lastCloudUpdate = Date.now();
+        
         if (response.ok) {
             console.log('✅ Synced to Supabase');
-        } else {
-            console.error('Sync failed:', response.status);
         }
     } catch (e) {
         console.error('Sync error:', e);
@@ -65,7 +66,7 @@ async function loadFromCloud() {
     
     try {
         const response = await fetch(
-            `${SUPABASE_URL}/rest/v1/${SUPABASE_TABLE}?key=eq.main_data&select=value`,
+            `${SUPABASE_URL}/rest/v1/${SUPABASE_TABLE}?key=eq.main_data&select=value,updated_at`,
             {
                 headers: {
                     'apikey': SUPABASE_KEY,
@@ -79,9 +80,12 @@ async function loadFromCloud() {
         if (data && data[0] && data[0].value) {
             const cloudData = JSON.parse(data[0].value);
             
-            // Load cloud data into localStorage
             for (const key in cloudData) {
                 localStorage.setItem(key, cloudData[key]);
+            }
+            
+            if (data[0].updated_at) {
+                lastCloudUpdate = new Date(data[0].updated_at).getTime();
             }
             
             console.log('✅ Loaded from Supabase');
@@ -93,6 +97,52 @@ async function loadFromCloud() {
         return false;
     }
 }
+
+// Real-time cloud check
+async function checkForCloudUpdates() {
+    if (!SUPABASE_ENABLED) return;
+    
+    try {
+        const response = await fetch(
+            `${SUPABASE_URL}/rest/v1/${SUPABASE_TABLE}?key=eq.main_data&select=updated_at`,
+            {
+                headers: {
+                    'apikey': SUPABASE_KEY,
+                    'Authorization': `Bearer ${SUPABASE_KEY}`
+                }
+            }
+        );
+        
+        const data = await response.json();
+        
+        if (data && data[0] && data[0].updated_at) {
+            const cloudTime = new Date(data[0].updated_at).getTime();
+            
+            if (!lastCloudUpdate) {
+                lastCloudUpdate = cloudTime;
+            } else if (cloudTime > lastCloudUpdate) {
+                console.log('🔄 Cloud updated, reloading...');
+                lastCloudUpdate = cloudTime;
+                await loadFromCloud();
+                
+                if (currentSection === 'reports') {
+                    loadReportsData();
+                    loadDailyReport();
+                    loadPointsReport();
+                } else {
+                    loadStudentCounts();
+                    updateStudentDropdown();
+                    loadStudent(currentStudentIndex + 1);
+                }
+            }
+        }
+    } catch (e) {
+        console.error('Check updates error:', e);
+    }
+}
+
+// Start real-time checking every 3 seconds
+setInterval(checkForCloudUpdates, 3000);
 
 // ============================================================
 // SESSION & GLOBALS
@@ -209,7 +259,6 @@ async function loadQuranData() {
     if (!checkAuth()) return;
     await updateDateDisplay();
     
-    // Try to load from cloud first
     await loadFromCloud();
     
     try { 
@@ -549,7 +598,6 @@ function saveCurrentStudent() {
     localStorage.setItem(`quran_${sid}`, JSON.stringify(data));
     updateStudentDropdown();
     
-    // Sync to Supabase cloud
     syncToCloud();
     
     const btn = event.target;
@@ -840,22 +888,17 @@ function addNewStudent(sec) {
     const cnt = parseInt(localStorage.getItem(`studentCount_${sec}`) || '50') + 1;
     localStorage.setItem(`studentCount_${sec}`, cnt);
     if (sec === currentSection) { totalStudents = cnt; updateStudentDropdown(); } 
-    
-    // SYNC TO CLOUD
     syncToCloud();
-    
     alert(`✅ تمت إضافة طالب جديد!\nالمرحلة: ${SECTION_NAMES[sec]}\nالعدد الآن: ${cnt}`); 
 }
+
 function deleteStudent(sec) { 
     const cnt = parseInt(localStorage.getItem(`studentCount_${sec}`) || '50');
     const n = parseInt(prompt(`أدخل رقم الطالب المراد حذفه (1-${cnt}):`)); 
     if (isNaN(n) || n < 1 || n > cnt) { alert("رقم غير صحيح"); return; } 
     if (!confirm(`حذف الطالب رقم ${n} من ${SECTION_NAMES[sec]}؟`)) return;
     
-    // Remove the student
     localStorage.removeItem(`quran_${sec}-${n}`);
-    
-    // Shift remaining students down
     for (let i = n; i < cnt; i++) {
         const old = localStorage.getItem(`quran_${sec}-${i+1}`);
         if (old) { 
@@ -864,10 +907,7 @@ function deleteStudent(sec) {
             localStorage.removeItem(`quran_${sec}-${i}`);
         }
     }
-    // Remove the last duplicate
     localStorage.removeItem(`quran_${sec}-${cnt}`);
-    
-    // Update count
     localStorage.setItem(`studentCount_${sec}`, cnt - 1);
     
     if (sec === currentSection) { 
@@ -876,10 +916,7 @@ function deleteStudent(sec) {
         loadStudent(currentStudentIndex + 1); 
         updateStudentDropdown(); 
     } 
-    
-    // SYNC DELETION TO CLOUD
     syncToCloud();
-    
     alert(`✅ تم حذف الطالب بنجاح!`); 
 }
 
@@ -887,21 +924,16 @@ function resetAllData() {
     if (!confirm("⚠️ تحذير: سيتم حذف جميع البيانات نهائياً!\n\nهل أنت متأكد؟")) return;
     if (prompt("اكتب: حذف جميع البيانات") !== "حذف جميع البيانات") { alert("تم الإلغاء"); return; } 
     
-    // Clear all Quran data
     for (let i = localStorage.length - 1; i >= 0; i--) { 
         const k = localStorage.key(i); 
         if (k.startsWith('quran_')) localStorage.removeItem(k); 
     } 
-    
-    // Reset counts
     localStorage.setItem('studentCount_highschool', '50'); 
     localStorage.setItem('studentCount_middleschool', '50'); 
     localStorage.setItem('studentCount_elementary', '50');
-    
-    // SYNC EMPTY DATA TO CLOUD (overwrites cloud with empty data)
     syncToCloud();
-    
     alert("✅ تم حذف جميع البيانات بنجاح!\nسيتم إعادة تحميل الصفحة.");
     location.reload();
 }
+
 window.onload = loadQuranData;
