@@ -1,17 +1,30 @@
 /* ============================================================ */
-/* QURAN TRACKER - COMPLETE STYLES (iPhone Optimized)            */
+/* QURAN TRACKER - COMPLETE STYLES (CAIRO FONT ONLY)             */
 /* ============================================================ */
 
-/* Arabic Font & Base */
+/* Force Cairo font on EVERYTHING */
 * {
     font-family: 'Cairo', sans-serif !important;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
 /* Arabic Text Rendering Fix */
-[lang="ar"], [dir="rtl"] {
+[lang="ar"],
+[dir="rtl"] {
     font-feature-settings: "liga" 1, "calt" 1;
     text-rendering: optimizeLegibility;
     unicode-bidi: embed;
+    font-family: 'Cairo', sans-serif !important;
+}
+
+/* Force Cairo on all elements */
+html, body, div, span, h1, h2, h3, h4, h5, h6, p,
+table, th, td, tr, thead, tbody,
+input, select, button, textarea,
+label, option, optgroup {
+    font-family: 'Cairo', sans-serif !important;
 }
 
 /* Table Arabic Fix */
@@ -20,6 +33,7 @@
 .monthly-summary-table {
     direction: rtl !important;
     text-align: right !important;
+    font-family: 'Cairo', sans-serif !important;
 }
 
 .summary-table td,
@@ -29,6 +43,7 @@
     text-align: right !important;
     direction: rtl !important;
     unicode-bidi: embed !important;
+    font-family: 'Cairo', sans-serif !important;
 }
 
 /* Hidden Utility */
