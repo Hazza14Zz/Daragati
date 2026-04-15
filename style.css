@@ -1,0 +1,37 @@
+/* ============================================================ */
+/* QURAN TRACKER - COMPLETE STYLES (iPhone Optimized)            */
+/* ============================================================ */
+
+/* Arabic Font & Base */
+* {
+    font-family: 'Cairo', sans-serif !important;
+}
+
+/* Arabic Text Rendering Fix */
+[lang="ar"], [dir="rtl"] {
+    font-feature-settings: "liga" 1, "calt" 1;
+    text-rendering: optimizeLegibility;
+    unicode-bidi: embed;
+}
+
+/* Table Arabic Fix */
+.summary-table,
+.daily-report-table,
+.monthly-summary-table {
+    direction: rtl !important;
+    text-align: right !important;
+}
+
+.summary-table td,
+.summary-table th,
+.daily-report-table td,
+.daily-report-table th {
+    text-align: right !important;
+    direction: rtl !important;
+    unicode-bidi: embed !important;
+}
+
+/* Hidden Utility */
+.hidden {
+    display: none !important;
+}
