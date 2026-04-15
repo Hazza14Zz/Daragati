@@ -1,4 +1,100 @@
 // ============================================================
+// SUPABASE CLOUD SYNC (Connected)
+// ============================================================
+const SUPABASE_URL = "https://dklyyzbnapkxlluximzk.supabase.co";
+const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRrbHl5emJuYXBreGxsdXhpbXprIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYyNjEwMDIsImV4cCI6MjA5MTgzNzAwMn0.qpCqvUTia4ywEMPSYJ_rIB4pSlk0zkvq5cQa-sFaFEs";
+const SUPABASE_TABLE = "quran_data";
+const SUPABASE_ENABLED = true;
+
+// Supabase Sync Functions
+async function syncToCloud() {
+    if (!SUPABASE_ENABLED) {
+        console.log('☁️ Supabase sync disabled');
+        return;
+    }
+    
+    // Collect all data from localStorage
+    const allData = {};
+    for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key.startsWith('quran_') || key.startsWith('studentCount_')) {
+            allData[key] = localStorage.getItem(key);
+        }
+    }
+    
+    try {
+        // First, delete old data
+        await fetch(`${SUPABASE_URL}/rest/v1/${SUPABASE_TABLE}?key=eq.main_data`, {
+            method: 'DELETE',
+            headers: {
+                'apikey': SUPABASE_KEY,
+                'Authorization': `Bearer ${SUPABASE_KEY}`
+            }
+        });
+        
+        // Then, insert new data
+        const response = await fetch(`${SUPABASE_URL}/rest/v1/${SUPABASE_TABLE}`, {
+            method: 'POST',
+            headers: {
+                'apikey': SUPABASE_KEY,
+                'Authorization': `Bearer ${SUPABASE_KEY}`,
+                'Content-Type': 'application/json',
+                'Prefer': 'return=minimal'
+            },
+            body: JSON.stringify({
+                key: 'main_data',
+                value: JSON.stringify(allData)
+            })
+        });
+        
+        if (response.ok) {
+            console.log('✅ Synced to Supabase');
+        } else {
+            console.error('Sync failed:', response.status);
+        }
+    } catch (e) {
+        console.error('Sync error:', e);
+    }
+}
+
+async function loadFromCloud() {
+    if (!SUPABASE_ENABLED) {
+        console.log('☁️ Supabase sync disabled');
+        return false;
+    }
+    
+    try {
+        const response = await fetch(
+            `${SUPABASE_URL}/rest/v1/${SUPABASE_TABLE}?key=eq.main_data&select=value`,
+            {
+                headers: {
+                    'apikey': SUPABASE_KEY,
+                    'Authorization': `Bearer ${SUPABASE_KEY}`
+                }
+            }
+        );
+        
+        const data = await response.json();
+        
+        if (data && data[0] && data[0].value) {
+            const cloudData = JSON.parse(data[0].value);
+            
+            // Load cloud data into localStorage
+            for (const key in cloudData) {
+                localStorage.setItem(key, cloudData[key]);
+            }
+            
+            console.log('✅ Loaded from Supabase');
+            return true;
+        }
+        return false;
+    } catch (e) {
+        console.error('Load error:', e);
+        return false;
+    }
+}
+
+// ============================================================
 // SESSION & GLOBALS
 // ============================================================
 function checkAuth() {
@@ -43,7 +139,7 @@ const SECTION_NAMES = {
 const ADMIN_PASSWORD = "224312";
 
 // ============================================================
-// SURAH NAMES (FALLBACK IF API FAILS)
+// SURAH NAMES (114 Surahs)
 // ============================================================
 const SURAH_NAMES_AR = [
     "الفاتحة", "البقرة", "آل عمران", "النساء", "المائدة", "الأنعام", "الأعراف", "الأنفال", "التوبة", "يونس",
@@ -107,17 +203,19 @@ async function updateDateDisplay() {
 }
 
 // ============================================================
-// LOAD QURAN DATA (FIXED - ALWAYS LOADS)
+// LOAD QURAN DATA
 // ============================================================
 async function loadQuranData() {
     if (!checkAuth()) return;
     await updateDateDisplay();
     
+    // Try to load from cloud first
+    await loadFromCloud();
+    
     try { 
         const r = await fetch('https://api.alquran.cloud/v1/surah'); 
         const data = await r.json(); 
         
-        // Use API data but with clean Arabic names
         surahsData = data.data.map((surah, index) => ({
             number: surah.number,
             name: SURAH_NAMES_AR[index] || surah.name,
@@ -127,9 +225,7 @@ async function loadQuranData() {
         
         initApp(); 
     } catch (e) {
-        console.error('API failed, using fallback data:', e);
-        
-        // FALLBACK: Use hardcoded data if API fails
+        console.error('API failed, using fallback:', e);
         surahsData = SURAH_NAMES_AR.map((name, index) => ({
             number: index + 1,
             name: name,
@@ -182,12 +278,10 @@ function loadStudent(studentNum) {
     
     currentAttendance = data.attendance || 'حاضر';
     
-    // BUILD SURAH OPTIONS - THIS IS THE FIX
     let surahOptions = '';
     if (surahsData && surahsData.length > 0) {
         surahOptions = surahsData.map(s => `<option value="${s.number}">${s.name}</option>`).join('');
     } else {
-        // Emergency fallback
         surahOptions = '<option value="1">الفاتحة</option><option value="2">البقرة</option>';
     }
     
@@ -455,6 +549,9 @@ function saveCurrentStudent() {
     localStorage.setItem(`quran_${sid}`, JSON.stringify(data));
     updateStudentDropdown();
     
+    // Sync to Supabase cloud
+    syncToCloud();
+    
     const btn = event.target;
     if (btn) {
         btn.textContent = '✅ تم الحفظ!';
@@ -483,6 +580,7 @@ function switchSection(section) {
     } else { 
         loadReportsData(); 
         loadDailyReport(); 
+        loadPointsReport();
     }
 }
 
@@ -626,48 +724,65 @@ function loadDailyReport() {
 }
 
 // ============================================================
-// PDF EXPORT (USING BROWSER PRINT - MOST RELIABLE)
+// POINTS REPORT
+// ============================================================
+function loadPointsReport() {
+    ['highschool', 'middleschool', 'elementary'].forEach(section => {
+        const container = document.getElementById(`points-${section}`);
+        if (!container) return;
+        
+        const students = [];
+        const count = parseInt(localStorage.getItem(`studentCount_${section}`) || '50');
+        
+        for (let i = 1; i <= count; i++) {
+            const key = `quran_${section}-${i}`;
+            const saved = localStorage.getItem(key);
+            
+            let name = `طالب ${i}`;
+            let totalPoints = 0;
+            
+            if (saved) {
+                try {
+                    const data = JSON.parse(saved);
+                    if (data.name) name = data.name;
+                    if (data.points) totalPoints = parseInt(data.points) || 0;
+                } catch (e) {}
+            }
+            
+            students.push({ number: i, name: name, points: totalPoints });
+        }
+        
+        students.sort((a, b) => b.points - a.points);
+        
+        let html = `
+            <table class="summary-table">
+                <thead>
+                    <tr><th>#</th><th>الطالب</th><th>النقاط</th></tr>
+                </thead>
+                <tbody>
+        `;
+        
+        students.forEach((s, idx) => {
+            html += `<tr><td>${idx + 1}</td><td>${s.name}</td><td>${s.points}</td></tr>`;
+        });
+        
+        html += `</tbody></table>`;
+        container.innerHTML = html;
+    });
+}
+
+// ============================================================
+// PDF EXPORT
 // ============================================================
 function exportDailyReport(l) { 
     const el = document.getElementById(`daily-${l}`); 
-    if (!el || el.querySelector('.no-data')) { 
-        alert('لا توجد بيانات للتصدير'); 
-        return; 
-    } 
-    
+    if (!el || el.querySelector('.no-data')) { alert('لا توجد بيانات للتصدير'); return; } 
     const sectionName = SECTION_NAMES[l];
     const dateStr = new Date(currentReportDate).toLocaleDateString('ar-SA', { year: 'numeric', month: 'long', day: 'numeric' });
     const gDate = getGregorianDate();
     const hDate = document.getElementById('hijriDate').textContent;
-    
     const printWindow = window.open('', '_blank');
-    printWindow.document.write(`
-        <!DOCTYPE html>
-        <html dir="rtl">
-        <head><meta charset="UTF-8">
-        <title>تقرير ${sectionName} اليومي</title>
-        <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
-        <style>
-            body { font-family: 'Cairo', sans-serif; direction: rtl; padding: 20px; }
-            h1 { color: #065f46; text-align: center; }
-            .date-info { text-align: center; color: #047857; margin-bottom: 20px; }
-            table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-            th { background: #047857; color: white; padding: 10px; }
-            td { padding: 8px; border-bottom: 1px solid #ddd; text-align: center; }
-            @media print { button { display: none; } }
-            .print-btn { background: #059669; color: white; padding: 10px 30px; border: none; border-radius: 8px; font-size: 16px; cursor: pointer; margin-top: 20px; }
-        </style>
-        </head>
-        <body>
-            <h1>📋 تقرير المرحلة ${sectionName} اليومي</h1>
-            <div class="date-info">📅 ${hDate} | 📆 ${gDate}</div>
-            ${el.innerHTML}
-            <div style="text-align:center;margin-top:20px;">
-                <button class="print-btn" onclick="window.print()">🖨️ طباعة / حفظ PDF</button>
-            </div>
-        </body>
-        </html>
-    `);
+    printWindow.document.write(`<!DOCTYPE html><html dir="rtl"><head><meta charset="UTF-8"><title>تقرير ${sectionName} اليومي</title><link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet"><style>body{font-family:'Cairo',sans-serif;direction:rtl;padding:20px}h1{color:#065f46;text-align:center}.date-info{text-align:center;color:#047857;margin-bottom:20px}table{width:100%;border-collapse:collapse;margin-top:20px}th{background:#047857;color:white;padding:10px}td{padding:8px;border-bottom:1px solid #ddd;text-align:center}@media print{button{display:none}}.print-btn{background:#059669;color:white;padding:10px 30px;border:none;border-radius:8px;font-size:16px;cursor:pointer;margin-top:20px}</style></head><body><h1>📋 تقرير المرحلة ${sectionName} اليومي</h1><div class="date-info">📅 ${hDate} | 📆 ${gDate}</div>${el.innerHTML}<div style="text-align:center;margin-top:20px"><button class="print-btn" onclick="window.print()">🖨️ طباعة / حفظ PDF</button></div></body></html>`);
     printWindow.document.close();
 }
 
@@ -677,35 +792,8 @@ function exportMonthlyReport(l) {
     const gDate = getGregorianDate();
     const hDate = document.getElementById('hijriDate').textContent;
     const summaryHTML = document.getElementById(`${l}-summary`).innerHTML;
-    
     const printWindow = window.open('', '_blank');
-    printWindow.document.write(`
-        <!DOCTYPE html>
-        <html dir="rtl">
-        <head><meta charset="UTF-8">
-        <title>تقرير ${sectionName} الشهري</title>
-        <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
-        <style>
-            body { font-family: 'Cairo', sans-serif; direction: rtl; padding: 20px; }
-            h1 { color: #065f46; text-align: center; }
-            .date-info { text-align: center; color: #047857; margin-bottom: 20px; }
-            table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-            th { background: #047857; color: white; padding: 10px; }
-            td { padding: 8px; border-bottom: 1px solid #ddd; text-align: center; }
-            @media print { button { display: none; } }
-            .print-btn { background: #059669; color: white; padding: 10px 30px; border: none; border-radius: 8px; font-size: 16px; cursor: pointer; margin-top: 20px; }
-        </style>
-        </head>
-        <body>
-            <h1>📊 تقرير المرحلة ${sectionName} الشهري</h1>
-            <div class="date-info">${monthStr}</div>
-            ${summaryHTML}
-            <div style="text-align:center;margin-top:20px;">
-                <button class="print-btn" onclick="window.print()">🖨️ طباعة / حفظ PDF</button>
-            </div>
-        </body>
-        </html>
-    `);
+    printWindow.document.write(`<!DOCTYPE html><html dir="rtl"><head><meta charset="UTF-8"><title>تقرير ${sectionName} الشهري</title><link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet"><style>body{font-family:'Cairo',sans-serif;direction:rtl;padding:20px}h1{color:#065f46;text-align:center}.date-info{text-align:center;color:#047857;margin-bottom:20px}table{width:100%;border-collapse:collapse;margin-top:20px}th{background:#047857;color:white;padding:10px}td{padding:8px;border-bottom:1px solid #ddd;text-align:center}@media print{button{display:none}}.print-btn{background:#059669;color:white;padding:10px 30px;border:none;border-radius:8px;font-size:16px;cursor:pointer;margin-top:20px}</style></head><body><h1>📊 تقرير المرحلة ${sectionName} الشهري</h1><div class="date-info">${monthStr}</div>${summaryHTML}<div style="text-align:center;margin-top:20px"><button class="print-btn" onclick="window.print()">🖨️ طباعة / حفظ PDF</button></div></body></html>`);
     printWindow.document.close();
 }
 
@@ -715,42 +803,18 @@ function exportGrandTotal() {
     const middleHTML = document.getElementById('middleschool-summary').innerHTML;
     const elemHTML = document.getElementById('elementary-summary').innerHTML;
     const total = document.getElementById('grand-total-khatmah').textContent;
-    
     const printWindow = window.open('', '_blank');
-    printWindow.document.write(`
-        <!DOCTYPE html>
-        <html dir="rtl">
-        <head><meta charset="UTF-8">
-        <title>التقرير الشامل</title>
-        <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
-        <style>
-            body { font-family: 'Cairo', sans-serif; direction: rtl; padding: 20px; }
-            h1 { color: #065f46; text-align: center; }
-            h2 { color: #047857; margin-top: 20px; }
-            table { width: 100%; border-collapse: collapse; margin: 10px 0; }
-            th { background: #047857; color: white; padding: 10px; }
-            td { padding: 8px; border-bottom: 1px solid #ddd; text-align: center; }
-            .grand-total { background: #059669; color: white; padding: 20px; border-radius: 12px; text-align: center; margin-top: 20px; }
-            @media print { button { display: none; } }
-            .print-btn { background: #059669; color: white; padding: 10px 30px; border: none; border-radius: 8px; font-size: 16px; cursor: pointer; margin-top: 20px; }
-        </style>
-        </head>
-        <body>
-            <h1>📊 التقرير الشامل لجميع المراحل</h1>
-            <p style="text-align:center">${monthStr}</p>
-            <h2>🏫 المرحلة الثانوية</h2>${highHTML}
-            <h2>🏫 المرحلة المتوسطة</h2>${middleHTML}
-            <h2>🏫 المرحلة الابتدائية</h2>${elemHTML}
-            <div class="grand-total">
-                <h2 style="color:white;">🎯 إجمالي الختمات</h2>
-                <div style="font-size:40px;">${total} ختمة</div>
-            </div>
-            <div style="text-align:center;margin-top:20px;">
-                <button class="print-btn" onclick="window.print()">🖨️ طباعة / حفظ PDF</button>
-            </div>
-        </body>
-        </html>
-    `);
+    printWindow.document.write(`<!DOCTYPE html><html dir="rtl"><head><meta charset="UTF-8"><title>التقرير الشامل</title><link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet"><style>body{font-family:'Cairo',sans-serif;direction:rtl;padding:20px}h1{color:#065f46;text-align:center}h2{color:#047857;margin-top:20px}table{width:100%;border-collapse:collapse;margin:10px 0}th{background:#047857;color:white;padding:10px}td{padding:8px;border-bottom:1px solid #ddd;text-align:center}.grand-total{background:#059669;color:white;padding:20px;border-radius:12px;text-align:center;margin-top:20px}@media print{button{display:none}}.print-btn{background:#059669;color:white;padding:10px 30px;border:none;border-radius:8px;font-size:16px;cursor:pointer;margin-top:20px}</style></head><body><h1>📊 التقرير الشامل لجميع المراحل</h1><p style="text-align:center">${monthStr}</p><h2>🏫 المرحلة الثانوية</h2>${highHTML}<h2>🏫 المرحلة المتوسطة</h2>${middleHTML}<h2>🏫 المرحلة الابتدائية</h2>${elemHTML}<div class="grand-total"><h2 style="color:white">🎯 إجمالي الختمات</h2><div style="font-size:40px">${total} ختمة</div></div><div style="text-align:center;margin-top:20px"><button class="print-btn" onclick="window.print()">🖨️ طباعة / حفظ PDF</button></div></body></html>`);
+    printWindow.document.close();
+}
+
+function exportPointsReport(level) {
+    const sectionName = SECTION_NAMES[level];
+    const container = document.getElementById(`points-${level}`);
+    const gDate = getGregorianDate();
+    const hDate = document.getElementById('hijriDate').textContent;
+    const printWindow = window.open('', '_blank');
+    printWindow.document.write(`<!DOCTYPE html><html dir="rtl"><head><meta charset="UTF-8"><title>تقرير نقاط ${sectionName}</title><link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet"><style>body{font-family:'Cairo',sans-serif;direction:rtl;padding:20px}h1{color:#065f46;text-align:center}.date-info{text-align:center;color:#047857;margin-bottom:20px}table{width:100%;border-collapse:collapse;margin-top:20px}th{background:#047857;color:white;padding:10px}td{padding:8px;border-bottom:1px solid #ddd;text-align:center}@media print{button{display:none}}.print-btn{background:#059669;color:white;padding:10px 30px;border:none;border-radius:8px;font-size:16px;cursor:pointer;margin-top:20px}</style></head><body><h1>⭐ تقرير نقاط المرحلة ${sectionName}</h1><div class="date-info">📅 ${hDate} | 📆 ${gDate}</div>${container.innerHTML}<div style="text-align:center;margin-top:20px"><button class="print-btn" onclick="window.print()">🖨️ طباعة / حفظ PDF</button></div></body></html>`);
     printWindow.document.close();
 }
 
@@ -759,21 +823,14 @@ function exportGrandTotal() {
 // ============================================================
 function showAdminPanel() { 
     const p = prompt("🔐 كلمة المرور:"); 
-    if (p !== ADMIN_PASSWORD) { 
-        alert("❌ كلمة مرور غير صحيحة"); 
-        return; 
-    } 
+    if (p !== ADMIN_PASSWORD) { alert("❌ كلمة مرور غير صحيحة"); return; } 
     const s = prompt("اختر:\n1- ثانوي\n2- متوسط\n3- ابتدائي\n4- حذف كل البيانات"); 
-    if (s === '4') { 
-        resetAllData(); 
-        return; 
-    } 
+    if (s === '4') { resetAllData(); return; } 
     let sec; 
     if (s === '1') sec = 'highschool'; 
     else if (s === '2') sec = 'middleschool'; 
     else if (s === '3') sec = 'elementary'; 
     else return; 
-    
     const a = prompt("1- إضافة طالب\n2- حذف طالب"); 
     if (a === '1') addNewStudent(sec); 
     else if (a === '2') deleteStudent(sec); 
@@ -782,30 +839,35 @@ function showAdminPanel() {
 function addNewStudent(sec) { 
     const cnt = parseInt(localStorage.getItem(`studentCount_${sec}`) || '50') + 1;
     localStorage.setItem(`studentCount_${sec}`, cnt);
-    if (sec === currentSection) { 
-        totalStudents = cnt; 
-        updateStudentDropdown(); 
-    } 
+    if (sec === currentSection) { totalStudents = cnt; updateStudentDropdown(); } 
+    
+    // SYNC TO CLOUD
+    syncToCloud();
+    
     alert(`✅ تمت إضافة طالب جديد!\nالمرحلة: ${SECTION_NAMES[sec]}\nالعدد الآن: ${cnt}`); 
 }
-
 function deleteStudent(sec) { 
     const cnt = parseInt(localStorage.getItem(`studentCount_${sec}`) || '50');
     const n = parseInt(prompt(`أدخل رقم الطالب المراد حذفه (1-${cnt}):`)); 
-    if (isNaN(n) || n < 1 || n > cnt) { 
-        alert("رقم غير صحيح"); 
-        return; 
-    } 
+    if (isNaN(n) || n < 1 || n > cnt) { alert("رقم غير صحيح"); return; } 
     if (!confirm(`حذف الطالب رقم ${n} من ${SECTION_NAMES[sec]}؟`)) return;
     
+    // Remove the student
     localStorage.removeItem(`quran_${sec}-${n}`);
+    
+    // Shift remaining students down
     for (let i = n; i < cnt; i++) {
         const old = localStorage.getItem(`quran_${sec}-${i+1}`);
         if (old) { 
             localStorage.setItem(`quran_${sec}-${i}`, old); 
-            localStorage.removeItem(`quran_${sec}-${i+1}`); 
+        } else {
+            localStorage.removeItem(`quran_${sec}-${i}`);
         }
     }
+    // Remove the last duplicate
+    localStorage.removeItem(`quran_${sec}-${cnt}`);
+    
+    // Update count
     localStorage.setItem(`studentCount_${sec}`, cnt - 1);
     
     if (sec === currentSection) { 
@@ -814,24 +876,32 @@ function deleteStudent(sec) {
         loadStudent(currentStudentIndex + 1); 
         updateStudentDropdown(); 
     } 
+    
+    // SYNC DELETION TO CLOUD
+    syncToCloud();
+    
     alert(`✅ تم حذف الطالب بنجاح!`); 
 }
 
 function resetAllData() { 
     if (!confirm("⚠️ تحذير: سيتم حذف جميع البيانات نهائياً!\n\nهل أنت متأكد؟")) return;
-    if (prompt("اكتب: حذف جميع البيانات") !== "حذف جميع البيانات") { 
-        alert("تم الإلغاء"); 
-        return; 
-    } 
+    if (prompt("اكتب: حذف جميع البيانات") !== "حذف جميع البيانات") { alert("تم الإلغاء"); return; } 
+    
+    // Clear all Quran data
     for (let i = localStorage.length - 1; i >= 0; i--) { 
         const k = localStorage.key(i); 
         if (k.startsWith('quran_')) localStorage.removeItem(k); 
     } 
+    
+    // Reset counts
     localStorage.setItem('studentCount_highschool', '50'); 
     localStorage.setItem('studentCount_middleschool', '50'); 
     localStorage.setItem('studentCount_elementary', '50');
+    
+    // SYNC EMPTY DATA TO CLOUD (overwrites cloud with empty data)
+    syncToCloud();
+    
     alert("✅ تم حذف جميع البيانات بنجاح!\nسيتم إعادة تحميل الصفحة.");
     location.reload();
 }
-
 window.onload = loadQuranData;
