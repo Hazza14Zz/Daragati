@@ -10,25 +10,20 @@ const SUPABASE_ENABLED = true;
 let lastCloudUpdate = null;
 
 // ============================================================
-// SMART SYNC - Only runs when tab is active (Saves Requests!)
+// SMART SYNC - Only runs when tab is active
 // ============================================================
 let isTabActive = true;
 
 document.addEventListener('visibilitychange', function() {
     isTabActive = !document.hidden;
-    if (isTabActive) {
-        console.log('👁️ Tab active - sync resumed');
-    } else {
-        console.log('💤 Tab inactive - sync paused (saving requests)');
-    }
+    console.log(isTabActive ? '👁️ Tab active' : '💤 Tab inactive');
 });
 
-// Supabase Sync Functions
+// ============================================================
+// SYNC FUNCTIONS (FIXED)
+// ============================================================
 async function syncToCloud() {
-    if (!SUPABASE_ENABLED) {
-        console.log('☁️ Supabase sync disabled');
-        return;
-    }
+    if (!SUPABASE_ENABLED) return;
     
     const allData = {};
     for (let i = 0; i < localStorage.length; i++) {
@@ -39,13 +34,14 @@ async function syncToCloud() {
     }
     
     try {
-        const response = await fetch(`${SUPABASE_URL}/rest/v1/${SUPABASE_TABLE}`, {
-            method: 'POST',
+        // Use PUT with upsert
+        const response = await fetch(`${SUPABASE_URL}/rest/v1/${SUPABASE_TABLE}?key=eq.main_data`, {
+            method: 'PATCH',
             headers: {
                 'apikey': SUPABASE_KEY,
                 'Authorization': `Bearer ${SUPABASE_KEY}`,
                 'Content-Type': 'application/json',
-                'Prefer': 'return=representation'  // ✅ FIXED
+                'Prefer': 'return=representation'
             },
             body: JSON.stringify({
                 key: 'main_data',
@@ -54,21 +50,38 @@ async function syncToCloud() {
             })
         });
         
-        lastCloudUpdate = Date.now();
-        
-        if (response.ok) {
+        // If PATCH fails (no row exists), use POST
+        if (!response.ok && response.status === 404) {
+            const postResponse = await fetch(`${SUPABASE_URL}/rest/v1/${SUPABASE_TABLE}`, {
+                method: 'POST',
+                headers: {
+                    'apikey': SUPABASE_KEY,
+                    'Authorization': `Bearer ${SUPABASE_KEY}`,
+                    'Content-Type': 'application/json',
+                    'Prefer': 'return=representation'
+                },
+                body: JSON.stringify({
+                    key: 'main_data',
+                    value: JSON.stringify(allData),
+                    updated_at: new Date().toISOString()
+                })
+            });
+            
+            if (postResponse.ok) {
+                console.log('✅ Created in Supabase');
+                lastCloudUpdate = Date.now();
+            }
+        } else if (response.ok) {
             console.log('✅ Synced to Supabase');
-        } else {
-            console.error('Sync failed:', response.status);
+            lastCloudUpdate = Date.now();
         }
     } catch (e) {
         console.error('Sync error:', e);
     }
-}async function loadFromCloud() {
-    if (!SUPABASE_ENABLED) {
-        console.log('☁️ Supabase sync disabled');
-        return false;
-    }
+}
+
+async function loadFromCloud() {
+    if (!SUPABASE_ENABLED) return false;
     
     try {
         const response = await fetch(
@@ -90,19 +103,12 @@ async function syncToCloud() {
                 localStorage.setItem(key, cloudData[key]);
             }
             
-            // FIX: Always set lastCloudUpdate
-            if (data[0].updated_at) {
-                lastCloudUpdate = new Date(data[0].updated_at).getTime();
-            } else {
-                // If no updated_at field, use current time
-                lastCloudUpdate = Date.now();
-            }
+            lastCloudUpdate = data[0].updated_at 
+                ? new Date(data[0].updated_at).getTime() 
+                : Date.now();
             
             console.log('✅ Loaded from Supabase');
             return true;
-        } else {
-            // FIX: Even if no data, set lastCloudUpdate
-            lastCloudUpdate = Date.now();
         }
         return false;
     } catch (e) {
@@ -110,9 +116,8 @@ async function syncToCloud() {
         return false;
     }
 }
-// Real-time cloud check - WITH SMART PAUSE
+
 async function checkForCloudUpdates() {
-    // SMART SYNC: Skip if tab is not active
     if (!isTabActive) return;
     if (!SUPABASE_ENABLED) return;
     
@@ -138,16 +143,15 @@ async function checkForCloudUpdates() {
             }
             
             if (cloudTime > lastCloudUpdate) {
-                console.log('🔄 Cloud changed! Force reloading page...');
-                location.reload(true);
+                console.log('🔄 Cloud changed! Reloading...');
+                location.reload();
             }
         }
     } catch (e) {
-        console.error('Check updates error:', e);
+        console.error('Check error:', e);
     }
 }
 
-// Start real-time checking every 15 SECONDS (Safe for free tier)
 setInterval(checkForCloudUpdates, 15000);
 
 // ============================================================
@@ -280,14 +284,12 @@ async function loadQuranData() {
         
         initApp(); 
     } catch (e) {
-        console.error('API failed, using fallback:', e);
         surahsData = SURAH_NAMES_AR.map((name, index) => ({
             number: index + 1,
             name: name,
             englishName: name,
             numberOfAyahs: AYAH_COUNTS[index] || 10
         }));
-        
         initApp();
     }
 }
@@ -348,7 +350,6 @@ function loadStudent(studentNum) {
                 <div class="student-number">${studentNum}</div>
                 <input type="text" id="studentName" class="student-name-input" value="${data.name.replace(/"/g, '&quot;')}" placeholder="اسم الطالب">
             </div>
-            
             <div class="task-section">
                 <div class="task-header task-header-hifz">🔰 حفظ</div>
                 <div class="task-body">
@@ -363,7 +364,6 @@ function loadStudent(studentNum) {
                     </div>
                 </div>
             </div>
-            
             <div class="task-section">
                 <div class="task-header task-header-rabt">🔗 ربط</div>
                 <div class="task-body">
@@ -371,7 +371,6 @@ function loadStudent(studentNum) {
                     <button class="add-btn" onclick="addRabtItem()">➕ إضافة سورة</button>
                 </div>
             </div>
-            
             <div class="task-section">
                 <div class="task-header task-header-murajaa">📖 مراجعة</div>
                 <div class="task-body">
@@ -386,23 +385,19 @@ function loadStudent(studentNum) {
                     </div>
                 </div>
             </div>
-            
             <div class="attendance-row">
                 <button class="attendance-btn ${currentAttendance === 'حاضر' ? 'active' : ''}" onclick="setAttendance('حاضر')">✅ حاضر</button>
                 <button class="attendance-btn ${currentAttendance === 'غائب' ? 'active' : ''}" onclick="setAttendance('غائب')">❌ غائب</button>
                 <button class="attendance-btn ${currentAttendance === 'معذور' ? 'active' : ''}" onclick="setAttendance('معذور')">⚠️ معذور</button>
             </div>
-            
             <div class="checks-row">
                 <label class="check-item"><input type="checkbox" id="quranCheck" ${data.hasQuran ? 'checked' : ''}> 📚 مصحف</label>
                 <label class="check-item"><input type="checkbox" id="uniformCheck" ${data.hasUniform ? 'checked' : ''}> 👕 زي</label>
             </div>
-            
             <div class="points-row">
                 <span class="points-label">⭐ نقاط</span>
                 <input type="number" id="pointsInput" class="points-input" min="0" max="100" value="${data.points || 0}">
             </div>
-            
             <button class="save-btn" onclick="saveCurrentStudent()">💾 حفظ</button>
         </div>
     `;
@@ -603,7 +598,6 @@ function saveCurrentStudent() {
     
     localStorage.setItem(`quran_${sid}`, JSON.stringify(data));
     updateStudentDropdown();
-    
     syncToCloud();
     
     const btn = event.target;
@@ -810,9 +804,7 @@ function loadPointsReport() {
         
         let html = `
             <table class="summary-table">
-                <thead>
-                    <tr><th>#</th><th>الطالب</th><th>النقاط</th></tr>
-                </thead>
+                <thead><tr><th>#</th><th>الطالب</th><th>النقاط</th></tr></thead>
                 <tbody>
         `;
         
@@ -907,11 +899,8 @@ function deleteStudent(sec) {
     localStorage.removeItem(`quran_${sec}-${n}`);
     for (let i = n; i < cnt; i++) {
         const old = localStorage.getItem(`quran_${sec}-${i+1}`);
-        if (old) { 
-            localStorage.setItem(`quran_${sec}-${i}`, old); 
-        } else {
-            localStorage.removeItem(`quran_${sec}-${i}`);
-        }
+        if (old) { localStorage.setItem(`quran_${sec}-${i}`, old); } 
+        else { localStorage.removeItem(`quran_${sec}-${i}`); }
     }
     localStorage.removeItem(`quran_${sec}-${cnt}`);
     localStorage.setItem(`studentCount_${sec}`, cnt - 1);
@@ -930,26 +919,17 @@ function resetAllData() {
     if (!confirm("⚠️ تحذير: سيتم حذف جميع البيانات نهائياً!\n\nهل أنت متأكد؟")) return;
     if (prompt("اكتب: حذف جميع البيانات") !== "حذف جميع البيانات") { alert("تم الإلغاء"); return; } 
     
-    // Clear ALL Quran data - FIXED
     const keysToRemove = [];
     for (let i = 0; i < localStorage.length; i++) { 
         const k = localStorage.key(i); 
-        if (k.startsWith('quran_')) {
-            keysToRemove.push(k);
-        }
+        if (k.startsWith('quran_')) keysToRemove.push(k);
     }
-    
-    // Remove each key
     keysToRemove.forEach(k => localStorage.removeItem(k));
     
-    // Reset counts
     localStorage.setItem('studentCount_highschool', '50'); 
     localStorage.setItem('studentCount_middleschool', '50'); 
     localStorage.setItem('studentCount_elementary', '50');
-    
-    // Force sync to cloud
     syncToCloud();
-    
     alert("✅ تم حذف جميع البيانات بنجاح!\nسيتم إعادة تحميل الصفحة.");
     location.reload();
 }
