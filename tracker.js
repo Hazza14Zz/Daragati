@@ -39,15 +39,13 @@ async function syncToCloud() {
     }
     
     try {
-        // FIX: Use UPSERT (Update or Insert) instead of DELETE + POST
-        // This ensures the cloud is never left empty
         const response = await fetch(`${SUPABASE_URL}/rest/v1/${SUPABASE_TABLE}`, {
             method: 'POST',
             headers: {
                 'apikey': SUPABASE_KEY,
                 'Authorization': `Bearer ${SUPABASE_KEY}`,
                 'Content-Type': 'application/json',
-                'Prefer': 'resolution=merge-duplicates' // UPSERT!
+                'Prefer': 'return=representation'  // ✅ FIXED
             },
             body: JSON.stringify({
                 key: 'main_data',
@@ -66,8 +64,7 @@ async function syncToCloud() {
     } catch (e) {
         console.error('Sync error:', e);
     }
-}
-async function loadFromCloud() {
+}async function loadFromCloud() {
     if (!SUPABASE_ENABLED) {
         console.log('☁️ Supabase sync disabled');
         return false;
