@@ -740,7 +740,6 @@ function loadReportsData() {
     
     ['highschool','middleschool','elementary'].forEach(s => { 
         const d = data[s]; 
-        const tot = d.hifz + d.rabt + d.murajaa; 
         document.getElementById(`${s}-summary`).innerHTML = `
             <table class="summary-table">
                 <thead><tr><th>المهمة</th><th>عدد المرات</th></tr></thead>
@@ -748,7 +747,6 @@ function loadReportsData() {
                     <tr><td>📖 حفظ</td><td>${d.hifz}</td></tr>
                     <tr><td>🔗 ربط</td><td>${d.rabt}</td></tr>
                     <tr><td>📚 مراجعة</td><td>${d.murajaa}</td></tr>
-                    <tr class="total-row"><td>📄 إجمالي المهام</td><td>${tot}</td></tr>
                     <tr class="total-row"><td>📖 إجمالي الصفحات</td><td>${d.pages}</td></tr>
                 </tbody>
             </table>
@@ -762,7 +760,6 @@ function loadReportsData() {
     document.getElementById('grand-total-pages').textContent = totalPages;
     document.getElementById('grand-total-khatmah').textContent = khatmahCount;
 }
-
 function loadDailyReport() {
     document.getElementById('currentDateDisplay').textContent = new Date(currentReportDate).toLocaleDateString('ar-SA', { year: 'numeric', month: 'long', day: 'numeric' });
     ['highschool','middleschool','elementary'].forEach(s => {
