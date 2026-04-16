@@ -77,6 +77,52 @@ async function syncToCloud() {
         isOwnChange = false;
     }
 }
+// ============================================================
+// LOAD FROM CLOUD (ADD THIS FUNCTION)
+// ============================================================
+async function loadFromCloud() {
+    if (!SUPABASE_ENABLED) return false;
+    
+    try {
+        const response = await fetch(
+            `${SUPABASE_URL}/rest/v1/${SUPABASE_TABLE}?key=eq.main_data&select=value,updated_at`,
+            {
+                headers: {
+                    'apikey': SUPABASE_KEY,
+                    'Authorization': `Bearer ${SUPABASE_KEY}`
+                }
+            }
+        );
+        
+        const data = await response.json();
+        
+        if (data && data[0] && data[0].value) {
+            const cloudData = JSON.parse(data[0].value);
+            
+            // Delete all local Quran data
+            const keysToDelete = [];
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                if (key.startsWith('quran_') || key.startsWith('studentCount_')) {
+                    keysToDelete.push(key);
+                }
+            }
+            keysToDelete.forEach(key => localStorage.removeItem(key));
+            
+            // Load cloud data into localStorage
+            for (const key in cloudData) {
+                localStorage.setItem(key, cloudData[key]);
+            }
+            
+            console.log('✅ Loaded from Supabase');
+            return true;
+        }
+        return false;
+    } catch (e) {
+        console.error('Load error:', e);
+        return false;
+    }
+}
 async function subscribeToRealtimeChanges() {
     if (!SUPABASE_ENABLED) return;
     
