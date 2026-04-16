@@ -245,27 +245,31 @@ const AYAH_COUNTS = [
 // ============================================================
 // DATE FUNCTIONS
 // ============================================================
-function getGregorianDate() { 
-    return new Date().toLocaleDateString('ar-SA', { 
-        weekday: 'long', 
-        year: 'numeric', 
-        month: 'long', 
-        day: 'numeric' 
-    }); 
+function getGregorianDate() {
+    const date = new Date();
+    const weekdays = ['الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
+    const months = ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'];
+    
+    return `${weekdays[date.getDay()]}، ${date.getDate()} ${months[date.getMonth()]} ${date.getFullYear()}`;
 }
 
 async function getHijriDate() {
-    try { 
-        const d = new Date(); 
-        const r = await fetch(`https://api.aladhan.com/v1/gToH?date=${d.getDate()}-${d.getMonth()+1}-${d.getFullYear()}`); 
-        const data = await r.json(); 
-        if (data.data?.hijri) return `${data.data.hijri.day} ${data.data.hijri.month.ar} ${data.data.hijri.year}`; 
-    } catch (e) {}
-    return new Intl.DateTimeFormat('ar-SA-u-ca-islamic', { 
-        day: 'numeric', 
-        month: 'long', 
-        year: 'numeric' 
-    }).format(new Date());
+    try {
+        const d = new Date();
+        const response = await fetch(`https://api.aladhan.com/v1/gToH?date=${d.getDate()}-${d.getMonth()+1}-${d.getFullYear()}`);
+        const data = await response.json();
+        
+        if (data.data && data.data.hijri) {
+            const hijri = data.data.hijri;
+            const weekdays = ['الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
+            const weekdayAr = hijri.weekday && hijri.weekday.ar ? hijri.weekday.ar : weekdays[d.getDay()];
+            
+            return `${weekdayAr} ${hijri.day} ${hijri.month.ar} ${hijri.year}`;
+        }
+        throw new Error('API failed');
+    } catch (e) {
+        return "جاري التحميل...";
+    }
 }
 
 async function updateDateDisplay() { 
