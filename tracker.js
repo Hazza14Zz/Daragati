@@ -5,7 +5,9 @@ const SUPABASE_URL = "https://dklyyzbnapkxlluximzk.supabase.co";
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRrbHl5emJuYXBreGxsdXhpbXprIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYyNjEwMDIsImV4cCI6MjA5MTgzNzAwMn0.qpCqvUTia4ywEMPSYJ_rIB4pSlk0zkvq5cQa-sFaFEs";
 const SUPABASE_TABLE = "quran_data";
 const SUPABASE_ENABLED = true;
-
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+let realtimeChannel = null;
+let isOwnChange = false;
 // Real-time sync variables
 let lastCloudUpdate = null;
 
@@ -34,7 +36,8 @@ async function syncToCloud() {
     }
     
     try {
-        // Use PUT with upsert
+        isOwnChange = true;
+        
         const response = await fetch(`${SUPABASE_URL}/rest/v1/${SUPABASE_TABLE}?key=eq.main_data`, {
             method: 'PATCH',
             headers: {
@@ -50,15 +53,13 @@ async function syncToCloud() {
             })
         });
         
-        // If PATCH fails (no row exists), use POST
         if (!response.ok && response.status === 404) {
-            const postResponse = await fetch(`${SUPABASE_URL}/rest/v1/${SUPABASE_TABLE}`, {
+            await fetch(`${SUPABASE_URL}/rest/v1/${SUPABASE_TABLE}`, {
                 method: 'POST',
                 headers: {
                     'apikey': SUPABASE_KEY,
                     'Authorization': `Bearer ${SUPABASE_KEY}`,
-                    'Content-Type': 'application/json',
-                    'Prefer': 'return=representation'
+                    'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
                     key: 'main_data',
@@ -66,104 +67,50 @@ async function syncToCloud() {
                     updated_at: new Date().toISOString()
                 })
             });
-            
-            if (postResponse.ok) {
-                console.log('✅ Created in Supabase');
-                lastCloudUpdate = Date.now();
-            }
-        } else if (response.ok) {
-            console.log('✅ Synced to Supabase');
-            lastCloudUpdate = Date.now();
         }
+        
+        console.log('✅ Synced to Supabase');
+        setTimeout(() => { isOwnChange = false; }, 500);
+        
     } catch (e) {
         console.error('Sync error:', e);
+        isOwnChange = false;
     }
 }
-
-async function loadFromCloud() {
-    if (!SUPABASE_ENABLED) return false;
-    
-    try {
-        const response = await fetch(
-            `${SUPABASE_URL}/rest/v1/${SUPABASE_TABLE}?key=eq.main_data&select=value,updated_at`,
-            {
-                headers: {
-                    'apikey': SUPABASE_KEY,
-                    'Authorization': `Bearer ${SUPABASE_KEY}`
-                }
-            }
-        );
-        
-        const data = await response.json();
-        
-        // If cloud has data
-        if (data && data[0] && data[0].value) {
-            const cloudData = JSON.parse(data[0].value);
-            
-            // FIRST: Delete all local Quran data
-            const keysToDelete = [];
-            for (let i = 0; i < localStorage.length; i++) {
-                const key = localStorage.key(i);
-                if (key.startsWith('quran_') || key.startsWith('studentCount_')) {
-                    keysToDelete.push(key);
-                }
-            }
-            keysToDelete.forEach(key => localStorage.removeItem(key));
-            
-            // SECOND: Load cloud data into localStorage
-            for (const key in cloudData) {
-                localStorage.setItem(key, cloudData[key]);
-            }
-            
-            lastCloudUpdate = data[0].updated_at 
-                ? new Date(data[0].updated_at).getTime() 
-                : Date.now();
-            
-            console.log('✅ Loaded from Supabase');
-            return true;
-        }
-        return false;
-    } catch (e) {
-        console.error('Load error:', e);
-        return false;
-    }
-}
-async function checkForCloudUpdates() {
-    if (!isTabActive) return;
+async function subscribeToRealtimeChanges() {
     if (!SUPABASE_ENABLED) return;
     
-    try {
-        const response = await fetch(
-            `${SUPABASE_URL}/rest/v1/${SUPABASE_TABLE}?key=eq.main_data&select=updated_at`,
+    if (realtimeChannel) {
+        await realtimeChannel.unsubscribe();
+    }
+    
+    realtimeChannel = supabaseClient
+        .channel('quran-tracker-changes')
+        .on(
+            'postgres_changes',
             {
-                headers: {
-                    'apikey': SUPABASE_KEY,
-                    'Authorization': `Bearer ${SUPABASE_KEY}`
+                event: 'UPDATE',
+                schema: 'public',
+                table: SUPABASE_TABLE,
+                filter: 'key=eq.main_data'
+            },
+            (payload) => {
+                if (!isOwnChange) {
+                    console.log('🔄 Change detected from another device! Reloading...');
+                    loadFromCloud().then(() => {
+                        location.reload();
+                    });
                 }
             }
-        );
-        
-        const data = await response.json();
-        
-        if (data && data[0] && data[0].updated_at) {
-            const cloudTime = new Date(data[0].updated_at).getTime();
-            
-            if (!lastCloudUpdate) {
-                lastCloudUpdate = cloudTime;
-                return;
+        )
+        .subscribe((status) => {
+            if (status === 'SUBSCRIBED') {
+                console.log('✅ Connected to real-time sync');
             }
-            
-            if (cloudTime > lastCloudUpdate) {
-                console.log('🔄 Cloud changed! Reloading...');
-                location.reload();
-            }
-        }
-    } catch (e) {
-        console.error('Check error:', e);
-    }
+        });
 }
 
-setInterval(checkForCloudUpdates, 15000);
+
 
 // ============================================================
 // SESSION & GLOBALS
@@ -958,4 +905,7 @@ function resetAllData() {
         location.reload();
     }, 1000);
 }
-window.onload = loadQuranData;
+window.onload = () => {
+    subscribeToRealtimeChanges();
+    loadQuranData();
+};
