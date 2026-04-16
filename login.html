@@ -6,10 +6,45 @@
     <title>تسجيل الدخول - سجل متابعة الحلقات</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body { 
+            font-family: 'Cairo', sans-serif;
+            background: linear-gradient(135deg, #065f46 0%, #059669 50%, #10b981 100%);
+            min-height: 100vh;
+        }
+        .login-box {
+            animation: slideUp 0.6s ease-out;
+        }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .input-field:focus {
+            transform: scale(1.02);
+            box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.15);
+        }
+        .login-btn {
+            transition: all 0.3s ease;
+        }
+        .login-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+        }
+        .error-shake {
+            animation: shake 0.5s ease-in-out;
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20% { transform: translateX(-12px); }
+            40% { transform: translateX(12px); }
+            60% { transform: translateX(-8px); }
+            80% { transform: translateX(8px); }
+        }
+    </style>
 </head>
-<body class="flex items-center justify-center p-4" style="font-family: 'Cairo', sans-serif; background: linear-gradient(135deg, #065f46 0%, #059669 50%, #10b981 100%); min-height: 100vh;">
-
-    <div class="w-full max-w-md">
+<body class="flex items-center justify-center p-4">
+    
+    <div class="login-box w-full max-w-md">
         
         <!-- Logo & Header -->
         <div class="text-center mb-8">
@@ -74,7 +109,7 @@
                 <!-- Login Button -->
                 <button 
                     type="submit" 
-                    class="w-full bg-gradient-to-r from-emerald-600 to-emerald-700 text-white font-bold py-4 px-6 rounded-2xl hover:from-emerald-700 hover:to-emerald-800 transition text-xl shadow-lg"
+                    class="login-btn w-full bg-gradient-to-r from-emerald-600 to-emerald-700 text-white font-bold py-4 px-6 rounded-2xl hover:from-emerald-700 hover:to-emerald-800 transition text-xl shadow-lg"
                 >
                     🚪 دخول
                 </button>
@@ -90,13 +125,11 @@
     </div>
 
     <script>
-        // Authorized Users-
-        const AUTHORIZED_USERS = [
-            { username: "Mohamed.A2312", password: "Mohamed1234@@", displayName: "محمد" },
-            { username: "Maher.2313", password: "Maher1414$$", displayName: "ماهر" },
-            { username: "Motaz.2314", password: "Motaz1212!!", displayName: "معتز" },
-            { username: "Bahaa1212" , password: "Mohamed123" , displayName: "بهاء"},
-        ];
+        // ============================================================
+        // SECURE LOGIN - NO PASSWORDS IN CODE!
+        // ============================================================
+        const SUPABASE_URL = "https://dklyyzbnapkxlluximzk.supabase.co";
+        const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRrbHl5emJuYXBreGxsdXhpbXprIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYyNjEwMDIsImV4cCI6MjA5MTgzNzAwMn0.qpCqvUTia4ywEMPSYJ_rIB4pSlk0zkvq5cQa-sFaFEs";
 
         function togglePassword() {
             const pass = document.getElementById('password');
@@ -110,31 +143,85 @@
             }
         }
 
-        function handleLogin(event) {
+        // Simple hash function (SHA-256)
+        async function hashPassword(password) {
+            const encoder = new TextEncoder();
+            const data = encoder.encode(password);
+            const hash = await crypto.subtle.digest('SHA-256', data);
+            return Array.from(new Uint8Array(hash))
+                .map(b => b.toString(16).padStart(2, '0'))
+                .join('');
+        }
+
+        async function handleLogin(event) {
             event.preventDefault();
+            
             const username = document.getElementById('username').value.trim();
             const password = document.getElementById('password').value;
             const errorDiv = document.getElementById('errorMessage');
             const form = document.getElementById('loginForm');
+            const loginBtn = document.querySelector('.login-btn');
             
-            const user = AUTHORIZED_USERS.find(u => u.username === username && u.password === password);
+            // Show loading
+            loginBtn.textContent = '⏳ جاري التحقق...';
+            loginBtn.disabled = true;
             
-            if (user) {
-                const sessionData = {
-                    username: user.username,
-                    displayName: user.displayName,
-                    loginTime: new Date().toISOString(),
-                    expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString()
-                };
-                sessionStorage.setItem('quranTrackerSession', JSON.stringify(sessionData));
-                window.location.href = 'index.html';
-            } else {
+            try {
+                // Hash the password
+                const hashedPassword = await hashPassword(password);
+                
+                // Query Supabase for user
+                const response = await fetch(
+                    `${SUPABASE_URL}/rest/v1/masjid_users?username=eq.${encodeURIComponent(username)}&select=*`,
+                    {
+                        headers: {
+                            'apikey': SUPABASE_KEY,
+                            'Authorization': `Bearer ${SUPABASE_KEY}`
+                        }
+                    }
+                );
+                
+                const users = await response.json();
+                
+                if (users && users.length > 0) {
+                    const user = users[0];
+                    
+                    // Check password hash
+                    if (user.password_hash === hashedPassword) {
+                        // Success! Create session
+                        const sessionData = {
+                            username: user.username,
+                            displayName: user.display_name,
+                            masjid_id: user.masjid_id || 'default',
+                            loginTime: new Date().toISOString(),
+                            expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString()
+                        };
+                        
+                        sessionStorage.setItem('quranTrackerSession', JSON.stringify(sessionData));
+                        window.location.href = 'index.html';
+                    } else {
+                        showError('❌ اسم المستخدم أو كلمة المرور غير صحيحة');
+                    }
+                } else {
+                    showError('❌ اسم المستخدم أو كلمة المرور غير صحيحة');
+                }
+            } catch (e) {
+                console.error('Login error:', e);
+                showError('❌ خطأ في الاتصال. حاول مرة أخرى.');
+            }
+            
+            loginBtn.textContent = '🚪 دخول';
+            loginBtn.disabled = false;
+            
+            function showError(msg) {
+                errorDiv.textContent = msg;
                 errorDiv.classList.remove('hidden');
                 form.classList.add('error-shake');
                 setTimeout(() => form.classList.remove('error-shake'), 500);
                 document.getElementById('password').value = '';
                 document.getElementById('password').focus();
             }
+            
             return false;
         }
 
@@ -163,17 +250,6 @@
             document.getElementById('errorMessage').classList.add('hidden');
         });
     </script>
-
-    <style>
-        .error-shake { animation: shake 0.5s ease-in-out; }
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            20% { transform: translateX(-12px); }
-            40% { transform: translateX(12px); }
-            60% { transform: translateX(-8px); }
-            80% { transform: translateX(8px); }
-        }
-    </style>
 
 </body>
 </html>
