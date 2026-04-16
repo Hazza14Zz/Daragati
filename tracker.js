@@ -930,14 +930,26 @@ function resetAllData() {
     if (!confirm("⚠️ تحذير: سيتم حذف جميع البيانات نهائياً!\n\nهل أنت متأكد؟")) return;
     if (prompt("اكتب: حذف جميع البيانات") !== "حذف جميع البيانات") { alert("تم الإلغاء"); return; } 
     
-    for (let i = localStorage.length - 1; i >= 0; i--) { 
+    // Clear ALL Quran data - FIXED
+    const keysToRemove = [];
+    for (let i = 0; i < localStorage.length; i++) { 
         const k = localStorage.key(i); 
-        if (k.startsWith('quran_')) localStorage.removeItem(k); 
-    } 
+        if (k.startsWith('quran_')) {
+            keysToRemove.push(k);
+        }
+    }
+    
+    // Remove each key
+    keysToRemove.forEach(k => localStorage.removeItem(k));
+    
+    // Reset counts
     localStorage.setItem('studentCount_highschool', '50'); 
     localStorage.setItem('studentCount_middleschool', '50'); 
     localStorage.setItem('studentCount_elementary', '50');
+    
+    // Force sync to cloud
     syncToCloud();
+    
     alert("✅ تم حذف جميع البيانات بنجاح!\nسيتم إعادة تحميل الصفحة.");
     location.reload();
 }
