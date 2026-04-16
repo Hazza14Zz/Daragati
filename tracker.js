@@ -9,6 +9,20 @@ const SUPABASE_ENABLED = true;
 // Real-time sync variables
 let lastCloudUpdate = null;
 
+// ============================================================
+// SMART SYNC - Only runs when tab is active (Saves Requests!)
+// ============================================================
+let isTabActive = true;
+
+document.addEventListener('visibilitychange', function() {
+    isTabActive = !document.hidden;
+    if (isTabActive) {
+        console.log('👁️ Tab active - sync resumed');
+    } else {
+        console.log('💤 Tab inactive - sync paused (saving requests)');
+    }
+});
+
 // Supabase Sync Functions
 async function syncToCloud() {
     if (!SUPABASE_ENABLED) {
@@ -25,21 +39,15 @@ async function syncToCloud() {
     }
     
     try {
-        await fetch(`${SUPABASE_URL}/rest/v1/${SUPABASE_TABLE}?key=eq.main_data`, {
-            method: 'DELETE',
-            headers: {
-                'apikey': SUPABASE_KEY,
-                'Authorization': `Bearer ${SUPABASE_KEY}`
-            }
-        });
-        
+        // FIX: Use UPSERT (Update or Insert) instead of DELETE + POST
+        // This ensures the cloud is never left empty
         const response = await fetch(`${SUPABASE_URL}/rest/v1/${SUPABASE_TABLE}`, {
             method: 'POST',
             headers: {
                 'apikey': SUPABASE_KEY,
                 'Authorization': `Bearer ${SUPABASE_KEY}`,
                 'Content-Type': 'application/json',
-                'Prefer': 'return=minimal'
+                'Prefer': 'resolution=merge-duplicates' // UPSERT!
             },
             body: JSON.stringify({
                 key: 'main_data',
@@ -52,11 +60,14 @@ async function syncToCloud() {
         
         if (response.ok) {
             console.log('✅ Synced to Supabase');
+        } else {
+            console.error('Sync failed:', response.status);
         }
     } catch (e) {
         console.error('Sync error:', e);
     }
-}async function loadFromCloud() {
+}
+async function loadFromCloud() {
     if (!SUPABASE_ENABLED) {
         console.log('☁️ Supabase sync disabled');
         return false;
@@ -82,12 +93,19 @@ async function syncToCloud() {
                 localStorage.setItem(key, cloudData[key]);
             }
             
+            // FIX: Always set lastCloudUpdate
             if (data[0].updated_at) {
                 lastCloudUpdate = new Date(data[0].updated_at).getTime();
+            } else {
+                // If no updated_at field, use current time
+                lastCloudUpdate = Date.now();
             }
             
             console.log('✅ Loaded from Supabase');
             return true;
+        } else {
+            // FIX: Even if no data, set lastCloudUpdate
+            lastCloudUpdate = Date.now();
         }
         return false;
     } catch (e) {
@@ -95,9 +113,10 @@ async function syncToCloud() {
         return false;
     }
 }
-
-// Real-time cloud check - FORCE RELOAD VERSION
+// Real-time cloud check - WITH SMART PAUSE
 async function checkForCloudUpdates() {
+    // SMART SYNC: Skip if tab is not active
+    if (!isTabActive) return;
     if (!SUPABASE_ENABLED) return;
     
     try {
@@ -116,18 +135,13 @@ async function checkForCloudUpdates() {
         if (data && data[0] && data[0].updated_at) {
             const cloudTime = new Date(data[0].updated_at).getTime();
             
-            // Initialize lastCloudUpdate if not set
             if (!lastCloudUpdate) {
                 lastCloudUpdate = cloudTime;
                 return;
             }
             
-            // If cloud is newer than our last known update AND the difference is more than 1 second
             if (cloudTime > lastCloudUpdate) {
                 console.log('🔄 Cloud changed! Force reloading page...');
-                
-                // Instead of trying to update the UI piece by piece (which is failing),
-                // we FORCE the entire page to reload from the cloud.
                 location.reload(true);
             }
         }
@@ -135,8 +149,9 @@ async function checkForCloudUpdates() {
         console.error('Check updates error:', e);
     }
 }
-// Start real-time checking every 3 seconds
-setInterval(checkForCloudUpdates, 3000);
+
+// Start real-time checking every 15 SECONDS (Safe for free tier)
+setInterval(checkForCloudUpdates, 15000);
 
 // ============================================================
 // SESSION & GLOBALS
