@@ -704,9 +704,9 @@ function loadReportsData() {
     document.getElementById('currentMonthDisplay').textContent = `${months[m]} ${y}`;
     
     const data = { 
-        highschool: { hifz:0, rabt:0, murajaa:0 }, 
-        middleschool: { hifz:0, rabt:0, murajaa:0 }, 
-        elementary: { hifz:0, rabt:0, murajaa:0 } 
+        highschool: { hifz:0, rabt:0, murajaa:0, pages:0 }, 
+        middleschool: { hifz:0, rabt:0, murajaa:0, pages:0 }, 
+        elementary: { hifz:0, rabt:0, murajaa:0, pages:0 } 
     };
     
     for (let i = 0; i < localStorage.length; i++) { 
@@ -716,9 +716,22 @@ function loadReportsData() {
                 const d = JSON.parse(localStorage.getItem(k)); 
                 if (d?.savedAt && new Date(d.savedAt).getFullYear() === y && new Date(d.savedAt).getMonth() === m) { 
                     if (d.section && data[d.section]) { 
-                        if (d.hifz) data[d.section].hifz += 1; 
-                        if (d.rabt) data[d.section].rabt += d.rabt.length; 
-                        if (d.murajaa) data[d.section].murajaa += 1; 
+                        let taskPages = 0;
+                        
+                        if (d.hifz) {
+                            data[d.section].hifz += 1;
+                            taskPages += 1;
+                        }
+                        if (d.rabt) {
+                            data[d.section].rabt += d.rabt.length;
+                            taskPages += d.rabt.length;
+                        }
+                        if (d.murajaa) {
+                            data[d.section].murajaa += 1;
+                            taskPages += 1;
+                        }
+                        
+                        data[d.section].pages += taskPages;
                     } 
                 } 
             } catch (e) {} 
@@ -730,23 +743,24 @@ function loadReportsData() {
         const tot = d.hifz + d.rabt + d.murajaa; 
         document.getElementById(`${s}-summary`).innerHTML = `
             <table class="summary-table">
-                <tr><th>المهمة</th><th>عدد المرات</th></tr>
-                <tr><td>📖 حفظ</td><td>${d.hifz}</td></tr>
-                <tr><td>🔗 ربط</td><td>${d.rabt}</td></tr>
-                <tr><td>📚 مراجعة</td><td>${d.murajaa}</td></tr>
-                <tr class="total-row"><td>📄 المجموع</td><td>${tot}</td></tr>
+                <thead><tr><th>المهمة</th><th>عدد المرات</th></tr></thead>
+                <tbody>
+                    <tr><td>📖 حفظ</td><td>${d.hifz}</td></tr>
+                    <tr><td>🔗 ربط</td><td>${d.rabt}</td></tr>
+                    <tr><td>📚 مراجعة</td><td>${d.murajaa}</td></tr>
+                    <tr class="total-row"><td>📄 إجمالي المهام</td><td>${tot}</td></tr>
+                    <tr class="total-row"><td>📖 إجمالي الصفحات</td><td>${d.pages}</td></tr>
+                </tbody>
             </table>
         `; 
     });
     
-    const tot = { 
-        hifz: data.highschool.hifz + data.middleschool.hifz + data.elementary.hifz, 
-        rabt: data.highschool.rabt + data.middleschool.rabt + data.elementary.rabt, 
-        murajaa: data.highschool.murajaa + data.middleschool.murajaa + data.elementary.murajaa 
-    };
-    const all = tot.hifz + tot.rabt + tot.murajaa;
-    document.getElementById('grand-total-pages').textContent = all; 
-    document.getElementById('grand-total-khatmah').textContent = all;
+    // Calculate totals
+    const totalPages = data.highschool.pages + data.middleschool.pages + data.elementary.pages;
+    const khatmahCount = (totalPages / 604).toFixed(2);
+    
+    document.getElementById('grand-total-pages').textContent = totalPages;
+    document.getElementById('grand-total-khatmah').textContent = khatmahCount;
 }
 
 function loadDailyReport() {
