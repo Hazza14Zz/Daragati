@@ -96,9 +96,21 @@ async function loadFromCloud() {
         
         const data = await response.json();
         
+        // If cloud has data
         if (data && data[0] && data[0].value) {
             const cloudData = JSON.parse(data[0].value);
             
+            // FIRST: Delete all local Quran data
+            const keysToDelete = [];
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                if (key.startsWith('quran_') || key.startsWith('studentCount_')) {
+                    keysToDelete.push(key);
+                }
+            }
+            keysToDelete.forEach(key => localStorage.removeItem(key));
+            
+            // SECOND: Load cloud data into localStorage
             for (const key in cloudData) {
                 localStorage.setItem(key, cloudData[key]);
             }
@@ -116,7 +128,6 @@ async function loadFromCloud() {
         return false;
     }
 }
-
 async function checkForCloudUpdates() {
     if (!isTabActive) return;
     if (!SUPABASE_ENABLED) return;
@@ -917,8 +928,12 @@ function deleteStudent(sec) {
 
 function resetAllData() { 
     if (!confirm("⚠️ تحذير: سيتم حذف جميع البيانات نهائياً!\n\nهل أنت متأكد؟")) return;
-    if (prompt("اكتب: حذف جميع البيانات") !== "حذف جميع البيانات") { alert("تم الإلغاء"); return; } 
+    if (prompt("اكتب: حذف جميع البيانات") !== "حذف جميع البيانات") { 
+        alert("تم الإلغاء"); 
+        return; 
+    }
     
+    // Clear localStorage on THIS device
     const keysToRemove = [];
     for (let i = 0; i < localStorage.length; i++) { 
         const k = localStorage.key(i); 
@@ -929,9 +944,14 @@ function resetAllData() {
     localStorage.setItem('studentCount_highschool', '50'); 
     localStorage.setItem('studentCount_middleschool', '50'); 
     localStorage.setItem('studentCount_elementary', '50');
+    
+    // Sync to cloud (this will upload empty data)
     syncToCloud();
-    alert("✅ تم حذف جميع البيانات بنجاح!\nسيتم إعادة تحميل الصفحة.");
-    location.reload();
+    
+    // Wait a moment for sync to complete, then reload
+    setTimeout(() => {
+        alert("✅ تم حذف جميع البيانات ومزامنتها!\nسيتم تحديث الصفحة.");
+        location.reload();
+    }, 1000);
 }
-
 window.onload = loadQuranData;
