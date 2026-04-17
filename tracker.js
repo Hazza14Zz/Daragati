@@ -976,20 +976,32 @@ function loadReportsData() {
         elementary: { hifz:0, rabt:0, murajaa:0, pages:0 } 
     };
     
-    // Simple page calculator
+    // Fixed page calculator
     function getPages(task) {
         if (!task) return 0;
+        
+        // Convert to numbers (in case they're stored as strings)
         const start = parseInt(task.startSurah);
         const end = parseInt(task.endSurah);
-        if (isNaN(start) || isNaN(end)) return 0;
+        
+        console.log('Calculating pages for:', task.startSurah, 'to', task.endSurah, 'Parsed:', start, 'to', end);
+        
+        if (isNaN(start) || isNaN(end) || start < 1 || end > 114) {
+            console.log('Invalid surah numbers, returning 1');
+            return 1; // Default to 1 page instead of 0
+        }
         
         let pages = 0;
         for (let s = start; s <= end; s++) {
             if (QURAN_PAGES[s]) {
-                pages += QURAN_PAGES[s].endPage - QURAN_PAGES[s].startPage + 1;
+                const surahPages = QURAN_PAGES[s].endPage - QURAN_PAGES[s].startPage + 1;
+                pages += surahPages;
+                console.log(`Surah ${s}: ${surahPages} pages`);
             }
         }
-        return pages;
+        
+        console.log('Total pages:', pages);
+        return pages > 0 ? pages : 1; // Minimum 1 page
     }
     
     for (let i = 0; i < localStorage.length; i++) { 
@@ -1001,23 +1013,33 @@ function loadReportsData() {
                     if (d.section && data[d.section]) { 
                         if (d.hifz) {
                             data[d.section].hifz += 1;
-                            data[d.section].pages += getPages(d.hifz);
+                            const pages = getPages(d.hifz);
+                            data[d.section].pages += pages;
+                            console.log('Hifz pages:', pages, 'Total:', data[d.section].pages);
                         }
-                        if (d.rabt) {
+                        if (d.rabt && Array.isArray(d.rabt)) {
                             data[d.section].rabt += d.rabt.length;
                             d.rabt.forEach(r => {
-                                data[d.section].pages += getPages(r);
+                                const pages = getPages(r);
+                                data[d.section].pages += pages;
+                                console.log('Rabt pages:', pages);
                             });
                         }
                         if (d.murajaa) {
                             data[d.section].murajaa += 1;
-                            data[d.section].pages += getPages(d.murajaa);
+                            const pages = getPages(d.murajaa);
+                            data[d.section].pages += pages;
+                            console.log('Murajaa pages:', pages);
                         }
                     } 
                 } 
-            } catch (e) {} 
+            } catch (e) { 
+                console.error('Error parsing data:', e);
+            } 
         } 
     }
+    
+    console.log('Final data:', data);
     
     ['highschool','middleschool','elementary'].forEach(s => { 
         const d = data[s]; 
