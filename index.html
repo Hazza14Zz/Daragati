@@ -130,9 +130,11 @@
     <button class="tab" id="tab-middleschool" onclick="switchSection('middleschool')">🏫 متوسط</button>
     <button class="tab" id="tab-elementary" onclick="switchSection('elementary')">🏫 ابتدائي</button>
     <button class="tab" id="tab-reports" onclick="switchSection('reports')">📊 تقارير</button>
+    <button class="tab hidden" id="tab-history" onclick="switchSection('history')">📜 سجل التغييرات</button>
 </div>
 
-<div id="trackerView">
+<!-- High School Section -->
+<div id="section-highschool" class="tracker-section">
     <div class="student-nav">
         <button class="nav-btn" onclick="prevStudent()">◀</button>
         <div class="student-selector">
@@ -143,7 +145,32 @@
     <div id="studentCardContainer"></div>
 </div>
 
-<div id="reportsView" class="hidden">
+<!-- Middle School Section -->
+<div id="section-middleschool" class="tracker-section hidden">
+    <div class="student-nav">
+        <button class="nav-btn" onclick="prevStudent()">◀</button>
+        <div class="student-selector">
+           <select id="studentJumpSelect" class="student-select" onchange="jumpToStudent()"></select>
+        </div>
+        <button class="nav-btn" onclick="nextStudent()">▶</button>
+    </div>
+    <div id="studentCardContainerM"></div>
+</div>
+
+<!-- Elementary Section -->
+<div id="section-elementary" class="tracker-section hidden">
+    <div class="student-nav">
+        <button class="nav-btn" onclick="prevStudent()">◀</button>
+        <div class="student-selector">
+            <select id="studentJumpSelect" class="student-select" onchange="jumpToStudent()"></select>
+        </div>
+        <button class="nav-btn" onclick="nextStudent()">▶</button>
+    </div>
+    <div id="studentCardContainerE"></div>
+</div>
+
+<!-- Reports Section -->
+<div id="section-reports" class="tracker-section hidden">
     <div class="report-section">
         <h2 class="report-title">📊 التقارير الشهرية</h2>
         <div class="month-selector">
@@ -193,23 +220,56 @@
     <!-- Points Report Section -->
     <div class="report-section">
         <h3 style="font-size: 18px; color: #047857; margin-bottom: 15px;">⭐ تقرير النقاط (إجمالي النقاط المكتسبة)</h3>
-        
         <h4 class="level-title">🏫 المرحلة الثانوية</h4>
         <div id="points-highschool"></div>
         <button class="export-btn" onclick="exportPointsReport('highschool')">📄 تحميل PDF نقاط الثانوي</button>
-        
         <h4 class="level-title" style="margin-top: 25px;">🏫 المرحلة المتوسطة</h4>
         <div id="points-middleschool"></div>
         <button class="export-btn" onclick="exportPointsReport('middleschool')">📄 تحميل PDF نقاط المتوسط</button>
-        
         <h4 class="level-title" style="margin-top: 25px;">🏫 المرحلة الابتدائية</h4>
         <div id="points-elementary"></div>
         <button class="export-btn" onclick="exportPointsReport('elementary')">📄 تحميل PDF نقاط الابتدائي</button>
     </div>
 </div>
 
+<!-- History Section (Admin Only) -->
+<div id="section-history" class="tracker-section hidden">
+    <div class="report-section">
+        <h2 class="report-title">📜 سجل التغييرات - جميع المعلمين</h2>
+        <button class="export-btn" onclick="syncHistoryToCloud()">📤 مزامنة سجل اليوم</button>
+        <div style="margin: 15px 0;">
+            <label style="font-weight:600;">تصفية حسب المعلم:</label>
+            <select id="historyTeacherFilter" class="student-select" onchange="filterHistory()" style="width:auto; padding:10px; margin-top:5px;">
+                <option value="all">الكل</option>
+                <option value="محمد">محمد</option>
+                <option value="ماهر">ماهر</option>
+                <option value="معتز">معتز</option>
+                <option value="المدير">المدير</option>
+            </select>
+        </div>
+        <div style="overflow-x: auto;">
+            <table class="summary-table">
+                <thead>
+                    <tr>
+                        <th>التاريخ والوقت</th>
+                        <th>المعلم</th>
+                        <th>الطالب</th>
+                        <th>المرحلة</th>
+                        <th>الإجراء</th>
+                    </tr>
+                </thead>
+                <tbody id="historyTableBody">
+                    <tr><td colspan="5" style="text-align:center;">⏳ جاري التحميل...</td></tr>
+                </tbody>
+            </table>
+        </div>
+        <button class="export-btn" onclick="exportHistoryPDF()">📄 تحميل PDF للسجل</button>
+    </div>
+</div>
+
 <button class="admin-btn" onclick="showAdminPanel()">⚙️</button>
 <div class="bottom-spacer"></div>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="tracker.js"></script>
 </body>
