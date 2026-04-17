@@ -785,9 +785,8 @@ function switchSection(section) {
     }
 }
 function updateStudentDropdown() {
-    let selectId = 'studentJumpSelect';
-    if (currentSection === 'middleschool') selectId = 'studentJumpSelectM';
-    else if (currentSection === 'elementary') selectId = 'studentJumpSelectE';
+    // All sections use the same select ID
+    const selectId = 'studentJumpSelect';
     
     const select = document.getElementById(selectId); 
     if (!select) return;
@@ -805,7 +804,6 @@ function updateStudentDropdown() {
     }
     select.value = currentStudentIndex + 1;
 }
-
 function prevStudent() { 
     if (currentStudentIndex > 0) { 
         currentStudentIndex--; 
@@ -823,9 +821,7 @@ function nextStudent() {
 }
 
 function jumpToStudent() {
-    let selectId = 'studentJumpSelect';
-    if (currentSection === 'middleschool') selectId = 'studentJumpSelectM';
-    else if (currentSection === 'elementary') selectId = 'studentJumpSelectE';
+    const selectId = 'studentJumpSelect';  // All sections use the same ID
     
     const select = document.getElementById(selectId);
     if (select) {
@@ -833,7 +829,6 @@ function jumpToStudent() {
         loadStudent(currentStudentIndex + 1); 
     }
 }
-
 // ============================================================
 // REPORTS
 // ============================================================
