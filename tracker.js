@@ -595,7 +595,7 @@ function loadStudent(studentNum) {
         surahOptions = '<option value="1">الفاتحة</option><option value="2">البقرة</option>';
     }
     
-   let containerId = 'studentCardContainer';
+  let containerId = 'studentCardContainer';
 if (currentSection === 'middleschool') containerId = 'studentCardContainerM';
 else if (currentSection === 'elementary') containerId = 'studentCardContainerE';
 const container = document.getElementById(containerId);
@@ -763,23 +763,38 @@ function updateVerseOptions(surahNum, selectEl, placeholder) {
 }
 
 function updateStartVerses(task) { 
-    const s = document.getElementById(`${task}StartSurah`)?.value; 
-    updateVerseOptions(s, document.getElementById(`${task}StartVerse`), 'من آية'); 
+    const container = document.querySelector(`#${getContainerId()} .task-body`);
+    const startSurah = container.querySelector(`#${task}StartSurah`)?.value;
+    const startVerse = container.querySelector(`#${task}StartVerse`);
+    updateVerseOptions(startSurah, startVerse, 'من آية'); 
 }
 
 function updateEndVerses(task) { 
-    const s = document.getElementById(`${task}EndSurah`)?.value; 
-    updateVerseOptions(s, document.getElementById(`${task}EndVerse`), 'إلى آية'); 
+    const container = document.querySelector(`#${getContainerId()} .task-body`);
+    const endSurah = container.querySelector(`#${task}EndSurah`)?.value;
+    const endVerse = container.querySelector(`#${task}EndVerse`);
+    updateVerseOptions(endSurah, endVerse, 'إلى آية'); 
+}
+
+// Helper function to get current container ID
+function getContainerId() {
+    if (currentSection === 'middleschool') return 'studentCardContainerM';
+    if (currentSection === 'elementary') return 'studentCardContainerE';
+    return 'studentCardContainer';
 }
 
 function updateRabtStartVerses(id) { 
-    const s = document.querySelector(`#${id} .rabt-start-surah`)?.value; 
-    updateVerseOptions(s, document.querySelector(`#${id} .rabt-start-verse`), 'من آية'); 
+    const item = document.getElementById(id);
+    if (!item) return;
+    const s = item.querySelector('.rabt-start-surah')?.value; 
+    updateVerseOptions(s, item.querySelector('.rabt-start-verse'), 'من آية'); 
 }
 
 function updateRabtEndVerses(id) { 
-    const s = document.querySelector(`#${id} .rabt-end-surah`)?.value; 
-    updateVerseOptions(s, document.querySelector(`#${id} .rabt-end-verse`), 'إلى آية'); 
+    const item = document.getElementById(id);
+    if (!item) return;
+    const s = item.querySelector('.rabt-end-surah')?.value; 
+    updateVerseOptions(s, item.querySelector('.rabt-end-verse'), 'إلى آية'); 
 }
 
 function setAttendance(val) { 
