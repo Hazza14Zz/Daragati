@@ -19,6 +19,126 @@ let isOwnChange = false;
 let lastCloudUpdate = null;
 
 // ============================================================
+// QURAN PAGE MAPPING (Madinah Mushaf - 604 Pages)
+// ============================================================
+const QURAN_PAGES = {
+    1: { startPage: 1, endPage: 1 },
+    2: { startPage: 2, endPage: 49 },
+    3: { startPage: 50, endPage: 76 },
+    4: { startPage: 77, endPage: 106 },
+    5: { startPage: 106, endPage: 127 },
+    6: { startPage: 128, endPage: 150 },
+    7: { startPage: 151, endPage: 176 },
+    8: { startPage: 177, endPage: 186 },
+    9: { startPage: 187, endPage: 207 },
+    10: { startPage: 208, endPage: 221 },
+    11: { startPage: 221, endPage: 235 },
+    12: { startPage: 235, endPage: 248 },
+    13: { startPage: 249, endPage: 255 },
+    14: { startPage: 255, endPage: 261 },
+    15: { startPage: 262, endPage: 267 },
+    16: { startPage: 267, endPage: 281 },
+    17: { startPage: 282, endPage: 293 },
+    18: { startPage: 293, endPage: 304 },
+    19: { startPage: 305, endPage: 312 },
+    20: { startPage: 312, endPage: 321 },
+    21: { startPage: 322, endPage: 331 },
+    22: { startPage: 332, endPage: 341 },
+    23: { startPage: 342, endPage: 349 },
+    24: { startPage: 350, endPage: 359 },
+    25: { startPage: 359, endPage: 366 },
+    26: { startPage: 367, endPage: 376 },
+    27: { startPage: 377, endPage: 385 },
+    28: { startPage: 385, endPage: 396 },
+    29: { startPage: 396, endPage: 404 },
+    30: { startPage: 404, endPage: 410 },
+    31: { startPage: 411, endPage: 414 },
+    32: { startPage: 415, endPage: 417 },
+    33: { startPage: 418, endPage: 427 },
+    34: { startPage: 428, endPage: 434 },
+    35: { startPage: 434, endPage: 440 },
+    36: { startPage: 440, endPage: 445 },
+    37: { startPage: 446, endPage: 452 },
+    38: { startPage: 453, endPage: 458 },
+    39: { startPage: 458, endPage: 467 },
+    40: { startPage: 467, endPage: 476 },
+    41: { startPage: 477, endPage: 482 },
+    42: { startPage: 483, endPage: 489 },
+    43: { startPage: 489, endPage: 495 },
+    44: { startPage: 496, endPage: 498 },
+    45: { startPage: 499, endPage: 502 },
+    46: { startPage: 502, endPage: 506 },
+    47: { startPage: 507, endPage: 510 },
+    48: { startPage: 511, endPage: 515 },
+    49: { startPage: 515, endPage: 517 },
+    50: { startPage: 518, endPage: 520 },
+    51: { startPage: 520, endPage: 523 },
+    52: { startPage: 523, endPage: 525 },
+    53: { startPage: 526, endPage: 528 },
+    54: { startPage: 528, endPage: 531 },
+    55: { startPage: 531, endPage: 534 },
+    56: { startPage: 534, endPage: 537 },
+    57: { startPage: 537, endPage: 541 },
+    58: { startPage: 542, endPage: 545 },
+    59: { startPage: 545, endPage: 548 },
+    60: { startPage: 549, endPage: 551 },
+    61: { startPage: 551, endPage: 553 },
+    62: { startPage: 553, endPage: 554 },
+    63: { startPage: 554, endPage: 556 },
+    64: { startPage: 556, endPage: 558 },
+    65: { startPage: 558, endPage: 560 },
+    66: { startPage: 560, endPage: 562 },
+    67: { startPage: 562, endPage: 564 },
+    68: { startPage: 564, endPage: 566 },
+    69: { startPage: 566, endPage: 568 },
+    70: { startPage: 568, endPage: 570 },
+    71: { startPage: 570, endPage: 572 },
+    72: { startPage: 572, endPage: 574 },
+    73: { startPage: 574, endPage: 575 },
+    74: { startPage: 575, endPage: 577 },
+    75: { startPage: 577, endPage: 578 },
+    76: { startPage: 578, endPage: 580 },
+    77: { startPage: 580, endPage: 581 },
+    78: { startPage: 582, endPage: 583 },
+    79: { startPage: 583, endPage: 584 },
+    80: { startPage: 585, endPage: 585 },
+    81: { startPage: 586, endPage: 586 },
+    82: { startPage: 587, endPage: 587 },
+    83: { startPage: 587, endPage: 589 },
+    84: { startPage: 589, endPage: 590 },
+    85: { startPage: 590, endPage: 590 },
+    86: { startPage: 591, endPage: 591 },
+    87: { startPage: 591, endPage: 592 },
+    88: { startPage: 592, endPage: 593 },
+    89: { startPage: 593, endPage: 594 },
+    90: { startPage: 594, endPage: 595 },
+    91: { startPage: 595, endPage: 595 },
+    92: { startPage: 595, endPage: 596 },
+    93: { startPage: 596, endPage: 596 },
+    94: { startPage: 596, endPage: 597 },
+    95: { startPage: 597, endPage: 597 },
+    96: { startPage: 597, endPage: 598 },
+    97: { startPage: 598, endPage: 598 },
+    98: { startPage: 598, endPage: 599 },
+    99: { startPage: 599, endPage: 599 },
+    100: { startPage: 599, endPage: 600 },
+    101: { startPage: 600, endPage: 600 },
+    102: { startPage: 600, endPage: 600 },
+    103: { startPage: 601, endPage: 601 },
+    104: { startPage: 601, endPage: 601 },
+    105: { startPage: 601, endPage: 601 },
+    106: { startPage: 602, endPage: 602 },
+    107: { startPage: 602, endPage: 602 },
+    108: { startPage: 602, endPage: 602 },
+    109: { startPage: 603, endPage: 603 },
+    110: { startPage: 603, endPage: 603 },
+    111: { startPage: 603, endPage: 603 },
+    112: { startPage: 604, endPage: 604 },
+    113: { startPage: 604, endPage: 604 },
+    114: { startPage: 604, endPage: 604 }
+};
+
+// ============================================================
 // SMART SYNC - Only runs when tab is active
 // ============================================================
 let isTabActive = true;
@@ -856,55 +976,20 @@ function loadReportsData() {
         elementary: { hifz:0, rabt:0, murajaa:0, pages:0 } 
     };
     
-    // Helper function to calculate actual pages
-    function calculateTaskPages(task) {
+    // Simple page calculator
+    function getPages(task) {
         if (!task) return 0;
+        const start = parseInt(task.startSurah);
+        const end = parseInt(task.endSurah);
+        if (isNaN(start) || isNaN(end)) return 0;
         
-        const startSurah = parseInt(task.startSurah);
-        const endSurah = parseInt(task.endSurah);
-        
-        if (isNaN(startSurah) || isNaN(endSurah)) return 1;
-        
-        let totalPages = 0;
-        
-        if (startSurah === endSurah) {
-            // Same surah
-            const surahStartPage = QURAN_PAGES[startSurah]?.startPage || (startSurah * 5);
-            const surahEndPage = QURAN_PAGES[endSurah]?.endPage || (endSurah * 5 + 4);
-            const surahPages = surahEndPage - surahStartPage + 1;
-            
-            const startVerse = parseInt(task.startVerse) || 1;
-            const endVerse = parseInt(task.endVerse) || AYAH_COUNTS[startSurah-1];
-            const totalAyahs = AYAH_COUNTS[startSurah-1];
-            
-            const portion = (endVerse - startVerse + 1) / totalAyahs;
-            return Math.max(1, Math.round(surahPages * portion));
-        } else {
-            // Multiple surahs
-            for (let s = startSurah; s <= endSurah; s++) {
-                const surahStartPage = QURAN_PAGES[s]?.startPage || (s * 5);
-                const surahEndPage = QURAN_PAGES[s]?.endPage || (s * 5 + 4);
-                const surahPages = surahEndPage - surahStartPage + 1;
-                
-                if (s === startSurah) {
-                    // First surah - from start verse to end
-                    const startVerse = parseInt(task.startVerse) || 1;
-                    const totalAyahs = AYAH_COUNTS[s-1];
-                    const portion = (totalAyahs - startVerse + 1) / totalAyahs;
-                    totalPages += Math.max(1, Math.round(surahPages * portion));
-                } else if (s === endSurah) {
-                    // Last surah - from beginning to end verse
-                    const endVerse = parseInt(task.endVerse) || AYAH_COUNTS[s-1];
-                    const totalAyahs = AYAH_COUNTS[s-1];
-                    const portion = endVerse / totalAyahs;
-                    totalPages += Math.max(1, Math.round(surahPages * portion));
-                } else {
-                    // Middle surah - full surah
-                    totalPages += surahPages;
-                }
+        let pages = 0;
+        for (let s = start; s <= end; s++) {
+            if (QURAN_PAGES[s]) {
+                pages += QURAN_PAGES[s].endPage - QURAN_PAGES[s].startPage + 1;
             }
         }
-        return totalPages;
+        return pages;
     }
     
     for (let i = 0; i < localStorage.length; i++) { 
@@ -914,24 +999,20 @@ function loadReportsData() {
                 const d = JSON.parse(localStorage.getItem(k)); 
                 if (d?.savedAt && new Date(d.savedAt).getFullYear() === y && new Date(d.savedAt).getMonth() === m) { 
                     if (d.section && data[d.section]) { 
-                        let taskPages = 0;
-                        
                         if (d.hifz) {
                             data[d.section].hifz += 1;
-                            taskPages += calculateTaskPages(d.hifz);
+                            data[d.section].pages += getPages(d.hifz);
                         }
                         if (d.rabt) {
                             data[d.section].rabt += d.rabt.length;
                             d.rabt.forEach(r => {
-                                taskPages += calculateTaskPages(r);
+                                data[d.section].pages += getPages(r);
                             });
                         }
                         if (d.murajaa) {
                             data[d.section].murajaa += 1;
-                            taskPages += calculateTaskPages(d.murajaa);
+                            data[d.section].pages += getPages(d.murajaa);
                         }
-                        
-                        data[d.section].pages += taskPages;
                     } 
                 } 
             } catch (e) {} 
@@ -942,24 +1023,25 @@ function loadReportsData() {
         const d = data[s]; 
         document.getElementById(`${s}-summary`).innerHTML = `
             <table class="summary-table">
-                <thead><tr><th>المهمة</th><th>عدد المرات</th><th>الصفحات</th></tr></thead>
+                <thead><tr><th>المهمة</th><th>عدد المرات</th></tr></thead>
                 <tbody>
-                    <tr><td>📖 حفظ</td><td>${d.hifz}</td><td>${d.hifz > 0 ? Math.round(data[s].pages * d.hifz / (d.hifz + d.rabt + d.murajaa || 1)) : 0}</td></tr>
-                    <tr><td>🔗 ربط</td><td>${d.rabt}</td><td>${d.rabt > 0 ? Math.round(data[s].pages * d.rabt / (d.hifz + d.rabt + d.murajaa || 1)) : 0}</td></tr>
-                    <tr><td>📚 مراجعة</td><td>${d.murajaa}</td><td>${d.murajaa > 0 ? Math.round(data[s].pages * d.murajaa / (d.hifz + d.rabt + d.murajaa || 1)) : 0}</td></tr>
-                    <tr class="total-row"><td>📖 إجمالي الصفحات</td><td colspan="2">${d.pages}</td></tr>
+                    <tr><td>📖 حفظ</td><td>${d.hifz}</td></tr>
+                    <tr><td>🔗 ربط</td><td>${d.rabt}</td></tr>
+                    <tr><td>📚 مراجعة</td><td>${d.murajaa}</td></tr>
+                    <tr class="total-row"><td>📖 إجمالي الصفحات</td><td>${d.pages}</td></tr>
                 </tbody>
             </table>
         `; 
     });
     
-    // Calculate totals
     const totalPages = data.highschool.pages + data.middleschool.pages + data.elementary.pages;
     const khatmahCount = (totalPages / 604).toFixed(2);
     
     document.getElementById('grand-total-pages').textContent = totalPages;
     document.getElementById('grand-total-khatmah').textContent = khatmahCount;
 }
+    
+
 function loadDailyReport() {
     document.getElementById('currentDateDisplay').textContent = new Date(currentReportDate).toLocaleDateString('ar-SA', { year: 'numeric', month: 'long', day: 'numeric' });
     ['highschool','middleschool','elementary'].forEach(s => {
