@@ -856,6 +856,57 @@ function loadReportsData() {
         elementary: { hifz:0, rabt:0, murajaa:0, pages:0 } 
     };
     
+    // Helper function to calculate actual pages
+    function calculateTaskPages(task) {
+        if (!task) return 0;
+        
+        const startSurah = parseInt(task.startSurah);
+        const endSurah = parseInt(task.endSurah);
+        
+        if (isNaN(startSurah) || isNaN(endSurah)) return 1;
+        
+        let totalPages = 0;
+        
+        if (startSurah === endSurah) {
+            // Same surah
+            const surahStartPage = QURAN_PAGES[startSurah]?.startPage || (startSurah * 5);
+            const surahEndPage = QURAN_PAGES[endSurah]?.endPage || (endSurah * 5 + 4);
+            const surahPages = surahEndPage - surahStartPage + 1;
+            
+            const startVerse = parseInt(task.startVerse) || 1;
+            const endVerse = parseInt(task.endVerse) || AYAH_COUNTS[startSurah-1];
+            const totalAyahs = AYAH_COUNTS[startSurah-1];
+            
+            const portion = (endVerse - startVerse + 1) / totalAyahs;
+            return Math.max(1, Math.round(surahPages * portion));
+        } else {
+            // Multiple surahs
+            for (let s = startSurah; s <= endSurah; s++) {
+                const surahStartPage = QURAN_PAGES[s]?.startPage || (s * 5);
+                const surahEndPage = QURAN_PAGES[s]?.endPage || (s * 5 + 4);
+                const surahPages = surahEndPage - surahStartPage + 1;
+                
+                if (s === startSurah) {
+                    // First surah - from start verse to end
+                    const startVerse = parseInt(task.startVerse) || 1;
+                    const totalAyahs = AYAH_COUNTS[s-1];
+                    const portion = (totalAyahs - startVerse + 1) / totalAyahs;
+                    totalPages += Math.max(1, Math.round(surahPages * portion));
+                } else if (s === endSurah) {
+                    // Last surah - from beginning to end verse
+                    const endVerse = parseInt(task.endVerse) || AYAH_COUNTS[s-1];
+                    const totalAyahs = AYAH_COUNTS[s-1];
+                    const portion = endVerse / totalAyahs;
+                    totalPages += Math.max(1, Math.round(surahPages * portion));
+                } else {
+                    // Middle surah - full surah
+                    totalPages += surahPages;
+                }
+            }
+        }
+        return totalPages;
+    }
+    
     for (let i = 0; i < localStorage.length; i++) { 
         const k = localStorage.key(i); 
         if (k.startsWith('quran_')) { 
@@ -867,15 +918,17 @@ function loadReportsData() {
                         
                         if (d.hifz) {
                             data[d.section].hifz += 1;
-                            taskPages += 1;
+                            taskPages += calculateTaskPages(d.hifz);
                         }
                         if (d.rabt) {
                             data[d.section].rabt += d.rabt.length;
-                            taskPages += d.rabt.length;
+                            d.rabt.forEach(r => {
+                                taskPages += calculateTaskPages(r);
+                            });
                         }
                         if (d.murajaa) {
                             data[d.section].murajaa += 1;
-                            taskPages += 1;
+                            taskPages += calculateTaskPages(d.murajaa);
                         }
                         
                         data[d.section].pages += taskPages;
@@ -889,12 +942,12 @@ function loadReportsData() {
         const d = data[s]; 
         document.getElementById(`${s}-summary`).innerHTML = `
             <table class="summary-table">
-                <thead><tr><th>المهمة</th><th>عدد المرات</th></tr></thead>
+                <thead><tr><th>المهمة</th><th>عدد المرات</th><th>الصفحات</th></tr></thead>
                 <tbody>
-                    <tr><td>📖 حفظ</td><td>${d.hifz}</td></tr>
-                    <tr><td>🔗 ربط</td><td>${d.rabt}</td></tr>
-                    <tr><td>📚 مراجعة</td><td>${d.murajaa}</td></tr>
-                    <tr class="total-row"><td>📖 إجمالي الصفحات</td><td>${d.pages}</td></tr>
+                    <tr><td>📖 حفظ</td><td>${d.hifz}</td><td>${d.hifz > 0 ? Math.round(data[s].pages * d.hifz / (d.hifz + d.rabt + d.murajaa || 1)) : 0}</td></tr>
+                    <tr><td>🔗 ربط</td><td>${d.rabt}</td><td>${d.rabt > 0 ? Math.round(data[s].pages * d.rabt / (d.hifz + d.rabt + d.murajaa || 1)) : 0}</td></tr>
+                    <tr><td>📚 مراجعة</td><td>${d.murajaa}</td><td>${d.murajaa > 0 ? Math.round(data[s].pages * d.murajaa / (d.hifz + d.rabt + d.murajaa || 1)) : 0}</td></tr>
+                    <tr class="total-row"><td>📖 إجمالي الصفحات</td><td colspan="2">${d.pages}</td></tr>
                 </tbody>
             </table>
         `; 
