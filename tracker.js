@@ -8,7 +8,11 @@ const SUPABASE_ENABLED = true;
 // History tracking
 const HISTORY_ENABLED = true;
 let localHistoryLogs = [];
-const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+// Initialize Supabase client (after the script loads)
+let supabaseClient = null;
+if (typeof supabase !== 'undefined') {
+    supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+}
 let realtimeChannel = null;
 let isOwnChange = false;
 // Real-time sync variables
@@ -52,6 +56,94 @@ function logTeacherAction(studentName, actionType, details) {
     localStorage.setItem('pendingHistoryLogs', JSON.stringify(existingLogs));
     
     console.log('📝 Logged locally:', teacherName, actionType, studentName);
+}
+
+// ============================================================
+// HISTORY TAB FUNCTIONS
+// ============================================================
+let allHistoryLogs = [];
+
+async function loadHistoryTab() {
+    if (!isAdmin()) {
+        alert('غير مصرح لك بالدخول');
+        switchSection('highschool');
+        return;
+    }
+    
+    document.getElementById('historyTableBody').innerHTML = '<tr><td colspan="5" style="text-align:center;">⏳ جاري التحميل...</td></tr>';
+    
+    allHistoryLogs = await loadHistoryFromCloud();
+    displayFilteredHistory();
+}
+
+function displayFilteredHistory() {
+    const filter = document.getElementById('historyTeacherFilter')?.value || 'all';
+    const tbody = document.getElementById('historyTableBody');
+    
+    const filtered = filter === 'all' 
+        ? allHistoryLogs 
+        : allHistoryLogs.filter(log => log.teacher_name === filter);
+    
+    if (filtered.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">لا توجد سجلات</td></tr>';
+        return;
+    }
+    
+    tbody.innerHTML = filtered.map(log => {
+        const date = new Date(log.created_at).toLocaleString('ar-SA');
+        return `
+            <tr>
+                <td>${date}</td>
+                <td>${log.teacher_name || '-'}</td>
+                <td>${log.student_name || '-'}</td>
+                <td>${log.section || '-'}</td>
+                <td>${log.details || '-'}</td>
+            </tr>
+        `;
+    }).join('');
+}
+
+function filterHistory() {
+    displayFilteredHistory();
+}
+
+function exportHistoryPDF() {
+    const filter = document.getElementById('historyTeacherFilter')?.value || 'all';
+    const filtered = filter === 'all' 
+        ? allHistoryLogs 
+        : allHistoryLogs.filter(log => log.teacher_name === filter);
+    
+    const printWindow = window.open('', '_blank');
+    const gDate = getGregorianDate();
+    const hDate = document.getElementById('hijriDate').textContent;
+    
+    let html = `
+        <!DOCTYPE html><html dir="rtl"><head><meta charset="UTF-8">
+        <title>سجل التغييرات</title>
+        <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+        <style>
+            body{font-family:'Cairo',sans-serif;direction:rtl;padding:20px}
+            h1{color:#065f46;text-align:center}
+            table{width:100%;border-collapse:collapse;margin-top:20px}
+            th{background:#047857;color:white;padding:10px}
+            td{padding:8px;border-bottom:1px solid #ddd;text-align:center}
+            @media print{button{display:none}}
+            .print-btn{background:#059669;color:white;padding:10px 30px;border:none;border-radius:8px;font-size:16px;cursor:pointer;margin-top:20px}
+        </style>
+        </head><body>
+        <h1>📜 سجل التغييرات</h1>
+        <div style="text-align:center">📅 ${hDate} | 📆 ${gDate}</div>
+        <table><tr><th>التاريخ</th><th>المعلم</th><th>الطالب</th><th>المرحلة</th><th>الإجراء</th></tr>`;
+    
+    filtered.forEach(log => {
+        const date = new Date(log.created_at).toLocaleString('ar-SA');
+        html += `<tr><td>${date}</td><td>${log.teacher_name}</td><td>${log.student_name}</td><td>${log.section}</td><td>${log.details}</td></tr>`;
+    });
+    
+    html += `</table><div style="text-align:center;margin-top:20px"><button class="print-btn" onclick="window.print()">🖨️ طباعة / حفظ PDF</button></div></body></html>`;
+    
+    printWindow.document.write(html);
+    printWindow.document.close();
 }
 
 // ============================================================
@@ -383,7 +475,10 @@ function loadStudent(studentNum) {
         surahOptions = '<option value="1">الفاتحة</option><option value="2">البقرة</option>';
     }
     
-    const container = document.getElementById('studentCardContainer');
+   let containerId = 'studentCardContainer';
+if (currentSection === 'middleschool') containerId = 'studentCardContainerM';
+else if (currentSection === 'elementary') containerId = 'studentCardContainerE';
+const container = document.getElementById(containerId);
     
     container.innerHTML = `
         <div class="student-card">
@@ -485,7 +580,10 @@ function loadStudent(studentNum) {
 }
 
 function addRabtItem(existing = null) {
-    const container = document.getElementById('rabtContainer');
+    let rabtId = 'rabtContainer';
+if (currentSection === 'middleschool') rabtId = 'rabtContainerM';
+else if (currentSection === 'elementary') rabtId = 'rabtContainerE';
+const container = document.getElementById(rabtId);
     const id = `rabt-${Date.now()}-${rabtCounter++}`;
     
     let surahOptions = '';
@@ -655,28 +753,43 @@ logTeacherAction(finalName, 'حفظ', getActionSummary(data));
 // ============================================================
 function switchSection(section) {
     currentSection = section;
+    
+    // Hide all sections
+    document.querySelectorAll('.tracker-section').forEach(el => el.classList.add('hidden'));
+    document.getElementById(`section-${section}`).classList.remove('hidden');
+    
+    // Update tabs
     document.querySelectorAll('.tab').forEach((t, i) => {
-        t.classList.toggle('active', ['highschool','middleschool','elementary','reports'][i] === section);
+        const sections = ['highschool', 'middleschool', 'elementary', 'reports', 'history'];
+        t.classList.toggle('active', sections[i] === section);
     });
     
-    const isReports = section === 'reports';
-    document.getElementById('trackerView').classList.toggle('hidden', isReports);
-    document.getElementById('reportsView').classList.toggle('hidden', !isReports);
+    // Hide history tab for non-admin
+    if (!isAdmin()) {
+        document.getElementById('tab-history')?.classList.add('hidden');
+    } else {
+        document.getElementById('tab-history')?.classList.remove('hidden');
+    }
     
-    if (!isReports) { 
-        loadStudentCounts(); 
-        currentStudentIndex = 0; 
-        updateStudentDropdown(); 
-        loadStudent(1); 
-    } else { 
-        loadReportsData(); 
-        loadDailyReport(); 
+    if (section === 'history') {
+        loadHistoryTab();
+    } else if (section === 'reports') {
+        loadReportsData();
+        loadDailyReport();
         loadPointsReport();
+    } else if (section !== 'history') {
+        loadStudentCounts();
+        currentStudentIndex = 0;
+        updateStudentDropdown();
+        loadStudent(1);
     }
 }
-
 function updateStudentDropdown() {
-    const select = document.getElementById('studentJumpSelect'); 
+    let selectId = 'studentJumpSelect';
+    if (currentSection === 'middleschool') selectId = 'studentJumpSelectM';
+    else if (currentSection === 'elementary') selectId = 'studentJumpSelectE';
+    
+    const select = document.getElementById(selectId); 
     if (!select) return;
     select.innerHTML = '';
     for (let i = 1; i <= totalStudents; i++) { 
@@ -709,8 +822,12 @@ function nextStudent() {
     } 
 }
 
-function jumpToStudent() { 
-    const select = document.getElementById('studentJumpSelect');
+function jumpToStudent() {
+    let selectId = 'studentJumpSelect';
+    if (currentSection === 'middleschool') selectId = 'studentJumpSelectM';
+    else if (currentSection === 'elementary') selectId = 'studentJumpSelectE';
+    
+    const select = document.getElementById(selectId);
     if (select) {
         currentStudentIndex = parseInt(select.value) - 1; 
         loadStudent(currentStudentIndex + 1); 
