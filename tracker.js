@@ -5,6 +5,9 @@ const SUPABASE_URL = "https://dklyyzbnapkxlluximzk.supabase.co";
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRrbHl5emJuYXBreGxsdXhpbXprIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYyNjEwMDIsImV4cCI6MjA5MTgzNzAwMn0.qpCqvUTia4ywEMPSYJ_rIB4pSlk0zkvq5cQa-sFaFEs";
 const SUPABASE_TABLE = "quran_data";
 const SUPABASE_ENABLED = true;
+// History tracking
+const HISTORY_ENABLED = true;
+let localHistoryLogs = [];
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 let realtimeChannel = null;
 let isOwnChange = false;
@@ -20,6 +23,36 @@ document.addEventListener('visibilitychange', function() {
     isTabActive = !document.hidden;
     console.log(isTabActive ? '👁️ Tab active' : '💤 Tab inactive');
 });
+
+// ============================================================
+// HISTORY LOGGING (Local Only During Day)
+// ============================================================
+function logTeacherAction(studentName, actionType, details) {
+    if (!HISTORY_ENABLED) return;
+    
+    const session = JSON.parse(sessionStorage.getItem('quranTrackerSession'));
+    const teacherName = session ? session.displayName : 'غير معروف';
+    
+    const logEntry = {
+        id: Date.now() + Math.random().toString(36),
+        teacherName: teacherName,
+        studentName: studentName,
+        section: currentSection,
+        actionType: actionType,
+        details: details,
+        timestamp: new Date().toISOString(),
+        synced: false
+    };
+    
+    // Get existing logs
+    const existingLogs = JSON.parse(localStorage.getItem('pendingHistoryLogs') || '[]');
+    existingLogs.push(logEntry);
+    
+    // Save back to localStorage
+    localStorage.setItem('pendingHistoryLogs', JSON.stringify(existingLogs));
+    
+    console.log('📝 Logged locally:', teacherName, actionType, studentName);
+}
 
 // ============================================================
 // SYNC FUNCTIONS (FIXED)
@@ -605,6 +638,8 @@ function saveCurrentStudent() {
     };
     
     localStorage.setItem(`quran_${sid}`, JSON.stringify(data));
+    // ADD THIS LINE:
+logTeacherAction(finalName, 'حفظ', getActionSummary(data));
     updateStudentDropdown();
     syncToCloud();
     
@@ -962,6 +997,102 @@ function resetAllData() {
         location.reload();
     }, 1000);
 }
+
+
+function getActionSummary(data) {
+    const parts = [];
+    
+    if (data.hifz) {
+        parts.push(`حفظ: ${data.hifz.startSurahName} ${data.hifz.startVerse}→${data.hifz.endVerse}`);
+    }
+    if (data.rabt && data.rabt.length > 0) {
+        parts.push(`ربط: ${data.rabt.length} سور`);
+    }
+    if (data.murajaa) {
+        parts.push(`مراجعة: ${data.murajaa.startSurahName} ${data.murajaa.startVerse}→${data.murajaa.endVerse}`);
+    }
+    if (data.points > 0) {
+        parts.push(`نقاط: ${data.points}`);
+    }
+    parts.push(`حضور: ${data.attendance}`);
+    
+    return parts.join(' | ') || 'تحديث البيانات';
+}
+
+// ============================================================
+// CHECK IF CURRENT USER IS ADMIN
+// ============================================================
+function isAdmin() {
+    const session = JSON.parse(sessionStorage.getItem('quranTrackerSession') || '{}');
+    return session.username === 'Admin.2123' || session.displayName === 'المدير';
+}
+// ============================================================
+// SYNC HISTORY TO CLOUD (Admin Only - End of Day)
+// ============================================================
+async function syncHistoryToCloud() {
+    const pendingLogs = JSON.parse(localStorage.getItem('pendingHistoryLogs') || '[]');
+    
+    if (pendingLogs.length === 0) {
+        alert('لا توجد سجلات جديدة للمزامنة');
+        return;
+    }
+    
+    if (!confirm(`سيتم مزامنة ${pendingLogs.length} سجل. هل تريد المتابعة؟`)) return;
+    
+    try {
+        for (const log of pendingLogs) {
+            await fetch(`${SUPABASE_URL}/rest/v1/history_log`, {
+                method: 'POST',
+                headers: {
+                    'apikey': SUPABASE_KEY,
+                    'Authorization': `Bearer ${SUPABASE_KEY}`,
+                    'Content-Type': 'application/json',
+                    'Prefer': 'return=minimal'
+                },
+                body: JSON.stringify({
+                    teacher_name: log.teacherName,
+                    student_name: log.studentName,
+                    section: SECTION_NAMES[log.section] || log.section,
+                    action_type: log.actionType,
+                    details: log.details,
+                    created_at: log.timestamp
+                })
+            });
+        }
+        
+        localStorage.removeItem('pendingHistoryLogs');
+        alert(`✅ تم مزامنة ${pendingLogs.length} سجل بنجاح`);
+        
+    } catch (e) {
+        console.error('History sync error:', e);
+        alert('❌ فشلت المزامنة. حاول مرة أخرى.');
+    }
+}
+// ============================================================
+// LOAD HISTORY FROM CLOUD (Admin Only)
+// ============================================================
+async function loadHistoryFromCloud() {
+    if (!isAdmin()) return [];
+    
+    try {
+        const response = await fetch(
+            `${SUPABASE_URL}/rest/v1/history_log?order=created_at.desc&limit=500`,
+            {
+                headers: {
+                    'apikey': SUPABASE_KEY,
+                    'Authorization': `Bearer ${SUPABASE_KEY}`
+                }
+            }
+        );
+        
+        const data = await response.json();
+        return data;
+    } catch (e) {
+        console.error('Load history error:', e);
+        return [];
+    }
+}
+
 window.onload = () => {
     subscribeToRealtimeChanges();
     loadQuranData();
