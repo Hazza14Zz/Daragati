@@ -7,7 +7,6 @@ const SUPABASE_TABLE = "quran_data";
 const SUPABASE_ENABLED = true;
 // History tracking
 const HISTORY_ENABLED = true;
-let localHistoryLogs = [];
 // Initialize Supabase client (after the script loads)
 let supabaseClient = null;
 if (typeof supabase !== 'undefined') {
@@ -15,8 +14,23 @@ if (typeof supabase !== 'undefined') {
 }
 let realtimeChannel = null;
 let isOwnChange = false;
-// Real-time sync variables
-let lastCloudUpdate = null;
+
+// ============================================================
+// SMART SYNC - Only syncs when data actually changed
+// ============================================================
+let hasUnsavedChanges = false;
+let isTabActive = true;
+
+document.addEventListener('visibilitychange', function() {
+    isTabActive = !document.hidden;
+    console.log(isTabActive ? '👁️ Tab active' : '💤 Tab inactive');
+    
+    // If tab becomes active and there are pending changes, sync immediately
+    if (isTabActive && hasUnsavedChanges) {
+        console.log('🔄 Tab active with pending changes - syncing...');
+        syncToCloud();
+    }
+});
 
 // ============================================================
 // QURAN PAGE MAPPING (Madinah Mushaf - 604 Pages)
@@ -139,16 +153,6 @@ const QURAN_PAGES = {
 };
 
 // ============================================================
-// SMART SYNC - Only runs when tab is active
-// ============================================================
-let isTabActive = true;
-
-document.addEventListener('visibilitychange', function() {
-    isTabActive = !document.hidden;
-    console.log(isTabActive ? '👁️ Tab active' : '💤 Tab inactive');
-});
-
-// ============================================================
 // HISTORY LOGGING (Local Only During Day)
 // ============================================================
 function logTeacherAction(studentName, actionType, details) {
@@ -267,10 +271,14 @@ function exportHistoryPDF() {
 }
 
 // ============================================================
-// SYNC FUNCTIONS (FIXED)
+// SYNC FUNCTIONS (OPTIMIZED - Only syncs when changes exist)
 // ============================================================
 async function syncToCloud() {
     if (!SUPABASE_ENABLED) return;
+    if (!hasUnsavedChanges) {
+        console.log('⏭️ No changes to sync');
+        return;
+    }
     
     const allData = {};
     for (let i = 0; i < localStorage.length; i++) {
@@ -314,17 +322,22 @@ async function syncToCloud() {
             });
         }
         
+        hasUnsavedChanges = false;  // ✅ Reset flag after successful sync
         console.log('✅ Synced to Supabase');
         setTimeout(() => { isOwnChange = false; }, 500);
         
     } catch (e) {
         console.error('Sync error:', e);
         isOwnChange = false;
+        // Keep hasUnsavedChanges = true so it will retry later
     }
 }
-// ============================================================
-// LOAD FROM CLOUD (ADD THIS FUNCTION)
-// ============================================================
+
+function markDataChanged() {
+    hasUnsavedChanges = true;
+    console.log('📝 Data changed - will sync soon');
+}
+
 async function loadFromCloud() {
     if (!SUPABASE_ENABLED) return false;
     
@@ -359,6 +372,7 @@ async function loadFromCloud() {
                 localStorage.setItem(key, cloudData[key]);
             }
             
+            hasUnsavedChanges = false;  // ✅ Just loaded from cloud, no pending changes
             console.log('✅ Loaded from Supabase');
             return true;
         }
@@ -368,6 +382,7 @@ async function loadFromCloud() {
         return false;
     }
 }
+
 async function subscribeToRealtimeChanges() {
     if (!SUPABASE_ENABLED) return;
     
@@ -401,8 +416,6 @@ async function subscribeToRealtimeChanges() {
         });
 }
 
-
-
 // ============================================================
 // SESSION & GLOBALS
 // ============================================================
@@ -427,6 +440,10 @@ function checkAuth() {
 
 function logout() { 
     if (confirm('تسجيل الخروج؟')) { 
+        // Sync any pending changes before logout
+        if (hasUnsavedChanges) {
+            syncToCloud();
+        }
         sessionStorage.removeItem('quranTrackerSession'); 
         window.location.href = 'login.html'; 
     } 
@@ -439,6 +456,7 @@ let totalStudents = 50;
 let currentReportMonth = new Date();
 let currentReportDate = new Date().toISOString().split('T')[0];
 let currentAttendance = 'حاضر';
+let rabtCounter = 0;
 
 const SECTION_NAMES = { 
     highschool: 'ثانوي', 
@@ -479,6 +497,21 @@ const AYAH_COUNTS = [
     11, 8, 3, 9, 5, 4, 7, 3, 6, 3,
     5, 4, 5, 6
 ];
+
+// ============================================================
+// HELPER FUNCTIONS FOR CONTAINERS AND SELECTS
+// ============================================================
+function getContainerId() {
+    if (currentSection === 'middleschool') return 'studentCardContainerM';
+    if (currentSection === 'elementary') return 'studentCardContainerE';
+    return 'studentCardContainer';
+}
+
+function getSelectId() {
+    if (currentSection === 'middleschool') return 'studentJumpSelect-middleschool';
+    if (currentSection === 'elementary') return 'studentJumpSelect-elementary';
+    return 'studentJumpSelect-highschool';
+}
 
 // ============================================================
 // DATE FUNCTIONS
@@ -565,8 +598,6 @@ function loadStudentCounts() {
 // ============================================================
 // STUDENT CARD RENDERING
 // ============================================================
-let rabtCounter = 0;
-
 function loadStudent(studentNum) {
     const sid = `${currentSection}-${studentNum}`;
     const saved = localStorage.getItem(`quran_${sid}`);
@@ -595,10 +626,8 @@ function loadStudent(studentNum) {
         surahOptions = '<option value="1">الفاتحة</option><option value="2">البقرة</option>';
     }
     
-  let containerId = 'studentCardContainer';
-if (currentSection === 'middleschool') containerId = 'studentCardContainerM';
-else if (currentSection === 'elementary') containerId = 'studentCardContainerE';
-const container = document.getElementById(containerId);
+    const containerId = getContainerId();
+    const container = document.getElementById(containerId);
     
     container.innerHTML = `
         <div class="student-card">
@@ -654,16 +683,19 @@ const container = document.getElementById(containerId);
                 <span class="points-label">⭐ نقاط</span>
                 <input type="number" id="pointsInput" class="points-input" min="0" max="100" value="${data.points || 0}">
             </div>
-            <button class="save-btn" onclick="saveCurrentStudent()">💾 حفظ</button>
+            <button class="save-btn" onclick="saveCurrentStudent(event)">💾 حفظ</button>
         </div>
     `;
     
     rabtCounter = 0;
-    document.getElementById('rabtContainer').innerHTML = '';
-    if (data.rabt && data.rabt.length > 0) { 
-        data.rabt.forEach(r => addRabtItem(r)); 
-    } else { 
-        addRabtItem(); 
+    const rabtContainer = document.getElementById('rabtContainer');
+    if (rabtContainer) {
+        rabtContainer.innerHTML = '';
+        if (data.rabt && data.rabt.length > 0) { 
+            data.rabt.forEach(r => addRabtItem(r)); 
+        } else { 
+            addRabtItem(); 
+        }
     }
     
     if (data.hifz) {
@@ -676,7 +708,10 @@ const container = document.getElementById(containerId);
                     document.getElementById('hifzStartVerse').value = data.hifz.startVerse;
                     document.getElementById('hifzEndSurah').value = data.hifz.endSurah;
                     updateEndVerses('hifz');
-                    setTimeout(() => document.getElementById('hifzEndVerse').value = data.hifz.endVerse, 30);
+                    setTimeout(() => {
+                        const endVerse = document.getElementById('hifzEndVerse');
+                        if (endVerse) endVerse.value = data.hifz.endVerse;
+                    }, 30);
                 }, 30);
             }
         }, 30);
@@ -692,7 +727,10 @@ const container = document.getElementById(containerId);
                     document.getElementById('murajaaStartVerse').value = data.murajaa.startVerse;
                     document.getElementById('murajaaEndSurah').value = data.murajaa.endSurah;
                     updateEndVerses('murajaa');
-                    setTimeout(() => document.getElementById('murajaaEndVerse').value = data.murajaa.endVerse, 30);
+                    setTimeout(() => {
+                        const endVerse = document.getElementById('murajaaEndVerse');
+                        if (endVerse) endVerse.value = data.murajaa.endVerse;
+                    }, 30);
                 }, 30);
             }
         }, 30);
@@ -700,10 +738,12 @@ const container = document.getElementById(containerId);
 }
 
 function addRabtItem(existing = null) {
-    let rabtId = 'rabtContainer';
-if (currentSection === 'middleschool') rabtId = 'rabtContainerM';
-else if (currentSection === 'elementary') rabtId = 'rabtContainerE';
-const container = document.getElementById(rabtId);
+    const container = document.getElementById('rabtContainer');
+    if (!container) {
+        console.error('Rabt container not found');
+        return;
+    }
+    
     const id = `rabt-${Date.now()}-${rabtCounter++}`;
     
     let surahOptions = '';
@@ -742,7 +782,10 @@ const container = document.getElementById(rabtId);
                     item.querySelector('.rabt-start-verse').value = existing.startVerse;
                     item.querySelector('.rabt-end-surah').value = existing.endSurah;
                     updateRabtEndVerses(id);
-                    setTimeout(() => item.querySelector('.rabt-end-verse').value = existing.endVerse, 30);
+                    setTimeout(() => {
+                        const endVerse = item.querySelector('.rabt-end-verse');
+                        if (endVerse) endVerse.value = existing.endVerse;
+                    }, 30);
                 }, 30);
             }
         }, 30);
@@ -763,38 +806,31 @@ function updateVerseOptions(surahNum, selectEl, placeholder) {
 }
 
 function updateStartVerses(task) { 
-    const container = document.querySelector(`#${getContainerId()} .task-body`);
-    const startSurah = container.querySelector(`#${task}StartSurah`)?.value;
-    const startVerse = container.querySelector(`#${task}StartVerse`);
-    updateVerseOptions(startSurah, startVerse, 'من آية'); 
+    const startSurah = document.getElementById(`${task}StartSurah`)?.value;
+    const startVerse = document.getElementById(`${task}StartVerse`);
+    if (startVerse) updateVerseOptions(startSurah, startVerse, 'من آية'); 
 }
 
 function updateEndVerses(task) { 
-    const container = document.querySelector(`#${getContainerId()} .task-body`);
-    const endSurah = container.querySelector(`#${task}EndSurah`)?.value;
-    const endVerse = container.querySelector(`#${task}EndVerse`);
-    updateVerseOptions(endSurah, endVerse, 'إلى آية'); 
-}
-
-// Helper function to get current container ID
-function getContainerId() {
-    if (currentSection === 'middleschool') return 'studentCardContainerM';
-    if (currentSection === 'elementary') return 'studentCardContainerE';
-    return 'studentCardContainer';
+    const endSurah = document.getElementById(`${task}EndSurah`)?.value;
+    const endVerse = document.getElementById(`${task}EndVerse`);
+    if (endVerse) updateVerseOptions(endSurah, endVerse, 'إلى آية'); 
 }
 
 function updateRabtStartVerses(id) { 
     const item = document.getElementById(id);
     if (!item) return;
     const s = item.querySelector('.rabt-start-surah')?.value; 
-    updateVerseOptions(s, item.querySelector('.rabt-start-verse'), 'من آية'); 
+    const verseSelect = item.querySelector('.rabt-start-verse');
+    if (verseSelect) updateVerseOptions(s, verseSelect, 'من آية'); 
 }
 
 function updateRabtEndVerses(id) { 
     const item = document.getElementById(id);
     if (!item) return;
     const s = item.querySelector('.rabt-end-surah')?.value; 
-    updateVerseOptions(s, item.querySelector('.rabt-end-verse'), 'إلى آية'); 
+    const verseSelect = item.querySelector('.rabt-end-verse');
+    if (verseSelect) updateVerseOptions(s, verseSelect, 'إلى آية'); 
 }
 
 function setAttendance(val) { 
@@ -804,7 +840,7 @@ function setAttendance(val) {
     });
 }
 
-function saveCurrentStudent() {
+function saveCurrentStudent(evt) {
     const studentNum = currentStudentIndex + 1;
     const sid = `${currentSection}-${studentNum}`;
     
@@ -814,7 +850,8 @@ function saveCurrentStudent() {
     
     const quran = document.getElementById('quranCheck')?.checked || false;
     const uniform = document.getElementById('uniformCheck')?.checked || false;
-    const points = document.getElementById('pointsInput')?.value || 0;
+    const pointsInput = document.getElementById('pointsInput');
+    const points = pointsInput ? (parseInt(pointsInput.value) || 0) : 0;
     
     let hifz = null, murajaa = null;
     const rabt = [];
@@ -871,16 +908,37 @@ function saveCurrentStudent() {
     };
     
     localStorage.setItem(`quran_${sid}`, JSON.stringify(data));
-    // ADD THIS LINE:
-logTeacherAction(finalName, 'حفظ', getActionSummary(data));
+    logTeacherAction(finalName, 'حفظ', getActionSummary(data));
     updateStudentDropdown();
-    syncToCloud();
     
-    const btn = event.target;
+    markDataChanged();  // ✅ Mark that data changed
+    syncToCloud();      // ✅ Sync immediately after save
+    
+    const btn = evt ? evt.target : null;
     if (btn) {
         btn.textContent = '✅ تم الحفظ!';
         setTimeout(() => btn.textContent = '💾 حفظ', 1500);
     }
+}
+
+function getActionSummary(data) {
+    const parts = [];
+    
+    if (data.hifz) {
+        parts.push(`حفظ: ${data.hifz.startSurahName} ${data.hifz.startVerse}→${data.hifz.endVerse}`);
+    }
+    if (data.rabt && data.rabt.length > 0) {
+        parts.push(`ربط: ${data.rabt.length} سور`);
+    }
+    if (data.murajaa) {
+        parts.push(`مراجعة: ${data.murajaa.startSurahName} ${data.murajaa.startVerse}→${data.murajaa.endVerse}`);
+    }
+    if (data.points > 0) {
+        parts.push(`نقاط: ${data.points}`);
+    }
+    parts.push(`حضور: ${data.attendance}`);
+    
+    return parts.join(' | ') || 'تحديث البيانات';
 }
 
 // ============================================================
@@ -912,19 +970,19 @@ function switchSection(section) {
         loadReportsData();
         loadDailyReport();
         loadPointsReport();
-    } else if (section !== 'history') {
+    } else {
         loadStudentCounts();
         currentStudentIndex = 0;
         updateStudentDropdown();
         loadStudent(1);
     }
 }
+
 function updateStudentDropdown() {
-    // All sections use the same select ID
-    const selectId = 'studentJumpSelect';
-    
+    const selectId = getSelectId();
     const select = document.getElementById(selectId); 
     if (!select) return;
+    
     select.innerHTML = '';
     for (let i = 1; i <= totalStudents; i++) { 
         const saved = localStorage.getItem(`quran_${currentSection}-${i}`); 
@@ -939,6 +997,7 @@ function updateStudentDropdown() {
     }
     select.value = currentStudentIndex + 1;
 }
+
 function prevStudent() { 
     if (currentStudentIndex > 0) { 
         currentStudentIndex--; 
@@ -956,14 +1015,14 @@ function nextStudent() {
 }
 
 function jumpToStudent() {
-    const selectId = 'studentJumpSelect';  // All sections use the same ID
-    
+    const selectId = getSelectId();
     const select = document.getElementById(selectId);
     if (select) {
         currentStudentIndex = parseInt(select.value) - 1; 
         loadStudent(currentStudentIndex + 1); 
     }
 }
+
 // ============================================================
 // REPORTS
 // ============================================================
@@ -991,7 +1050,6 @@ function loadReportsData() {
         elementary: { hifz:0, rabt:0, murajaa:0, pages:0 } 
     };
     
-       // Fixed page calculator with verse support
     function getPages(task) {
         if (!task) return 0;
         
@@ -1000,25 +1058,20 @@ function loadReportsData() {
         const startVerse = parseInt(task.startVerse) || 1;
         const endVerse = parseInt(task.endVerse) || AYAH_COUNTS[endSurah - 1] || 1;
         
-        console.log(`Calculating: Surah ${startSurah}:${startVerse} to Surah ${endSurah}:${endVerse}`);
-        
         if (isNaN(startSurah) || isNaN(endSurah)) return 1;
         
         let totalPages = 0;
         
         if (startSurah === endSurah) {
-            // Same Surah - calculate portion
             if (QURAN_PAGES[startSurah]) {
                 const surahPages = QURAN_PAGES[startSurah].endPage - QURAN_PAGES[startSurah].startPage + 1;
                 const totalAyahs = AYAH_COUNTS[startSurah - 1] || 1;
                 const ayahsRecited = endVerse - startVerse + 1;
                 const portion = ayahsRecited / totalAyahs;
                 const pages = Math.max(1, Math.round(surahPages * portion));
-                console.log(`Same surah: ${surahPages} pages × ${portion.toFixed(2)} = ${pages} pages`);
                 return pages;
             }
         } else {
-            // Multiple Surahs
             for (let s = startSurah; s <= endSurah; s++) {
                 if (!QURAN_PAGES[s]) continue;
                 
@@ -1026,28 +1079,21 @@ function loadReportsData() {
                 const totalAyahs = AYAH_COUNTS[s - 1] || 1;
                 
                 if (s === startSurah) {
-                    // First Surah - from startVerse to end of Surah
                     const ayahsRecited = totalAyahs - startVerse + 1;
                     const portion = ayahsRecited / totalAyahs;
                     const pages = Math.max(1, Math.round(surahPages * portion));
                     totalPages += pages;
-                    console.log(`First Surah ${s}: ${surahPages} pages × ${portion.toFixed(2)} = ${pages} pages`);
                 } else if (s === endSurah) {
-                    // Last Surah - from beginning to endVerse
                     const ayahsRecited = endVerse;
                     const portion = ayahsRecited / totalAyahs;
                     const pages = Math.max(1, Math.round(surahPages * portion));
                     totalPages += pages;
-                    console.log(`Last Surah ${s}: ${surahPages} pages × ${portion.toFixed(2)} = ${pages} pages`);
                 } else {
-                    // Middle Surah - full Surah
                     totalPages += surahPages;
-                    console.log(`Middle Surah ${s}: full ${surahPages} pages`);
                 }
             }
         }
         
-        console.log(`Total calculated pages: ${totalPages}`);
         return totalPages;
     }
     
@@ -1060,23 +1106,17 @@ function loadReportsData() {
                     if (d.section && data[d.section]) { 
                         if (d.hifz) {
                             data[d.section].hifz += 1;
-                            const pages = getPages(d.hifz);
-                            data[d.section].pages += pages;
-                            console.log('Hifz pages:', pages, 'Total:', data[d.section].pages);
+                            data[d.section].pages += getPages(d.hifz);
                         }
                         if (d.rabt && Array.isArray(d.rabt)) {
                             data[d.section].rabt += d.rabt.length;
                             d.rabt.forEach(r => {
-                                const pages = getPages(r);
-                                data[d.section].pages += pages;
-                                console.log('Rabt pages:', pages);
+                                data[d.section].pages += getPages(r);
                             });
                         }
                         if (d.murajaa) {
                             data[d.section].murajaa += 1;
-                            const pages = getPages(d.murajaa);
-                            data[d.section].pages += pages;
-                            console.log('Murajaa pages:', pages);
+                            data[d.section].pages += getPages(d.murajaa);
                         }
                     } 
                 } 
@@ -1085,8 +1125,6 @@ function loadReportsData() {
             } 
         } 
     }
-    
-    console.log('Final data:', data);
     
     ['highschool','middleschool','elementary'].forEach(s => { 
         const d = data[s]; 
@@ -1109,7 +1147,6 @@ function loadReportsData() {
     document.getElementById('grand-total-pages').textContent = totalPages;
     document.getElementById('grand-total-khatmah').textContent = khatmahCount;
 }
-    
 
 function loadDailyReport() {
     document.getElementById('currentDateDisplay').textContent = new Date(currentReportDate).toLocaleDateString('ar-SA', { year: 'numeric', month: 'long', day: 'numeric' });
@@ -1194,7 +1231,6 @@ function exportDailyReport(l) {
     const el = document.getElementById(`daily-${l}`); 
     if (!el || el.querySelector('.no-data')) { alert('لا توجد بيانات للتصدير'); return; } 
     const sectionName = SECTION_NAMES[l];
-    const dateStr = new Date(currentReportDate).toLocaleDateString('ar-SA', { year: 'numeric', month: 'long', day: 'numeric' });
     const gDate = getGregorianDate();
     const hDate = document.getElementById('hijriDate').textContent;
     const printWindow = window.open('', '_blank');
@@ -1205,8 +1241,6 @@ function exportDailyReport(l) {
 function exportMonthlyReport(l) { 
     const sectionName = SECTION_NAMES[l];
     const monthStr = currentReportMonth.toLocaleDateString('ar-SA', { month: 'long', year: 'numeric' });
-    const gDate = getGregorianDate();
-    const hDate = document.getElementById('hijriDate').textContent;
     const summaryHTML = document.getElementById(`${l}-summary`).innerHTML;
     const printWindow = window.open('', '_blank');
     printWindow.document.write(`<!DOCTYPE html><html dir="rtl"><head><meta charset="UTF-8"><title>تقرير ${sectionName} الشهري</title><link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet"><style>body{font-family:'Cairo',sans-serif;direction:rtl;padding:20px}h1{color:#065f46;text-align:center}.date-info{text-align:center;color:#047857;margin-bottom:20px}table{width:100%;border-collapse:collapse;margin-top:20px}th{background:#047857;color:white;padding:10px}td{padding:8px;border-bottom:1px solid #ddd;text-align:center}@media print{button{display:none}}.print-btn{background:#059669;color:white;padding:10px 30px;border:none;border-radius:8px;font-size:16px;cursor:pointer;margin-top:20px}</style></head><body><h1>📊 تقرير المرحلة ${sectionName} الشهري</h1><div class="date-info">${monthStr}</div>${summaryHTML}<div style="text-align:center;margin-top:20px"><button class="print-btn" onclick="window.print()">🖨️ طباعة / حفظ PDF</button></div></body></html>`);
@@ -1255,8 +1289,12 @@ function showAdminPanel() {
 function addNewStudent(sec) { 
     const cnt = parseInt(localStorage.getItem(`studentCount_${sec}`) || '50') + 1;
     localStorage.setItem(`studentCount_${sec}`, cnt);
-    if (sec === currentSection) { totalStudents = cnt; updateStudentDropdown(); } 
-    syncToCloud();
+    if (sec === currentSection) { 
+        totalStudents = cnt; 
+        updateStudentDropdown(); 
+    } 
+    markDataChanged();  // ✅ Mark that data changed
+    syncToCloud();      // ✅ Sync immediately
     alert(`✅ تمت إضافة طالب جديد!\nالمرحلة: ${SECTION_NAMES[sec]}\nالعدد الآن: ${cnt}`); 
 }
 
@@ -1281,7 +1319,8 @@ function deleteStudent(sec) {
         loadStudent(currentStudentIndex + 1); 
         updateStudentDropdown(); 
     } 
-    syncToCloud();
+    markDataChanged();  // ✅ Mark that data changed
+    syncToCloud();      // ✅ Sync immediately
     alert(`✅ تم حذف الطالب بنجاح!`); 
 }
 
@@ -1292,7 +1331,6 @@ function resetAllData() {
         return; 
     }
     
-    // Clear localStorage on THIS device
     const keysToRemove = [];
     for (let i = 0; i < localStorage.length; i++) { 
         const k = localStorage.key(i); 
@@ -1304,35 +1342,13 @@ function resetAllData() {
     localStorage.setItem('studentCount_middleschool', '50'); 
     localStorage.setItem('studentCount_elementary', '50');
     
-    // Sync to cloud (this will upload empty data)
-    syncToCloud();
+    markDataChanged();  // ✅ Mark that data changed
+    syncToCloud();      // ✅ Sync immediately
     
-    // Wait a moment for sync to complete, then reload
     setTimeout(() => {
         alert("✅ تم حذف جميع البيانات ومزامنتها!\nسيتم تحديث الصفحة.");
         location.reload();
     }, 1000);
-}
-
-
-function getActionSummary(data) {
-    const parts = [];
-    
-    if (data.hifz) {
-        parts.push(`حفظ: ${data.hifz.startSurahName} ${data.hifz.startVerse}→${data.hifz.endVerse}`);
-    }
-    if (data.rabt && data.rabt.length > 0) {
-        parts.push(`ربط: ${data.rabt.length} سور`);
-    }
-    if (data.murajaa) {
-        parts.push(`مراجعة: ${data.murajaa.startSurahName} ${data.murajaa.startVerse}→${data.murajaa.endVerse}`);
-    }
-    if (data.points > 0) {
-        parts.push(`نقاط: ${data.points}`);
-    }
-    parts.push(`حضور: ${data.attendance}`);
-    
-    return parts.join(' | ') || 'تحديث البيانات';
 }
 
 // ============================================================
@@ -1342,8 +1358,9 @@ function isAdmin() {
     const session = JSON.parse(sessionStorage.getItem('quranTrackerSession') || '{}');
     return session.username === 'Admin.2123' || session.displayName === 'المدير';
 }
+
 // ============================================================
-// SYNC HISTORY TO CLOUD (Admin Only - End of Day)
+// SYNC HISTORY TO CLOUD
 // ============================================================
 async function syncHistoryToCloud() {
     const pendingLogs = JSON.parse(localStorage.getItem('pendingHistoryLogs') || '[]');
@@ -1384,9 +1401,7 @@ async function syncHistoryToCloud() {
         alert('❌ فشلت المزامنة. حاول مرة أخرى.');
     }
 }
-// ============================================================
-// LOAD HISTORY FROM CLOUD (Admin Only)
-// ============================================================
+
 async function loadHistoryFromCloud() {
     if (!isAdmin()) return [];
     
@@ -1409,7 +1424,18 @@ async function loadHistoryFromCloud() {
     }
 }
 
+// ============================================================
+// INITIALIZATION
+// ============================================================
 window.onload = () => {
     subscribeToRealtimeChanges();
     loadQuranData();
 };
+
+// Sync interval - only syncs if there are pending changes AND tab is active
+setInterval(() => {
+    if (isTabActive && SUPABASE_ENABLED && hasUnsavedChanges) {
+        console.log('🔄 Auto-syncing pending changes...');
+        syncToCloud();
+    }
+}, 15000); // Check every 15 seconds, but only sync if changes exist
