@@ -976,32 +976,64 @@ function loadReportsData() {
         elementary: { hifz:0, rabt:0, murajaa:0, pages:0 } 
     };
     
-    // Fixed page calculator
+       // Fixed page calculator with verse support
     function getPages(task) {
         if (!task) return 0;
         
-        // Convert to numbers (in case they're stored as strings)
-        const start = parseInt(task.startSurah);
-        const end = parseInt(task.endSurah);
+        const startSurah = parseInt(task.startSurah);
+        const endSurah = parseInt(task.endSurah);
+        const startVerse = parseInt(task.startVerse) || 1;
+        const endVerse = parseInt(task.endVerse) || AYAH_COUNTS[endSurah - 1] || 1;
         
-        console.log('Calculating pages for:', task.startSurah, 'to', task.endSurah, 'Parsed:', start, 'to', end);
+        console.log(`Calculating: Surah ${startSurah}:${startVerse} to Surah ${endSurah}:${endVerse}`);
         
-        if (isNaN(start) || isNaN(end) || start < 1 || end > 114) {
-            console.log('Invalid surah numbers, returning 1');
-            return 1; // Default to 1 page instead of 0
-        }
+        if (isNaN(startSurah) || isNaN(endSurah)) return 1;
         
-        let pages = 0;
-        for (let s = start; s <= end; s++) {
-            if (QURAN_PAGES[s]) {
+        let totalPages = 0;
+        
+        if (startSurah === endSurah) {
+            // Same Surah - calculate portion
+            if (QURAN_PAGES[startSurah]) {
+                const surahPages = QURAN_PAGES[startSurah].endPage - QURAN_PAGES[startSurah].startPage + 1;
+                const totalAyahs = AYAH_COUNTS[startSurah - 1] || 1;
+                const ayahsRecited = endVerse - startVerse + 1;
+                const portion = ayahsRecited / totalAyahs;
+                const pages = Math.max(1, Math.round(surahPages * portion));
+                console.log(`Same surah: ${surahPages} pages × ${portion.toFixed(2)} = ${pages} pages`);
+                return pages;
+            }
+        } else {
+            // Multiple Surahs
+            for (let s = startSurah; s <= endSurah; s++) {
+                if (!QURAN_PAGES[s]) continue;
+                
                 const surahPages = QURAN_PAGES[s].endPage - QURAN_PAGES[s].startPage + 1;
-                pages += surahPages;
-                console.log(`Surah ${s}: ${surahPages} pages`);
+                const totalAyahs = AYAH_COUNTS[s - 1] || 1;
+                
+                if (s === startSurah) {
+                    // First Surah - from startVerse to end of Surah
+                    const ayahsRecited = totalAyahs - startVerse + 1;
+                    const portion = ayahsRecited / totalAyahs;
+                    const pages = Math.max(1, Math.round(surahPages * portion));
+                    totalPages += pages;
+                    console.log(`First Surah ${s}: ${surahPages} pages × ${portion.toFixed(2)} = ${pages} pages`);
+                } else if (s === endSurah) {
+                    // Last Surah - from beginning to endVerse
+                    const ayahsRecited = endVerse;
+                    const portion = ayahsRecited / totalAyahs;
+                    const pages = Math.max(1, Math.round(surahPages * portion));
+                    totalPages += pages;
+                    console.log(`Last Surah ${s}: ${surahPages} pages × ${portion.toFixed(2)} = ${pages} pages`);
+                } else {
+                    // Middle Surah - full Surah
+                    totalPages += surahPages;
+                    console.log(`Middle Surah ${s}: full ${surahPages} pages`);
+                }
             }
         }
         
-        console.log('Total pages:', pages);
-        return pages > 0 ? pages : 1; // Minimum 1 page
+        console.log(`Total calculated pages: ${totalPages}`);
+        return totalPages;
     }
     
     for (let i = 0; i < localStorage.length; i++) { 
