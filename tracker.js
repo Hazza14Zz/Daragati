@@ -244,6 +244,154 @@ const AYAH_COUNTS = [
 ];
 
 // ============================================================
+// QURAN PAGE MAPPING - Madinah Mushaf (604 Pages Total)
+// ============================================================
+const QURAN_PAGES = {
+    1: { name: "الفاتحة", startPage: 1, endPage: 1, ayahs: 7 },
+    2: { name: "البقرة", startPage: 2, endPage: 49, ayahs: 286 },
+    3: { name: "آل عمران", startPage: 50, endPage: 76, ayahs: 200 },
+    4: { name: "النساء", startPage: 77, endPage: 106, ayahs: 176 },
+    5: { name: "المائدة", startPage: 106, endPage: 127, ayahs: 120 },
+    6: { name: "الأنعام", startPage: 128, endPage: 150, ayahs: 165 },
+    7: { name: "الأعراف", startPage: 151, endPage: 176, ayahs: 206 },
+    8: { name: "الأنفال", startPage: 177, endPage: 186, ayahs: 75 },
+    9: { name: "التوبة", startPage: 187, endPage: 207, ayahs: 129 },
+    10: { name: "يونس", startPage: 208, endPage: 221, ayahs: 109 },
+    11: { name: "هود", startPage: 221, endPage: 235, ayahs: 123 },
+    12: { name: "يوسف", startPage: 235, endPage: 248, ayahs: 111 },
+    13: { name: "الرعد", startPage: 249, endPage: 255, ayahs: 43 },
+    14: { name: "إبراهيم", startPage: 255, endPage: 261, ayahs: 52 },
+    15: { name: "الحجر", startPage: 262, endPage: 267, ayahs: 99 },
+    16: { name: "النحل", startPage: 267, endPage: 281, ayahs: 128 },
+    17: { name: "الإسراء", startPage: 282, endPage: 293, ayahs: 111 },
+    18: { name: "الكهف", startPage: 293, endPage: 304, ayahs: 110 },
+    19: { name: "مريم", startPage: 305, endPage: 312, ayahs: 98 },
+    20: { name: "طه", startPage: 312, endPage: 321, ayahs: 135 },
+    21: { name: "الأنبياء", startPage: 322, endPage: 331, ayahs: 112 },
+    22: { name: "الحج", startPage: 332, endPage: 341, ayahs: 78 },
+    23: { name: "المؤمنون", startPage: 342, endPage: 349, ayahs: 118 },
+    24: { name: "النور", startPage: 350, endPage: 359, ayahs: 64 },
+    25: { name: "الفرقان", startPage: 359, endPage: 366, ayahs: 77 },
+    26: { name: "الشعراء", startPage: 367, endPage: 376, ayahs: 227 },
+    27: { name: "النمل", startPage: 377, endPage: 385, ayahs: 93 },
+    28: { name: "القصص", startPage: 385, endPage: 396, ayahs: 88 },
+    29: { name: "العنكبوت", startPage: 396, endPage: 404, ayahs: 69 },
+    30: { name: "الروم", startPage: 404, endPage: 410, ayahs: 60 },
+    31: { name: "لقمان", startPage: 411, endPage: 414, ayahs: 34 },
+    32: { name: "السجدة", startPage: 415, endPage: 417, ayahs: 30 },
+    33: { name: "الأحزاب", startPage: 418, endPage: 427, ayahs: 73 },
+    34: { name: "سبأ", startPage: 428, endPage: 434, ayahs: 54 },
+    35: { name: "فاطر", startPage: 434, endPage: 440, ayahs: 45 },
+    36: { name: "يس", startPage: 440, endPage: 445, ayahs: 83 },
+    37: { name: "الصافات", startPage: 446, endPage: 452, ayahs: 182 },
+    38: { name: "ص", startPage: 453, endPage: 458, ayahs: 88 },
+    39: { name: "الزمر", startPage: 458, endPage: 467, ayahs: 75 },
+    40: { name: "غافر", startPage: 467, endPage: 476, ayahs: 85 },
+    41: { name: "فصلت", startPage: 477, endPage: 482, ayahs: 54 },
+    42: { name: "الشورى", startPage: 483, endPage: 489, ayahs: 53 },
+    43: { name: "الزخرف", startPage: 489, endPage: 495, ayahs: 89 },
+    44: { name: "الدخان", startPage: 496, endPage: 498, ayahs: 59 },
+    45: { name: "الجاثية", startPage: 499, endPage: 502, ayahs: 37 },
+    46: { name: "الأحقاف", startPage: 502, endPage: 506, ayahs: 35 },
+    47: { name: "محمد", startPage: 507, endPage: 510, ayahs: 38 },
+    48: { name: "الفتح", startPage: 511, endPage: 515, ayahs: 29 },
+    49: { name: "الحجرات", startPage: 515, endPage: 517, ayahs: 18 },
+    50: { name: "ق", startPage: 518, endPage: 520, ayahs: 45 },
+    51: { name: "الذاريات", startPage: 520, endPage: 523, ayahs: 60 },
+    52: { name: "الطور", startPage: 523, endPage: 525, ayahs: 49 },
+    53: { name: "النجم", startPage: 526, endPage: 528, ayahs: 62 },
+    54: { name: "القمر", startPage: 528, endPage: 531, ayahs: 55 },
+    55: { name: "الرحمن", startPage: 531, endPage: 534, ayahs: 78 },
+    56: { name: "الواقعة", startPage: 534, endPage: 537, ayahs: 96 },
+    57: { name: "الحديد", startPage: 537, endPage: 541, ayahs: 29 },
+    58: { name: "المجادلة", startPage: 542, endPage: 545, ayahs: 22 },
+    59: { name: "الحشر", startPage: 545, endPage: 548, ayahs: 24 },
+    60: { name: "الممتحنة", startPage: 549, endPage: 551, ayahs: 13 },
+    61: { name: "الصف", startPage: 551, endPage: 553, ayahs: 14 },
+    62: { name: "الجمعة", startPage: 553, endPage: 554, ayahs: 11 },
+    63: { name: "المنافقون", startPage: 554, endPage: 556, ayahs: 11 },
+    64: { name: "التغابن", startPage: 556, endPage: 558, ayahs: 18 },
+    65: { name: "الطلاق", startPage: 558, endPage: 560, ayahs: 12 },
+    66: { name: "التحريم", startPage: 560, endPage: 562, ayahs: 12 },
+    67: { name: "الملك", startPage: 562, endPage: 564, ayahs: 30 },
+    68: { name: "القلم", startPage: 564, endPage: 566, ayahs: 52 },
+    69: { name: "الحاقة", startPage: 566, endPage: 568, ayahs: 52 },
+    70: { name: "المعارج", startPage: 568, endPage: 570, ayahs: 44 },
+    71: { name: "نوح", startPage: 570, endPage: 572, ayahs: 28 },
+    72: { name: "الجن", startPage: 572, endPage: 574, ayahs: 28 },
+    73: { name: "المزمل", startPage: 574, endPage: 575, ayahs: 20 },
+    74: { name: "المدثر", startPage: 575, endPage: 577, ayahs: 56 },
+    75: { name: "القيامة", startPage: 577, endPage: 578, ayahs: 40 },
+    76: { name: "الإنسان", startPage: 578, endPage: 580, ayahs: 31 },
+    77: { name: "المرسلات", startPage: 580, endPage: 581, ayahs: 50 },
+    78: { name: "النبأ", startPage: 582, endPage: 583, ayahs: 40 },
+    79: { name: "النازعات", startPage: 583, endPage: 584, ayahs: 46 },
+    80: { name: "عبس", startPage: 585, endPage: 585, ayahs: 42 },
+    81: { name: "التكوير", startPage: 586, endPage: 586, ayahs: 29 },
+    82: { name: "الإنفطار", startPage: 587, endPage: 587, ayahs: 19 },
+    83: { name: "المطففين", startPage: 587, endPage: 589, ayahs: 36 },
+    84: { name: "الإنشقاق", startPage: 589, endPage: 590, ayahs: 25 },
+    85: { name: "البروج", startPage: 590, endPage: 590, ayahs: 22 },
+    86: { name: "الطارق", startPage: 591, endPage: 591, ayahs: 17 },
+    87: { name: "الأعلى", startPage: 591, endPage: 592, ayahs: 19 },
+    88: { name: "الغاشية", startPage: 592, endPage: 593, ayahs: 26 },
+    89: { name: "الفجر", startPage: 593, endPage: 594, ayahs: 30 },
+    90: { name: "البلد", startPage: 594, endPage: 595, ayahs: 20 },
+    91: { name: "الشمس", startPage: 595, endPage: 595, ayahs: 15 },
+    92: { name: "الليل", startPage: 595, endPage: 596, ayahs: 21 },
+    93: { name: "الضحى", startPage: 596, endPage: 596, ayahs: 11 },
+    94: { name: "الشرح", startPage: 596, endPage: 597, ayahs: 8 },
+    95: { name: "التين", startPage: 597, endPage: 597, ayahs: 8 },
+    96: { name: "العلق", startPage: 597, endPage: 598, ayahs: 19 },
+    97: { name: "القدر", startPage: 598, endPage: 598, ayahs: 5 },
+    98: { name: "البينة", startPage: 598, endPage: 599, ayahs: 8 },
+    99: { name: "الزلزلة", startPage: 599, endPage: 599, ayahs: 8 },
+    100: { name: "العاديات", startPage: 599, endPage: 600, ayahs: 11 },
+    101: { name: "القارعة", startPage: 600, endPage: 600, ayahs: 11 },
+    102: { name: "التكاثر", startPage: 600, endPage: 600, ayahs: 8 },
+    103: { name: "العصر", startPage: 601, endPage: 601, ayahs: 3 },
+    104: { name: "الهمزة", startPage: 601, endPage: 601, ayahs: 9 },
+    105: { name: "الفيل", startPage: 601, endPage: 601, ayahs: 5 },
+    106: { name: "قريش", startPage: 602, endPage: 602, ayahs: 4 },
+    107: { name: "الماعون", startPage: 602, endPage: 602, ayahs: 7 },
+    108: { name: "الكوثر", startPage: 602, endPage: 602, ayahs: 3 },
+    109: { name: "الكافرون", startPage: 603, endPage: 603, ayahs: 6 },
+    110: { name: "النصر", startPage: 603, endPage: 603, ayahs: 3 },
+    111: { name: "المسد", startPage: 603, endPage: 603, ayahs: 5 },
+    112: { name: "الإخلاص", startPage: 604, endPage: 604, ayahs: 4 },
+    113: { name: "الفلق", startPage: 604, endPage: 604, ayahs: 5 },
+    114: { name: "الناس", startPage: 604, endPage: 604, ayahs: 6 }
+};
+
+const TOTAL_QURAN_PAGES = 604;
+
+function calculatePages(startSurah, startVerse, endSurah, endVerse) {
+    startSurah = parseInt(startSurah); 
+    endSurah = parseInt(endSurah);
+    
+    if (startSurah === endSurah) {
+        const s = QURAN_PAGES[startSurah]; 
+        if (!s) return 1;
+        return Math.max(1, Math.round(((parseInt(endVerse) - parseInt(startVerse) + 1) / s.ayahs) * (s.endPage - s.startPage + 1)));
+    }
+    
+    let pages = 0;
+    
+    const first = QURAN_PAGES[startSurah];
+    if (first) pages += Math.max(1, Math.round(((first.ayahs - parseInt(startVerse) + 1) / first.ayahs) * (first.endPage - first.startPage + 1)));
+    
+    for (let s = startSurah + 1; s < endSurah; s++) { 
+        const su = QURAN_PAGES[s]; 
+        if (su) pages += su.endPage - su.startPage + 1; 
+    }
+    
+    const last = QURAN_PAGES[endSurah];
+    if (last) pages += Math.max(1, Math.round((parseInt(endVerse) / last.ayahs) * (last.endPage - last.startPage + 1)));
+    
+    return pages;
+}
+
+// ============================================================
 // DATE FUNCTIONS
 // ============================================================
 function getGregorianDate() {
