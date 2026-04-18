@@ -568,7 +568,7 @@ function saveCurrentStudent() {
     let hifz = null, murajaa = null;
     const rabt = [];
     
-    const hs = document.getElementById('hifzStartSurah')?.value;
+      const hs = document.getElementById('hifzStartSurah')?.value;
     const hsv = document.getElementById('hifzStartVerse')?.value;
     const he = document.getElementById('hifzEndSurah')?.value;
     const hev = document.getElementById('hifzEndVerse')?.value;
@@ -576,11 +576,12 @@ function saveCurrentStudent() {
         hifz = { 
             startSurah: hs, startVerse: hsv, endSurah: he, endVerse: hev, 
             startSurahName: surahsData.find(s => s.number == hs)?.name || '', 
-            endSurahName: surahsData.find(s => s.number == he)?.name || ''
+            endSurahName: surahsData.find(s => s.number == he)?.name || '',
+            pages: calculatePages(hs, hsv, he, hev)  // ✅ ADD THIS LINE
         };
     }
     
-    const ms = document.getElementById('murajaaStartSurah')?.value;
+        const ms = document.getElementById('murajaaStartSurah')?.value;
     const msv = document.getElementById('murajaaStartVerse')?.value;
     const me = document.getElementById('murajaaEndSurah')?.value;
     const mev = document.getElementById('murajaaEndVerse')?.value;
@@ -588,11 +589,12 @@ function saveCurrentStudent() {
         murajaa = { 
             startSurah: ms, startVerse: msv, endSurah: me, endVerse: mev, 
             startSurahName: surahsData.find(s => s.number == ms)?.name || '', 
-            endSurahName: surahsData.find(s => s.number == me)?.name || ''
+            endSurahName: surahsData.find(s => s.number == me)?.name || '',
+            pages: calculatePages(ms, msv, me, mev)  // ✅ ADD THIS LINE
         };
     }
     
-    document.querySelectorAll('.rabt-item').forEach(item => {
+      document.querySelectorAll('.rabt-item').forEach(item => {
         const ss = item.querySelector('.rabt-start-surah')?.value;
         const sv = item.querySelector('.rabt-start-verse')?.value;
         const es = item.querySelector('.rabt-end-surah')?.value;
@@ -601,7 +603,8 @@ function saveCurrentStudent() {
             rabt.push({ 
                 startSurah: ss, startVerse: sv, endSurah: es, endVerse: ev, 
                 startSurahName: surahsData.find(s => s.number == ss)?.name || '', 
-                endSurahName: surahsData.find(s => s.number == es)?.name || ''
+                endSurahName: surahsData.find(s => s.number == es)?.name || '',
+                pages: calculatePages(ss, sv, es, ev)  // ✅ ADD THIS LINE
             });
         }
     });
@@ -720,9 +723,9 @@ function loadReportsData() {
     document.getElementById('currentMonthDisplay').textContent = `${months[m]} ${y}`;
     
     const data = { 
-        highschool: { hifz:0, rabt:0, murajaa:0 }, 
-        middleschool: { hifz:0, rabt:0, murajaa:0 }, 
-        elementary: { hifz:0, rabt:0, murajaa:0 } 
+        highschool: { hifz:0, rabt:0, murajaa:0, totalPages:0 }, 
+        middleschool: { hifz:0, rabt:0, murajaa:0, totalPages:0 }, 
+        elementary: { hifz:0, rabt:0, murajaa:0, totalPages:0 } 
     };
     
     for (let i = 0; i < localStorage.length; i++) { 
@@ -731,38 +734,70 @@ function loadReportsData() {
             try { 
                 const d = JSON.parse(localStorage.getItem(k)); 
                 if (d?.savedAt && new Date(d.savedAt).getFullYear() === y && new Date(d.savedAt).getMonth() === m) { 
-                    if (d.section && data[d.section]) { 
-                        if (d.hifz) data[d.section].hifz += 1; 
-                        if (d.rabt) data[d.section].rabt += d.rabt.length; 
-                        if (d.murajaa) data[d.section].murajaa += 1; 
+                    if (d.section && data[d.section]) {
+                        // ✅ Calculate actual pages for Hifz
+                        if (d.hifz) {
+                            const pages = calculatePages(
+                                d.hifz.startSurah, 
+                                d.hifz.startVerse, 
+                                d.hifz.endSurah, 
+                                d.hifz.endVerse
+                            );
+                            data[d.section].hifz += pages;
+                            data[d.section].totalPages += pages;
+                        }
+                        
+                        // ✅ Calculate actual pages for each Rabt
+                        if (d.rabt && d.rabt.length > 0) {
+                            d.rabt.forEach(r => {
+                                const pages = calculatePages(
+                                    r.startSurah, 
+                                    r.startVerse, 
+                                    r.endSurah, 
+                                    r.endVerse
+                                );
+                                data[d.section].rabt += pages;
+                                data[d.section].totalPages += pages;
+                            });
+                        }
+                        
+                        // ✅ Calculate actual pages for Murajaa
+                        if (d.murajaa) {
+                            const pages = calculatePages(
+                                d.murajaa.startSurah, 
+                                d.murajaa.startVerse, 
+                                d.murajaa.endSurah, 
+                                d.murajaa.endVerse
+                            );
+                            data[d.section].murajaa += pages;
+                            data[d.section].totalPages += pages;
+                        }
                     } 
                 } 
-            } catch (e) {} 
+            } catch (e) {
+                console.error('Error parsing data:', e);
+            } 
         } 
     }
     
     ['highschool','middleschool','elementary'].forEach(s => { 
         const d = data[s]; 
-        const tot = d.hifz + d.rabt + d.murajaa; 
         document.getElementById(`${s}-summary`).innerHTML = `
             <table class="summary-table">
-                <tr><th>المهمة</th><th>عدد المرات</th></tr>
+                <tr><th>المهمة</th><th>الصفحات</th></tr>
                 <tr><td>📖 حفظ</td><td>${d.hifz}</td></tr>
                 <tr><td>🔗 ربط</td><td>${d.rabt}</td></tr>
                 <tr><td>📚 مراجعة</td><td>${d.murajaa}</td></tr>
-                <tr class="total-row"><td>📄 المجموع</td><td>${tot}</td></tr>
+                <tr class="total-row"><td>📄 إجمالي الصفحات</td><td>${d.totalPages}</td></tr>
             </table>
         `; 
     });
     
-    const tot = { 
-        hifz: data.highschool.hifz + data.middleschool.hifz + data.elementary.hifz, 
-        rabt: data.highschool.rabt + data.middleschool.rabt + data.elementary.rabt, 
-        murajaa: data.highschool.murajaa + data.middleschool.murajaa + data.elementary.murajaa 
-    };
-    const all = tot.hifz + tot.rabt + tot.murajaa;
-    document.getElementById('grand-total-pages').textContent = all; 
-    document.getElementById('grand-total-khatmah').textContent = all;
+    const totalPages = data.highschool.totalPages + data.middleschool.totalPages + data.elementary.totalPages;
+    const khatmah = (totalPages / 604).toFixed(2);
+    
+    document.getElementById('grand-total-pages').textContent = totalPages; 
+    document.getElementById('grand-total-khatmah').textContent = khatmah;
 }
 
 function loadDailyReport() {
