@@ -5,7 +5,13 @@ const SUPABASE_URL = "https://dklyyzbnapkxlluximzk.supabase.co";
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRrbHl5emJuYXBreGxsdXhpbXprIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYyNjEwMDIsImV4cCI6MjA5MTgzNzAwMn0.qpCqvUTia4ywEMPSYJ_rIB4pSlk0zkvq5cQa-sFaFEs";
 const SUPABASE_TABLE = "quran_data";
 const SUPABASE_ENABLED = true;
-
+// ✅ ADD THESE LINES
+let supabaseClient = null;
+if (typeof supabase !== 'undefined') {
+    supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+}
+let realtimeChannel = null;
+let isOwnChange = false;
 // Real-time sync variables
 
 
@@ -14,7 +20,7 @@ const SUPABASE_ENABLED = true;
 // ============================================================
 let isTabActive = true;
 let hasUnsavedChanges = false;
-
+let lastCloudUpdate = null;  // ✅ ADD THIS LINE
 document.addEventListener('visibilitychange', function() {
     isTabActive = !document.hidden;
     console.log(isTabActive ? '👁️ Tab active' : '💤 Tab inactive');
@@ -29,6 +35,8 @@ async function syncToCloud() {
         console.log('⏭️ No changes to sync');
         return;
     }
+
+    isOwnChange = true;  // ✅ ADD THIS LINE
     
     const allData = {};
     // ... rest of function stays the same
@@ -85,6 +93,7 @@ async function syncToCloud() {
         }    } catch (e) {
         console.error('Sync error:', e);
     }
+    setTimeout(() => { isOwnChange = false; }, 500);  // ✅ ADD THIS LINE
 }
 
 async function loadFromCloud() {
@@ -959,6 +968,44 @@ function resetAllData() {
         alert("✅ تم حذف جميع البيانات ومزامنتها!\nسيتم تحديث الصفحة.");
         location.reload();
     }, 1000);
+}
+// ============================================================
+// REAL-TIME SUBSCRIPTION
+// ============================================================
+async function subscribeToRealtimeChanges() {
+    if (!SUPABASE_ENABLED || !supabaseClient) {
+        console.log('⚠️ Realtime sync disabled - Supabase not loaded');
+        return;
+    }
+    
+    if (realtimeChannel) {
+        await realtimeChannel.unsubscribe();
+    }
+    
+    realtimeChannel = supabaseClient
+        .channel('quran-tracker-changes')
+        .on(
+            'postgres_changes',
+            {
+                event: 'UPDATE',
+                schema: 'public',
+                table: SUPABASE_TABLE,
+                filter: 'key=eq.main_data'
+            },
+            (payload) => {
+                if (!isOwnChange) {
+                    console.log('🔄 Change detected from another device! Reloading...');
+                    loadFromCloud().then(() => {
+                        location.reload();
+                    });
+                }
+            }
+        )
+        .subscribe((status) => {
+            if (status === 'SUBSCRIBED') {
+                console.log('✅ Connected to real-time sync');
+            }
+        });
 }
 window.onload = () => {
     subscribeToRealtimeChanges();
