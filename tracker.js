@@ -247,8 +247,12 @@ function getPage(surah, verse) {
 }
 
 function calculatePages(startSurah, startVerse, endSurah, endVerse) {
-    const startPage = getPage(parseInt(startSurah), parseInt(startVerse));
-    const endPage = getPage(parseInt(endSurah), parseInt(endVerse));
+    // Convert name to number if needed
+    const startNum = isNaN(startSurah) ? getSurahNumberFromName(startSurah) : parseInt(startSurah);
+    const endNum = isNaN(endSurah) ? getSurahNumberFromName(endSurah) : parseInt(endSurah);
+    
+    const startPage = getPage(startNum, parseInt(startVerse));
+    const endPage = getPage(endNum, parseInt(endVerse));
     
     if (startPage === null || endPage === null) {
         return 0;
@@ -257,6 +261,10 @@ function calculatePages(startSurah, startVerse, endSurah, endVerse) {
     return endPage - startPage + 1;
 }
 
+function getSurahNumberFromName(name) {
+    const surah = surahsData.find(s => s.name === name);
+    return surah ? surah.number : null;
+}
 // ============================================================
 // DATE FUNCTIONS
 // ============================================================
@@ -377,7 +385,7 @@ function loadStudent(studentNum) {
     
     let surahOptions = '';
     if (surahsData && surahsData.length > 0) {
-        surahOptions = surahsData.map(s => `<option value="${s.number}">${s.name}</option>`).join('');
+       surahOptions = surahsData.map(s => `<option value="${s.name}">${s.name}</option>`).join('');
     } else {
         surahOptions = '<option value="1">الفاتحة</option><option value="2">البقرة</option>';
     }
@@ -496,7 +504,7 @@ function addRabtItem(existing = null) {
     
     let surahOptions = '';
     if (surahsData && surahsData.length > 0) {
-        surahOptions = surahsData.map(s => `<option value="${s.number}">${s.name}</option>`).join('');
+        surahOptions = surahsData.map(s => `<option value="${s.name}">${s.name}</option>`).join('');
     } else {
         surahOptions = '<option value="1">الفاتحة</option><option value="2">البقرة</option>';
     }
@@ -539,12 +547,16 @@ function addRabtItem(existing = null) {
     }
 }
 
-function updateVerseOptions(surahNum, selectEl, placeholder) {
-    if (!surahNum) { 
+function updateVerseOptions(surahInput, selectEl, placeholder) {
+    if (!surahInput) { 
         selectEl.innerHTML = `<option value="">${placeholder}</option>`; 
         return; 
     }
-    const surah = surahsData.find(s => s.number == surahNum);
+    // Check if input is a number or name
+    const surah = !isNaN(surahInput) 
+        ? surahsData.find(s => s.number == surahInput)
+        : surahsData.find(s => s.name === surahInput);
+    
     if (surah) { 
         let o = `<option value="">${placeholder}</option>`; 
         for (let i = 1; i <= surah.numberOfAyahs; i++) o += `<option value="${i}">${i}</option>`; 
@@ -598,41 +610,41 @@ function saveCurrentStudent() {
     const hsv = document.getElementById('hifzStartVerse')?.value;
     const he = document.getElementById('hifzEndSurah')?.value;
     const hev = document.getElementById('hifzEndVerse')?.value;
-    if (hs && hsv && he && hev) {
-        hifz = { 
-            startSurah: hs, startVerse: hsv, endSurah: he, endVerse: hev, 
-            startSurahName: surahsData.find(s => s.number == hs)?.name || '', 
-            endSurahName: surahsData.find(s => s.number == he)?.name || '',
-            pages: calculatePages(hs, hsv, he, hev)  // ✅ ADD THIS LINE
-        };
-    }
+   if (hs && hsv && he && hev) {
+    hifz = { 
+        startSurah: hs, startVerse: hsv, endSurah: he, endVerse: hev, 
+        startSurahName: hs,  // Now hs is the name directly
+        endSurahName: he,    // Now he is the name directly
+        pages: calculatePages(hs, hsv, he, hev)
+    };
+}
     
         const ms = document.getElementById('murajaaStartSurah')?.value;
     const msv = document.getElementById('murajaaStartVerse')?.value;
     const me = document.getElementById('murajaaEndSurah')?.value;
     const mev = document.getElementById('murajaaEndVerse')?.value;
     if (ms && msv && me && mev) {
-        murajaa = { 
-            startSurah: ms, startVerse: msv, endSurah: me, endVerse: mev, 
-            startSurahName: surahsData.find(s => s.number == ms)?.name || '', 
-            endSurahName: surahsData.find(s => s.number == me)?.name || '',
-            pages: calculatePages(ms, msv, me, mev)  // ✅ ADD THIS LINE
-        };
-    }
+    murajaa = { 
+        startSurah: ms, startVerse: msv, endSurah: me, endVerse: mev, 
+        startSurahName: ms,
+        endSurahName: me,
+        pages: calculatePages(ms, msv, me, mev)
+    };
+}
     
       document.querySelectorAll('.rabt-item').forEach(item => {
         const ss = item.querySelector('.rabt-start-surah')?.value;
         const sv = item.querySelector('.rabt-start-verse')?.value;
         const es = item.querySelector('.rabt-end-surah')?.value;
         const ev = item.querySelector('.rabt-end-verse')?.value;
-        if (ss && sv && es && ev) {
-            rabt.push({ 
-                startSurah: ss, startVerse: sv, endSurah: es, endVerse: ev, 
-                startSurahName: surahsData.find(s => s.number == ss)?.name || '', 
-                endSurahName: surahsData.find(s => s.number == es)?.name || '',
-                pages: calculatePages(ss, sv, es, ev)  // ✅ ADD THIS LINE
-            });
-        }
+       if (ss && sv && es && ev) {
+    rabt.push({ 
+        startSurah: ss, startVerse: sv, endSurah: es, endVerse: ev, 
+        startSurahName: ss,
+        endSurahName: es,
+        pages: calculatePages(ss, sv, es, ev)
+    });
+}
     });
     
         const data = { 
