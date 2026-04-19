@@ -1008,7 +1008,30 @@ function deleteStudent(sec) {
     syncToCloud();
     alert(`✅ تم حذف الطالب بنجاح!`); 
 }
-
+async function deleteAllHistoryFromCloud() {
+    try {
+        // Delete all records from history_log table
+        const response = await fetch(
+            `${SUPABASE_URL}/rest/v1/history_log?select=id`,
+            {
+                method: 'DELETE',
+                headers: {
+                    'apikey': SUPABASE_KEY,
+                    'Authorization': `Bearer ${SUPABASE_KEY}`,
+                    'Content-Type': 'application/json'
+                }
+            }
+        );
+        
+        if (response.ok) {
+            console.log('✅ All history deleted from cloud');
+        } else {
+            console.error('Failed to delete history from cloud');
+        }
+    } catch (e) {
+        console.error('Error deleting history:', e);
+    }
+}
 function resetAllData() { 
     if (!confirm("⚠️ تحذير: سيتم حذف جميع البيانات نهائياً!\n\nهل أنت متأكد؟")) return;
     if (prompt("اكتب: حذف جميع البيانات") !== "حذف جميع البيانات") { 
@@ -1016,7 +1039,7 @@ function resetAllData() {
         return; 
     }
     
-    // Clear localStorage on THIS device
+    // Clear all Quran data from localStorage
     const keysToRemove = [];
     for (let i = 0; i < localStorage.length; i++) { 
         const k = localStorage.key(i); 
@@ -1024,20 +1047,25 @@ function resetAllData() {
     }
     keysToRemove.forEach(k => localStorage.removeItem(k));
     
-        localStorage.setItem('studentCount_highschool', '50'); 
+    // ✅ Clear pending history logs from localStorage
+    localStorage.removeItem('pendingHistoryLogs');
+    
+    // Reset student counts
+    localStorage.setItem('studentCount_highschool', '50'); 
     localStorage.setItem('studentCount_middleschool', '50'); 
     localStorage.setItem('studentCount_elementary', '50');
     
-    markDataChanged();  // ✅ ADD THIS LINE
+    markDataChanged();
     syncToCloud();
     
-    // Wait a moment for sync to complete, then reload
+    // ✅ Delete all history from Supabase
+    deleteAllHistoryFromCloud();
+    
     setTimeout(() => {
-        alert("✅ تم حذف جميع البيانات ومزامنتها!\nسيتم تحديث الصفحة.");
+        alert("✅ تم حذف جميع البيانات والسجل ومزامنتها!\nسيتم تحديث الصفحة.");
         location.reload();
     }, 1000);
-}
-// ============================================================
+}// ============================================================
 // REAL-TIME SUBSCRIPTION
 // ============================================================
 async function subscribeToRealtimeChanges() {
