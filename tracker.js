@@ -394,12 +394,14 @@ function loadStudent(studentNum) {
                 <div class="task-header task-header-hifz">🔰 حفظ</div>
                 <div class="task-body">
                     <div class="range-input">
-                        <select id="hifzStartSurah" class="range-select" onchange="updateStartVerses('hifz')"><option value="">من سورة</option>${surahOptions}</select>
+                        <input list="surah-list-hifz-start" id="hifzStartSurah" class="range-select" placeholder="🔍 ابحث عن السورة..." onchange="updateStartVerses('hifz')" autocomplete="off">
+<datalist id="surah-list-hifz-start">${surahOptions}</datalist>
                         <select id="hifzStartVerse" class="verse-select"><option value="">من آية</option></select>
                     </div>
                     <div class="range-input"><span class="arrow">⬇</span></div>
                     <div class="range-input">
-                        <select id="hifzEndSurah" class="range-select" onchange="updateEndVerses('hifz')"><option value="">إلى سورة</option>${surahOptions}</select>
+<input list="surah-list-hifz-end" id="hifzEndSurah" class="range-select" placeholder="🔍 ابحث عن السورة..." onchange="updateEndVerses('hifz')" autocomplete="off">
+<datalist id="surah-list-hifz-end">${surahOptions}</datalist>
                         <select id="hifzEndVerse" class="verse-select"><option value="">إلى آية</option></select>
                     </div>
                 </div>
@@ -415,12 +417,14 @@ function loadStudent(studentNum) {
                 <div class="task-header task-header-murajaa">📖 مراجعة</div>
                 <div class="task-body">
                     <div class="range-input">
-                        <select id="murajaaStartSurah" class="range-select" onchange="updateStartVerses('murajaa')"><option value="">من سورة</option>${surahOptions}</select>
+                     <input list="surah-list-murajaa-start" id="murajaaStartSurah" class="range-select" placeholder="🔍 ابحث عن السورة..." onchange="updateStartVerses('murajaa')" autocomplete="off">
+<datalist id="surah-list-murajaa-start">${surahOptions}</datalist>
                         <select id="murajaaStartVerse" class="verse-select"><option value="">من آية</option></select>
                     </div>
                     <div class="range-input"><span class="arrow">⬇</span></div>
                     <div class="range-input">
-                        <select id="murajaaEndSurah" class="range-select" onchange="updateEndVerses('murajaa')"><option value="">إلى سورة</option>${surahOptions}</select>
+                       <input list="surah-list-murajaa-end" id="murajaaEndSurah" class="range-select" placeholder="🔍 ابحث عن السورة..." onchange="updateEndVerses('murajaa')" autocomplete="off">
+<datalist id="surah-list-murajaa-end">${surahOptions}</datalist>
                         <select id="murajaaEndVerse" class="verse-select"><option value="">إلى آية</option></select>
                     </div>
                 </div>
@@ -505,12 +509,14 @@ function addRabtItem(existing = null) {
             <button class="remove-btn" onclick="this.closest('.rabt-item').remove()">✖ حذف</button>
         </div>
         <div class="range-input">
-            <select class="range-select rabt-start-surah" onchange="updateRabtStartVerses('${id}')"><option value="">من سورة</option>${surahOptions}</select>
+          <input list="surah-list-${id}-start" class="range-select rabt-start-surah" placeholder="🔍 ابحث عن السورة..." onchange="updateRabtStartVerses('${id}')" autocomplete="off">
+<datalist id="surah-list-${id}-start">${surahOptions}</datalist>
             <select class="verse-select rabt-start-verse"><option value="">من آية</option></select>
         </div>
         <div class="range-input"><span class="arrow">⬇</span></div>
         <div class="range-input">
-            <select class="range-select rabt-end-surah" onchange="updateRabtEndVerses('${id}')"><option value="">إلى سورة</option>${surahOptions}</select>
+           <input list="surah-list-${id}-end" class="range-select rabt-end-surah" placeholder="🔍 ابحث عن السورة..." onchange="updateRabtEndVerses('${id}')" autocomplete="off">
+<datalist id="surah-list-${id}-end">${surahOptions}</datalist>
             <select class="verse-select rabt-end-verse"><option value="">إلى آية</option></select>
         </div>
     `;
