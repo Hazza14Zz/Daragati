@@ -8,6 +8,7 @@
     <title>سجل متابعة الحلقات - الجوال</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css">
     <style>
         * { 
             margin: 0; 
@@ -81,6 +82,62 @@
             background-color: white; 
             direction: rtl; 
             height: 60px;
+        }
+                /* Choices.js Searchable Dropdown */
+        .choices {
+            flex: 1;
+            direction: rtl;
+            text-align: right;
+            font-family: 'Cairo', sans-serif;
+            font-size: 14px !important;
+        }
+        .choices__inner {
+            background-color: white !important;
+            border: 2px solid #e5e7eb !important;
+            border-radius: 12px !important;
+            padding: 8px 12px !important;
+            min-height: 42px !important;
+            font-size: 14px !important;
+        }
+        .choices__list--dropdown {
+            direction: rtl;
+            text-align: right;
+            font-family: 'Cairo', sans-serif;
+            font-size: 14px !important;
+            max-height: 300px;
+            z-index: 999 !important;
+        }
+        .choices__list--dropdown .choices__list {
+            max-width: 100% !important;
+            overflow-x: hidden !important;
+        }
+        .choices__input {
+            background-color: white !important;
+            border: none !important;
+            border-bottom: 1px solid #e5e7eb !important;
+            border-radius: 0 !important;
+            padding: 10px 12px !important;
+            font-size: 16px !important;
+            direction: rtl;
+            text-align: right;
+        }
+        .choices__input:focus {
+            outline: none;
+            border-bottom-color: #059669 !important;
+        }
+        .choices__list--dropdown .choices__item--selectable.is-highlighted {
+            background-color: #059669 !important;
+            color: white;
+        }
+        .choices[data-type*="select-one"] .choices__inner {
+            padding-bottom: 8px !important;
+        }
+        .choices__list--single {
+            padding: 0 !important;
+        }
+        .choices__item {
+            white-space: normal !important;
+            word-break: break-word !important;
         }
         .arrow { font-size: 18px; font-weight: 700; color: #6b7280; }
         .rabt-list { display: flex; flex-direction: column; gap: 8px; }
@@ -285,6 +342,7 @@
 <button class="admin-btn" onclick="showAdminPanel()">⚙️</button>
 <div class="bottom-spacer"></div>
 <script src="quran-pages.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="tracker.js"></script>
 </body>
