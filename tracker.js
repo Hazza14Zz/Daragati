@@ -735,42 +735,21 @@ function loadReportsData() {
                 const d = JSON.parse(localStorage.getItem(k)); 
                 if (d?.savedAt && new Date(d.savedAt).getFullYear() === y && new Date(d.savedAt).getMonth() === m) { 
                     if (d.section && data[d.section]) {
-                        // ✅ Calculate actual pages for Hifz
-                        if (d.hifz) {
-                            const pages = calculatePages(
-                                d.hifz.startSurah, 
-                                d.hifz.startVerse, 
-                                d.hifz.endSurah, 
-                                d.hifz.endVerse
-                            );
-                            data[d.section].hifz += pages;
-                            data[d.section].totalPages += pages;
+                        if (d.hifz && d.hifz.pages) {
+                            data[d.section].hifz += d.hifz.pages;
+                            data[d.section].totalPages += d.hifz.pages;
                         }
-                        
-                        // ✅ Calculate actual pages for each Rabt
                         if (d.rabt && d.rabt.length > 0) {
                             d.rabt.forEach(r => {
-                                const pages = calculatePages(
-                                    r.startSurah, 
-                                    r.startVerse, 
-                                    r.endSurah, 
-                                    r.endVerse
-                                );
-                                data[d.section].rabt += pages;
-                                data[d.section].totalPages += pages;
+                                if (r.pages) {
+                                    data[d.section].rabt += r.pages;
+                                    data[d.section].totalPages += r.pages;
+                                }
                             });
                         }
-                        
-                        // ✅ Calculate actual pages for Murajaa
-                        if (d.murajaa) {
-                            const pages = calculatePages(
-                                d.murajaa.startSurah, 
-                                d.murajaa.startVerse, 
-                                d.murajaa.endSurah, 
-                                d.murajaa.endVerse
-                            );
-                            data[d.section].murajaa += pages;
-                            data[d.section].totalPages += pages;
+                        if (d.murajaa && d.murajaa.pages) {
+                            data[d.section].murajaa += d.murajaa.pages;
+                            data[d.section].totalPages += d.murajaa.pages;
                         }
                     } 
                 } 
@@ -780,26 +759,36 @@ function loadReportsData() {
         } 
     }
     
+    // Display each section with pages AND khatmah
     ['highschool','middleschool','elementary'].forEach(s => { 
         const d = data[s]; 
+        const hifzKhatmah = (d.hifz / 604).toFixed(2);
+        const rabtKhatmah = (d.rabt / 604).toFixed(2);
+        const murajaaKhatmah = (d.murajaa / 604).toFixed(2);
+        const totalKhatmah = (d.totalPages / 604).toFixed(2);
+        
         document.getElementById(`${s}-summary`).innerHTML = `
             <table class="summary-table">
-                <tr><th>المهمة</th><th>الصفحات</th></tr>
-                <tr><td>📖 حفظ</td><td>${d.hifz}</td></tr>
-                <tr><td>🔗 ربط</td><td>${d.rabt}</td></tr>
-                <tr><td>📚 مراجعة</td><td>${d.murajaa}</td></tr>
-                <tr class="total-row"><td>📄 إجمالي الصفحات</td><td>${d.totalPages}</td></tr>
+                <thead>
+                    <tr><th>المهمة</th><th>إجمالي الصفحات</th><th>إجمالي الختمات</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>📖 حفظ</td><td>${d.hifz}</td><td>${hifzKhatmah}</td></tr>
+                    <tr><td>🔗 ربط</td><td>${d.rabt}</td><td>${rabtKhatmah}</td></tr>
+                    <tr><td>📚 مراجعة</td><td>${d.murajaa}</td><td>${murajaaKhatmah}</td></tr>
+                    <tr class="total-row"><td><strong>📄 المجموع</strong></td><td><strong>${d.totalPages}</strong></td><td><strong>${totalKhatmah}</strong></td></tr>
+                </tbody>
             </table>
         `; 
     });
     
+    // Grand total
     const totalPages = data.highschool.totalPages + data.middleschool.totalPages + data.elementary.totalPages;
-    const khatmah = (totalPages / 604).toFixed(2);
+    const grandKhatmah = (totalPages / 604).toFixed(2);
     
     document.getElementById('grand-total-pages').textContent = totalPages; 
-    document.getElementById('grand-total-khatmah').textContent = khatmah;
+    document.getElementById('grand-total-khatmah').textContent = grandKhatmah;
 }
-
 function loadDailyReport() {
     document.getElementById('currentDateDisplay').textContent = new Date(currentReportDate).toLocaleDateString('ar-SA', { year: 'numeric', month: 'long', day: 'numeric' });
     ['highschool','middleschool','elementary'].forEach(s => {
