@@ -1076,45 +1076,102 @@ function showAdminPanel() {
     else if (s === '2') sec = 'middleschool'; 
     else if (s === '3') sec = 'elementary'; 
     else return; 
-    const a = prompt("1- إضافة طالب\n2- حذف طالب"); 
-    if (a === '1') addNewStudent(sec); 
-    else if (a === '2') deleteStudent(sec); 
+    const a = prompt("1- إضافة طلاب\n2- حذف طلاب"); 
+    if (a === '1') addMultipleStudents(sec); 
+    else if (a === '2') deleteMultipleStudents(sec); 
 }
-
-function addNewStudent(sec) { 
-    const cnt = parseInt(localStorage.getItem(`studentCount_${sec}`) || '50') + 1;
-        localStorage.setItem(`studentCount_${sec}`, cnt);
-    if (sec === currentSection) { totalStudents = cnt; updateStudentDropdown(); } 
-    markDataChanged();  // ✅ ADD THIS LINE
-    syncToCloud();
-    alert(`✅ تمت إضافة طالب جديد!\nالمرحلة: ${SECTION_NAMES[sec]}\nالعدد الآن: ${cnt}`); 
-}
-
-function deleteStudent(sec) { 
-    const cnt = parseInt(localStorage.getItem(`studentCount_${sec}`) || '50');
-    const n = parseInt(prompt(`أدخل رقم الطالب المراد حذفه (1-${cnt}):`)); 
-    if (isNaN(n) || n < 1 || n > cnt) { alert("رقم غير صحيح"); return; } 
-    if (!confirm(`حذف الطالب رقم ${n} من ${SECTION_NAMES[sec]}؟`)) return;
+function addMultipleStudents(sec) { 
+    const currentCount = parseInt(localStorage.getItem(`studentCount_${sec}`) || '50');
+    const addCount = parseInt(prompt(`العدد الحالي: ${currentCount}\nكم طالب تريد إضافته؟`));
     
-        localStorage.removeItem(`quran_${sec}-${n}`);
-    for (let i = n; i < cnt; i++) {
-        const old = localStorage.getItem(`quran_${sec}-${i+1}`);
-        if (old) { localStorage.setItem(`quran_${sec}-${i}`, old); } 
-        else { localStorage.removeItem(`quran_${sec}-${i}`); }
+    if (isNaN(addCount) || addCount < 1) {
+        alert("❌ رقم غير صحيح");
+        return;
     }
-    localStorage.removeItem(`quran_${sec}-${cnt}`);
-    localStorage.setItem(`studentCount_${sec}`, cnt - 1);
+    
+    const newCount = currentCount + addCount;
+    localStorage.setItem(`studentCount_${sec}`, newCount);
     
     if (sec === currentSection) { 
-        totalStudents = cnt - 1; 
-        if (currentStudentIndex >= totalStudents) currentStudentIndex = Math.max(0, totalStudents - 1); 
+        totalStudents = newCount; 
+        updateStudentDropdown(); 
+    } 
+    
+    markDataChanged();
+    syncToCloud();
+    alert(`✅ تمت إضافة ${addCount} طلاب!\nالمرحلة: ${SECTION_NAMES[sec]}\nالعدد الآن: ${newCount}`); 
+}
+
+function deleteMultipleStudents(sec) { 
+    const currentCount = parseInt(localStorage.getItem(`studentCount_${sec}`) || '50');
+    const input = prompt(`العدد الحالي: ${currentCount}\nأدخل أرقام الطلاب المراد حذفهم:\n(مثال: 12,33,45,50 أو 13)`);
+    
+    if (!input) return;
+    
+    // Parse numbers from input (supports commas, spaces, or both)
+    const numbers = input.split(/[,\s]+/).map(n => parseInt(n)).filter(n => !isNaN(n) && n >= 1 && n <= currentCount);
+    
+    if (numbers.length === 0) {
+        alert("❌ لم يتم إدخال أرقام صحيحة");
+        return;
+    }
+    
+    // Remove duplicates and sort descending (to delete from end first)
+    const uniqueNumbers = [...new Set(numbers)].sort((a, b) => b - a);
+    
+    if (!confirm(`حذف ${uniqueNumbers.length} طالب:\nالأرقام: ${uniqueNumbers.reverse().join(', ')}\nمن ${SECTION_NAMES[sec]}؟`)) return;
+    
+    // Delete from highest to lowest to avoid index shifting issues
+    uniqueNumbers.sort((a, b) => b - a).forEach(n => {
+        localStorage.removeItem(`quran_${sec}-${n}`);
+    });
+    
+    // Renumber remaining students
+    for (let i = 1; i <= currentCount; i++) {
+        const oldData = localStorage.getItem(`quran_${sec}-${i}`);
+        if (oldData) {
+            // Find the next available slot
+            let targetIndex = i;
+            while (targetIndex > 1 && !localStorage.getItem(`quran_${sec}-${targetIndex - 1}`)) {
+                targetIndex--;
+            }
+            if (targetIndex !== i) {
+                localStorage.setItem(`quran_${sec}-${targetIndex}`, oldData);
+                localStorage.removeItem(`quran_${sec}-${i}`);
+            }
+        }
+    }
+    
+    // Compact the numbering (remove gaps)
+    const allData = [];
+    for (let i = 1; i <= currentCount; i++) {
+        const data = localStorage.getItem(`quran_${sec}-${i}`);
+        if (data) allData.push(data);
+    }
+    
+    // Clear all and rewrite sequentially
+    for (let i = 1; i <= currentCount; i++) {
+        localStorage.removeItem(`quran_${sec}-${i}`);
+    }
+    
+    const newCount = allData.length;
+    allData.forEach((data, index) => {
+        localStorage.setItem(`quran_${sec}-${index + 1}`, data);
+    });
+    
+    localStorage.setItem(`studentCount_${sec}`, newCount);
+    
+    if (sec === currentSection) { 
+        totalStudents = newCount; 
+        if (currentStudentIndex >= newCount) currentStudentIndex = Math.max(0, newCount - 1); 
         loadStudent(currentStudentIndex + 1); 
         updateStudentDropdown(); 
     }
-    markDataChanged();  // ✅ ADD THIS LINE
+    
+    markDataChanged();
     syncToCloud();
-    alert(`✅ تم حذف الطالب بنجاح!`); 
-}async function deleteAllHistoryFromCloud() {
+    alert(`✅ تم حذف ${uniqueNumbers.length} طالب بنجاح!\nالعدد الآن: ${newCount}`); 
+}}async function deleteAllHistoryFromCloud() {
     try {
         // First, get all history record IDs
         const response = await fetch(
