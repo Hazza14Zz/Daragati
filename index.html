@@ -105,18 +105,19 @@
             outline: none;
             border-color: #059669;
         }
-        .searchable-select-dropdown {
+                .searchable-select-dropdown {
             position: absolute;
             top: 100%;
             left: 0;
             right: 0;
-            max-height: 300px;
-            overflow-y: auto;
+            max-height: 350px !important;
+            min-height: 250px !important;
+            overflow-y: auto !important;
             background: white;
             border: 2px solid #e5e7eb;
             border-top: none;
             border-radius: 0 0 12px 12px;
-            z-index: 1000;
+            z-index: 9999 !important;
             display: none;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
@@ -190,6 +191,16 @@
         .hidden { display: none !important; }
         .no-data { color: #6b7280; text-align: center; padding: 20px; font-style: italic; }
         .bottom-spacer { height: 20px; }
+
+                .searchable-select-wrapper {
+            overflow: visible !important;
+        }
+        .task-body {
+            overflow: visible !important;
+        }
+        .student-card {
+            overflow: visible !important;
+        }
     </style>
 </head>
 <body>
