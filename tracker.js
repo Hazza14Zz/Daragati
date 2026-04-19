@@ -321,6 +321,11 @@ function initApp() {
     loadStudentCounts();
     updateStudentDropdown();
     loadStudent(currentStudentIndex + 1);
+    
+    // ✅ Initialize date displays for reports
+    const months = ['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
+    document.getElementById('currentMonthDisplay').textContent = `${months[currentReportMonth.getMonth()]} ${currentReportMonth.getFullYear()}`;
+    document.getElementById('currentDateDisplay').textContent = new Date(currentReportDate).toLocaleDateString('ar-SA', { year: 'numeric', month: 'long', day: 'numeric' });
 }
 
 function loadStudentCounts() {
