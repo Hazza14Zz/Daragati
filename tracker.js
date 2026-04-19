@@ -265,6 +265,28 @@ function getSurahNumberFromName(name) {
     const surah = surahsData.find(s => s.name === name);
     return surah ? surah.number : null;
 }
+function initChoicesSelects() {
+    const selects = document.querySelectorAll('select[data-choice]');
+    selects.forEach(select => {
+        if (select._choicesInstance) return;
+        
+        const choices = new Choices(select, {
+            searchEnabled: true,
+            searchPlaceholderValue: '🔍 ابحث عن السورة...',
+            noResultsText: 'لا توجد نتائج',
+            noChoicesText: 'لا توجد خيارات',
+            itemSelectText: 'اختر',
+            shouldSort: false,
+            position: 'auto',
+            searchFloor: 1,
+            searchResultLimit: 114,
+            resetScrollPosition: true,
+            allowHTML: true,
+            searchFields: ['label']
+        });
+        select._choicesInstance = choices;
+    });
+}
 // ============================================================
 // DATE FUNCTIONS
 // ============================================================
@@ -363,6 +385,14 @@ function loadStudentCounts() {
 let rabtCounter = 0;
 
 function loadStudent(studentNum) {
+    // Destroy existing Choices instances before re-rendering
+    document.querySelectorAll('select[data-choice]').forEach(select => {
+        if (select._choicesInstance) {
+            select._choicesInstance.destroy();
+            select._choicesInstance = null;
+        }
+    });
+    
     const sid = `${currentSection}-${studentNum}`;
     const saved = localStorage.getItem(`quran_${sid}`);
     let data = { 
@@ -402,12 +432,12 @@ function loadStudent(studentNum) {
                 <div class="task-header task-header-hifz">🔰 حفظ</div>
                 <div class="task-body">
                     <div class="range-input">
-                       <select id="hifzStartSurah" class="range-select" onchange="updateStartVerses('hifz')"><option value="">اختر السورة</option>${surahOptions}</select>
+                       <select id="hifzStartSurah" class="range-select" data-choice onchange="updateStartVerses('hifz')"><option value="">اختر السورة</option>${surahOptions}</select>
                         <select id="hifzStartVerse" class="verse-select"><option value="">من آية</option></select>
                     </div>
                     <div class="range-input"><span class="arrow">⬇</span></div>
                     <div class="range-input">
-<select id="hifzEndSurah" class="range-select" onchange="updateEndVerses('hifz')"><option value="">اختر السورة</option>${surahOptions}</select>
+<select id="hifzEndSurah" class="range-select" data-choice onchange="updateEndVerses('hifz')"><option value="">اختر السورة</option>${surahOptions}</select>
                         <select id="hifzEndVerse" class="verse-select"><option value="">إلى آية</option></select>
                     </div>
                 </div>
@@ -423,12 +453,12 @@ function loadStudent(studentNum) {
                 <div class="task-header task-header-murajaa">📖 مراجعة</div>
                 <div class="task-body">
                     <div class="range-input">
-                    <select id="murajaaStartSurah" class="range-select" onchange="updateStartVerses('murajaa')"><option value="">اختر السورة</option>${surahOptions}</select>
+                    <select id="murajaaStartSurah" class="range-select" data-choice onchange="updateStartVerses('murajaa')"><option value="">اختر السورة</option>${surahOptions}</select>
                         <select id="murajaaStartVerse" class="verse-select"><option value="">من آية</option></select>
                     </div>
                     <div class="range-input"><span class="arrow">⬇</span></div>
                     <div class="range-input">
-                     <select id="murajaaEndSurah" class="range-select" onchange="updateEndVerses('murajaa')"><option value="">اختر السورة</option>${surahOptions}</select>
+                     <select id="murajaaEndSurah" class="range-select" data-choice onchange="updateEndVerses('murajaa')"><option value="">اختر السورة</option>${surahOptions}</select>
                         <select id="murajaaEndVerse" class="verse-select"><option value="">إلى آية</option></select>
                     </div>
                 </div>
@@ -452,6 +482,8 @@ function loadStudent(studentNum) {
             <button class="save-btn" onclick="saveCurrentStudent()">💾 حفظ</button>
         </div>
     `;
+
+     setTimeout(() => initChoicesSelects(), 80);  // ✅ ADD THIS LINE HERE
     
     rabtCounter = 0;
     document.getElementById('rabtContainer').innerHTML = '';
@@ -461,38 +493,51 @@ function loadStudent(studentNum) {
         addRabtItem(); 
     }
     
-    if (data.hifz) {
+       if (data.hifz) {
         setTimeout(() => {
             const startSurah = document.getElementById('hifzStartSurah');
             if (startSurah) {
                 startSurah.value = data.hifz.startSurah;
+                if (startSurah._choicesInstance) {
+                    startSurah._choicesInstance.setChoiceByValue(data.hifz.startSurah);
+                }
                 updateStartVerses('hifz');
                 setTimeout(() => {
                     document.getElementById('hifzStartVerse').value = data.hifz.startVerse;
-                    document.getElementById('hifzEndSurah').value = data.hifz.endSurah;
+                    const endSurah = document.getElementById('hifzEndSurah');
+                    endSurah.value = data.hifz.endSurah;
+                    if (endSurah._choicesInstance) {
+                        endSurah._choicesInstance.setChoiceByValue(data.hifz.endSurah);
+                    }
                     updateEndVerses('hifz');
                     setTimeout(() => document.getElementById('hifzEndVerse').value = data.hifz.endVerse, 30);
                 }, 30);
             }
-        }, 30);
+        }, 120);
     }
     
-    if (data.murajaa) {
+      if (data.murajaa) {
         setTimeout(() => {
             const startSurah = document.getElementById('murajaaStartSurah');
             if (startSurah) {
                 startSurah.value = data.murajaa.startSurah;
+                if (startSurah._choicesInstance) {
+                    startSurah._choicesInstance.setChoiceByValue(data.murajaa.startSurah);
+                }
                 updateStartVerses('murajaa');
                 setTimeout(() => {
                     document.getElementById('murajaaStartVerse').value = data.murajaa.startVerse;
-                    document.getElementById('murajaaEndSurah').value = data.murajaa.endSurah;
+                    const endSurah = document.getElementById('murajaaEndSurah');
+                    endSurah.value = data.murajaa.endSurah;
+                    if (endSurah._choicesInstance) {
+                        endSurah._choicesInstance.setChoiceByValue(data.murajaa.endSurah);
+                    }
                     updateEndVerses('murajaa');
                     setTimeout(() => document.getElementById('murajaaEndVerse').value = data.murajaa.endVerse, 30);
                 }, 30);
             }
-        }, 30);
+        }, 120);
     }
-}
 
 function addRabtItem(existing = null) {
     const container = document.getElementById('rabtContainer');
@@ -513,12 +558,12 @@ function addRabtItem(existing = null) {
             <button class="remove-btn" onclick="this.closest('.rabt-item').remove()">✖ حذف</button>
         </div>
         <div class="range-input">
-         <select class="range-select rabt-start-surah" onchange="updateRabtStartVerses('${id}')"><option value="">اختر السورة</option>${surahOptions}</select>
+            <select class="range-select rabt-start-surah" data-choice onchange="updateRabtStartVerses('${id}')"><option value="">اختر السورة</option>${surahOptions}</select>
             <select class="verse-select rabt-start-verse"><option value="">من آية</option></select>
         </div>
         <div class="range-input"><span class="arrow">⬇</span></div>
         <div class="range-input">
-          <select class="range-select rabt-end-surah" onchange="updateRabtEndVerses('${id}')"><option value="">اختر السورة</option>${surahOptions}</select>
+            <select class="range-select rabt-end-surah" data-choice onchange="updateRabtEndVerses('${id}')"><option value="">اختر السورة</option>${surahOptions}</select>
             <select class="verse-select rabt-end-verse"><option value="">إلى آية</option></select>
         </div>
     `;
@@ -528,17 +573,27 @@ function addRabtItem(existing = null) {
         setTimeout(() => {
             const item = document.getElementById(id);
             if (item) {
-                item.querySelector('.rabt-start-surah').value = existing.startSurah;
+                const startSelect = item.querySelector('.rabt-start-surah');
+                startSelect.value = existing.startSurah;
+                if (startSelect._choicesInstance) {
+                    startSelect._choicesInstance.setChoiceByValue(existing.startSurah);
+                }
                 updateRabtStartVerses(id);
                 setTimeout(() => {
                     item.querySelector('.rabt-start-verse').value = existing.startVerse;
-                    item.querySelector('.rabt-end-surah').value = existing.endSurah;
+                    const endSelect = item.querySelector('.rabt-end-surah');
+                    endSelect.value = existing.endSurah;
+                    if (endSelect._choicesInstance) {
+                        endSelect._choicesInstance.setChoiceByValue(existing.endSurah);
+                    }
                     updateRabtEndVerses(id);
                     setTimeout(() => item.querySelector('.rabt-end-verse').value = existing.endVerse, 30);
                 }, 30);
             }
         }, 30);
     }
+    
+    setTimeout(() => initChoicesSelects(), 120);
 }
 
 function updateVerseOptions(surahInput, selectEl, placeholder) {
