@@ -175,6 +175,13 @@ function logout() {
         window.location.href = 'login.html'; 
     } 
 }
+
+// ✅ PASTE THE FUNCTION HERE
+function isAdmin() {
+    const session = JSON.parse(sessionStorage.getItem('quranTrackerSession') || '{}');
+    return session.username === 'Admin.2123' || session.displayName === 'المدير';
+}
+
 function markDataChanged() {
     hasUnsavedChanges = true;
     console.log('📝 Data changed - pending sync');
