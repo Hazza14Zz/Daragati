@@ -609,7 +609,7 @@ function saveCurrentStudent() {
         }
     });
     
-    const data = { 
+        const data = { 
         name: finalName, 
         section: currentSection, 
         attendance: currentAttendance, 
@@ -622,8 +622,10 @@ function saveCurrentStudent() {
         savedAt: new Date().toISOString() 
     };
     
-       localStorage.setItem(`quran_${sid}`, JSON.stringify(data));
-    updateStudentDropdown();
+    // ✅ ADD THIS LINE
+    logTeacherAction(finalName, 'حفظ', getActionSummary(data));
+    
+    localStorage.setItem(`quran_${sid}`, JSON.stringify(data));    updateStudentDropdown();
     markDataChanged();  // ✅ ADD THIS LINE
     syncToCloud();
     
@@ -639,26 +641,51 @@ function saveCurrentStudent() {
 // ============================================================
 function switchSection(section) {
     currentSection = section;
+    
+    // Hide all sections
+    document.querySelectorAll('.tracker-section').forEach(el => el.classList.add('hidden'));
+    
+    // Show selected section
+    if (section === 'reports') {
+        document.getElementById('reportsView').classList.remove('hidden');
+        document.getElementById('trackerView').classList.add('hidden');
+        document.getElementById('section-history')?.classList.add('hidden');
+    } else if (section === 'history') {
+        document.getElementById('section-history')?.classList.remove('hidden');
+        document.getElementById('trackerView').classList.add('hidden');
+        document.getElementById('reportsView').classList.add('hidden');
+    } else {
+        document.getElementById('trackerView').classList.remove('hidden');
+        document.getElementById('reportsView').classList.add('hidden');
+        document.getElementById('section-history')?.classList.add('hidden');
+    }
+    
+    // Update tabs
+    const sections = ['highschool', 'middleschool', 'elementary', 'reports', 'history'];
     document.querySelectorAll('.tab').forEach((t, i) => {
-        t.classList.toggle('active', ['highschool','middleschool','elementary','reports'][i] === section);
+        t.classList.toggle('active', sections[i] === section);
     });
     
-    const isReports = section === 'reports';
-    document.getElementById('trackerView').classList.toggle('hidden', isReports);
-    document.getElementById('reportsView').classList.toggle('hidden', !isReports);
+    // Show/hide history tab based on admin
+    if (isAdmin()) {
+        document.getElementById('tab-history')?.classList.remove('hidden');
+    } else {
+        document.getElementById('tab-history')?.classList.add('hidden');
+    }
     
-    if (!isReports) { 
-        loadStudentCounts(); 
-        currentStudentIndex = 0; 
-        updateStudentDropdown(); 
-        loadStudent(1); 
-    } else { 
-        loadReportsData(); 
-        loadDailyReport(); 
+    if (section === 'history') {
+        loadHistoryTab();
+    } else if (section === 'reports') {
+        loadReportsData();
+        loadDailyReport();
         loadPointsReport();
+    } else if (section !== 'history') {
+        loadStudentCounts();
+        currentStudentIndex = 0;
+        updateStudentDropdown();
+        loadStudent(1);
     }
 }
-
 function updateStudentDropdown() {
     const select = document.getElementById('studentJumpSelect'); 
     if (!select) return;
@@ -1030,6 +1057,255 @@ async function subscribeToRealtimeChanges() {
                 console.log('✅ Connected to real-time sync');
             }
         });
+}
+// ============================================================
+// HISTORY LOGGING
+// ============================================================
+const HISTORY_ENABLED = true;
+
+function logTeacherAction(studentName, actionType, details) {
+    if (!HISTORY_ENABLED) return;
+    
+    const session = JSON.parse(sessionStorage.getItem('quranTrackerSession') || '{}');
+    const teacherName = session.displayName || 'غير معروف';
+    
+    const logEntry = {
+        id: Date.now() + Math.random().toString(36),
+        teacherName: teacherName,
+        studentName: studentName,
+        section: SECTION_NAMES[currentSection] || currentSection,
+        actionType: actionType,
+        details: details,
+        timestamp: new Date().toISOString()
+    };
+    
+    // Store locally
+    const pendingLogs = JSON.parse(localStorage.getItem('pendingHistoryLogs') || '[]');
+    pendingLogs.push(logEntry);
+    localStorage.setItem('pendingHistoryLogs', JSON.stringify(pendingLogs));
+    
+    console.log('📝 History logged:', teacherName, actionType, studentName);
+}
+
+function getActionSummary(data) {
+    const parts = [];
+    if (data.hifz) parts.push(`حفظ: ${data.hifz.startSurahName} ${data.hifz.startVerse}→${data.hifz.endVerse}`);
+    if (data.rabt?.length) parts.push(`ربط: ${data.rabt.length} سور`);
+    if (data.murajaa) parts.push(`مراجعة: ${data.murajaa.startSurahName} ${data.murajaa.startVerse}→${data.murajaa.endVerse}`);
+    parts.push(`حضور: ${data.attendance}`);
+    if (data.points > 0) parts.push(`نقاط: ${data.points}`);
+    return parts.join(' | ') || 'تحديث البيانات';
+}
+
+// ============================================================
+// HISTORY TAB FUNCTIONS
+// ============================================================
+let allHistoryLogs = [];
+
+async function loadHistoryTab() {
+    if (!isAdmin()) {
+        alert('❌ غير مصرح لك بالدخول');
+        switchSection('highschool');
+        return;
+    }
+    
+    document.getElementById('historyTableBody').innerHTML = '<tr><td colspan="5" style="text-align:center;">⏳ جاري التحميل...</td></tr>';
+    
+    // Load from cloud
+    await loadHistoryFromCloud();
+    
+    // Also load pending local logs
+    const pendingLogs = JSON.parse(localStorage.getItem('pendingHistoryLogs') || '[]');
+    allHistoryLogs = [...allHistoryLogs, ...pendingLogs];
+    
+    // Sort by date (newest first)
+    allHistoryLogs.sort((a, b) => new Date(b.timestamp || b.created_at) - new Date(a.timestamp || a.created_at));
+    
+    filterHistory();
+}
+
+function filterHistory() {
+    const teacherFilter = document.getElementById('historyTeacherFilter')?.value || 'all';
+    const sectionFilter = document.getElementById('historySectionFilter')?.value || 'all';
+    const dateFilter = document.getElementById('historyDateFilter')?.value;
+    
+    let filtered = allHistoryLogs;
+    
+    // Filter by teacher
+    if (teacherFilter !== 'all') {
+        filtered = filtered.filter(log => log.teacherName === teacherFilter || log.teacher_name === teacherFilter);
+    }
+    
+    // Filter by section
+    if (sectionFilter !== 'all') {
+        filtered = filtered.filter(log => log.section === sectionFilter);
+    }
+    
+    // Filter by date
+    if (dateFilter) {
+        filtered = filtered.filter(log => {
+            const logDate = (log.timestamp || log.created_at).split('T')[0];
+            return logDate === dateFilter;
+        });
+    }
+    
+    displayFilteredHistory(filtered);
+}
+
+function displayFilteredHistory(filtered) {
+    const tbody = document.getElementById('historyTableBody');
+    
+    if (filtered.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">لا توجد سجلات</td></tr>';
+        return;
+    }
+    
+    tbody.innerHTML = filtered.map(log => {
+        const date = new Date(log.timestamp || log.created_at).toLocaleString('ar-SA');
+        const teacher = log.teacherName || log.teacher_name || '-';
+        const student = log.studentName || log.student_name || '-';
+        const section = log.section || '-';
+        const details = log.details || '-';
+        
+        return `
+            <tr>
+                <td>${date}</td>
+                <td>${teacher}</td>
+                <td>${student}</td>
+                <td>${section}</td>
+                <td>${details}</td>
+            </tr>
+        `;
+    }).join('');
+}
+
+async function syncHistoryToCloud() {
+    const pendingLogs = JSON.parse(localStorage.getItem('pendingHistoryLogs') || '[]');
+    
+    if (pendingLogs.length === 0) {
+        alert('لا توجد سجلات جديدة للمزامنة');
+        return;
+    }
+    
+    if (!confirm(`سيتم مزامنة ${pendingLogs.length} سجل. هل تريد المتابعة؟`)) return;
+    
+    try {
+        for (const log of pendingLogs) {
+            await fetch(`${SUPABASE_URL}/rest/v1/history_log`, {
+                method: 'POST',
+                headers: {
+                    'apikey': SUPABASE_KEY,
+                    'Authorization': `Bearer ${SUPABASE_KEY}`,
+                    'Content-Type': 'application/json',
+                    'Prefer': 'return=minimal'
+                },
+                body: JSON.stringify({
+                    teacher_name: log.teacherName,
+                    student_name: log.studentName,
+                    section: log.section,
+                    action_type: log.actionType,
+                    details: log.details,
+                    created_at: log.timestamp
+                })
+            });
+        }
+        
+        localStorage.removeItem('pendingHistoryLogs');
+        alert(`✅ تم مزامنة ${pendingLogs.length} سجل بنجاح`);
+        
+        // Reload history tab
+        if (currentSection === 'history') {
+            loadHistoryTab();
+        }
+    } catch (e) {
+        console.error('History sync error:', e);
+        alert('❌ فشلت المزامنة. حاول مرة أخرى.');
+    }
+}
+
+async function loadHistoryFromCloud() {
+    try {
+        const response = await fetch(
+            `${SUPABASE_URL}/rest/v1/history_log?order=created_at.desc&limit=500`,
+            {
+                headers: {
+                    'apikey': SUPABASE_KEY,
+                    'Authorization': `Bearer ${SUPABASE_KEY}`
+                }
+            }
+        );
+        
+        const data = await response.json();
+        allHistoryLogs = data || [];
+        return data;
+    } catch (e) {
+        console.error('Load history error:', e);
+        allHistoryLogs = [];
+        return [];
+    }
+}
+
+function exportHistoryPDF() {
+    const teacherFilter = document.getElementById('historyTeacherFilter')?.value || 'all';
+    const sectionFilter = document.getElementById('historySectionFilter')?.value || 'all';
+    const dateFilter = document.getElementById('historyDateFilter')?.value;
+    
+    let filtered = allHistoryLogs;
+    
+    if (teacherFilter !== 'all') {
+        filtered = filtered.filter(log => log.teacherName === teacherFilter || log.teacher_name === teacherFilter);
+    }
+    if (sectionFilter !== 'all') {
+        filtered = filtered.filter(log => log.section === sectionFilter);
+    }
+    if (dateFilter) {
+        filtered = filtered.filter(log => {
+            const logDate = (log.timestamp || log.created_at).split('T')[0];
+            return logDate === dateFilter;
+        });
+    }
+    
+    const printWindow = window.open('', '_blank');
+    const gDate = getGregorianDate();
+    const hDate = document.getElementById('hijriDate').textContent;
+    
+    let html = `
+        <!DOCTYPE html><html dir="rtl"><head><meta charset="UTF-8">
+        <title>سجل التغييرات</title>
+        <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+        <style>
+            body{font-family:'Cairo',sans-serif;direction:rtl;padding:20px}
+            h1{color:#065f46;text-align:center}
+            .filters{text-align:center;margin-bottom:20px;color:#666}
+            table{width:100%;border-collapse:collapse;margin-top:20px}
+            th{background:#047857;color:white;padding:10px}
+            td{padding:8px;border-bottom:1px solid #ddd;text-align:center}
+            @media print{button{display:none}}
+            .print-btn{background:#059669;color:white;padding:10px 30px;border:none;border-radius:8px;font-size:16px;cursor:pointer;margin-top:20px}
+        </style>
+        </head><body>
+        <h1>📜 سجل التغييرات</h1>
+        <div class="filters">
+            ${teacherFilter !== 'all' ? '👤 المعلم: ' + teacherFilter : ''}
+            ${sectionFilter !== 'all' ? ' | 🏫 المرحلة: ' + sectionFilter : ''}
+            ${dateFilter ? ' | 📅 التاريخ: ' + dateFilter : ''}
+        </div>
+        <div style="text-align:center">📅 ${hDate} | 📆 ${gDate}</div>
+        <table><tr><th>التاريخ</th><th>المعلم</th><th>الطالب</th><th>المرحلة</th><th>الإجراء</th></tr>`;
+    
+    filtered.forEach(log => {
+        const date = new Date(log.timestamp || log.created_at).toLocaleString('ar-SA');
+        const teacher = log.teacherName || log.teacher_name || '-';
+        const student = log.studentName || log.student_name || '-';
+        const section = log.section || '-';
+        const details = log.details || '-';
+        html += `<tr><td>${date}</td><td>${teacher}</td><td>${student}</td><td>${section}</td><td>${details}</td></tr>`;
+    });
+    
+    html += `</table><div style="text-align:center;margin-top:20px"><button class="print-btn" onclick="window.print()">🖨️ طباعة / حفظ PDF</button></div></body></html>`;
+    
+    printWindow.document.write(html);
+    printWindow.document.close();
 }
 window.onload = () => {
     subscribeToRealtimeChanges();
