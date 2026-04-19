@@ -860,7 +860,8 @@ function loadDailyReport() {
             const hifzText = d.hifz ? `${d.hifz.startSurahName || ''} ${d.hifz.startVerse} ← ${d.hifz.endSurahName || ''} ${d.hifz.endVerse}` : '-';
             const rabtText = d.rabt?.length ? d.rabt.map(r => `${r.startSurahName || ''} ${r.startVerse} ← ${r.endSurahName || ''} ${r.endVerse}`).join('، ') : '-';
             const murajaaText = d.murajaa ? `${d.murajaa.startSurahName || ''} ${d.murajaa.startVerse} ← ${d.murajaa.endSurahName || ''} ${d.murajaa.endVerse}` : '-';
-                        const attendanceDisplay = {'حاضر':'✅','متأخر':'🕐','غائب':'❌','معذور':'⚠️'}[d.attendance] || d.attendance;
+                                   const attendanceIcon = {'حاضر':'✅', 'متأخر':'🕐', 'غائب':'❌', 'معذور':'⚠️'}[d.attendance] || '';
+            const attendanceDisplay = attendanceIcon ? `${attendanceIcon} ${d.attendance}` : d.attendance;
             h += `<tr><td>${idx+1}</td><td>${d.name || '-'}</td><td>${attendanceDisplay}</td><td>${hifzText}</td><td>${rabtText}</td><td>${murajaaText}</td><td>${d.hasQuran ? '✅' : '❌'}</td><td>${d.hasUniform ? '✅' : '❌'}</td><td>${d.points || 0}</td></tr>`; 
         });
         c.innerHTML = h + '</table>';
