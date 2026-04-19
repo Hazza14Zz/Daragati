@@ -1171,6 +1171,7 @@ function deleteMultipleStudents(sec) {
     markDataChanged();
     syncToCloud();
     alert(`✅ تم حذف ${uniqueNumbers.length} طالب بنجاح!\nالعدد الآن: ${newCount}`); 
+}
 }}async function deleteAllHistoryFromCloud() {
     try {
         // First, get all history record IDs
