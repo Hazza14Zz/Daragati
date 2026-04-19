@@ -130,6 +130,7 @@
     <button class="tab" id="tab-middleschool" onclick="switchSection('middleschool')">🏫 متوسط</button>
     <button class="tab" id="tab-elementary" onclick="switchSection('elementary')">🏫 ابتدائي</button>
     <button class="tab" id="tab-reports" onclick="switchSection('reports')">📊 تقارير</button>
+    <button class="tab hidden" id="tab-history" onclick="switchSection('history')">📜 سجل التغييرات</button>
 </div>
 
 <div id="trackerView">
@@ -205,6 +206,58 @@
         <h4 class="level-title" style="margin-top: 25px;">🏫 المرحلة الابتدائية</h4>
         <div id="points-elementary"></div>
         <button class="export-btn" onclick="exportPointsReport('elementary')">📄 تحميل PDF نقاط الابتدائي</button>
+    </div>
+</div>
+    </div>
+</div>
+
+<!-- History Section (Admin Only) -->
+<div id="section-history" class="tracker-section hidden">
+    <div class="report-section">
+        <h2 class="report-title">📜 سجل التغييرات - المشرف</h2>
+        
+        <!-- Filters -->
+        <div style="display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px;">
+            <select id="historyTeacherFilter" class="student-select" onchange="filterHistory()" style="flex: 1; min-width: 120px;">
+                <option value="all">👤 جميع المعلمين</option>
+                <option value="محمد">محمد</option>
+                <option value="ماهر">ماهر</option>
+                <option value="معتز">معتز</option>
+            </select>
+            
+            <select id="historySectionFilter" class="student-select" onchange="filterHistory()" style="flex: 1; min-width: 120px;">
+                <option value="all">🏫 جميع المراحل</option>
+                <option value="ثانوي">ثانوي</option>
+                <option value="متوسط">متوسط</option>
+                <option value="ابتدائي">ابتدائي</option>
+            </select>
+            
+            <input type="date" id="historyDateFilter" class="student-select" onchange="filterHistory()" style="flex: 1; min-width: 140px;">
+        </div>
+        
+        <!-- Sync Button -->
+        <button class="export-btn" onclick="syncHistoryToCloud()" style="margin-bottom: 15px;">📤 مزامنة سجل اليوم مع السحابة</button>
+        
+        <!-- History Table -->
+        <div style="overflow-x: auto;">
+            <table class="summary-table">
+                <thead>
+                    <tr>
+                        <th>التاريخ والوقت</th>
+                        <th>المعلم</th>
+                        <th>الطالب</th>
+                        <th>المرحلة</th>
+                        <th>الإجراء</th>
+                    </tr>
+                </thead>
+                <tbody id="historyTableBody">
+                    <tr><td colspan="5" style="text-align:center;">⏳ جاري التحميل...</td></tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- Export Button -->
+        <button class="export-btn" onclick="exportHistoryPDF()" style="margin-top: 20px;">📄 تحميل PDF للسجل</button>
     </div>
 </div>
 
