@@ -265,26 +265,85 @@ function getSurahNumberFromName(name) {
     const surah = surahsData.find(s => s.name === name);
     return surah ? surah.number : null;
 }
-function initChoicesSelects() {
-    const selects = document.querySelectorAll('select[data-choice]');
-    selects.forEach(select => {
-        if (select._choicesInstance) return;
+function initSearchableSelects() {
+    document.querySelectorAll('select[data-searchable]').forEach(select => {
+        if (select._searchableInitialized) return;
+        select._searchableInitialized = true;
         
-        const choices = new Choices(select, {
-            searchEnabled: true,
-            searchPlaceholderValue: '🔍 ابحث عن السورة...',
-            noResultsText: 'لا توجد نتائج',
-            noChoicesText: 'لا توجد خيارات',
-            itemSelectText: 'اختر',
-            shouldSort: false,
-            position: 'auto',
-            searchFloor: 1,
-            searchResultLimit: 114,
-            resetScrollPosition: true,
-            allowHTML: true,
-            searchFields: ['label']
+        const wrapper = document.createElement('div');
+        wrapper.className = 'searchable-select-wrapper';
+        select.parentNode.insertBefore(wrapper, select);
+        
+        // Create display input
+        const displayInput = document.createElement('div');
+        displayInput.className = 'searchable-select-input';
+        displayInput.textContent = select.options[select.selectedIndex]?.text || 'اختر السورة';
+        wrapper.appendChild(displayInput);
+        
+        // Create dropdown
+        const dropdown = document.createElement('div');
+        dropdown.className = 'searchable-select-dropdown';
+        wrapper.appendChild(dropdown);
+        
+        // Create search input
+        const searchInput = document.createElement('input');
+        searchInput.type = 'text';
+        searchInput.className = 'searchable-select-search';
+        searchInput.placeholder = '🔍 ابحث عن السورة...';
+        searchInput.dir = 'rtl';
+        dropdown.appendChild(searchInput);
+        
+        // Add options
+        const optionsContainer = document.createElement('div');
+        dropdown.appendChild(optionsContainer);
+        
+        function renderOptions(filter = '') {
+            optionsContainer.innerHTML = '';
+            Array.from(select.options).forEach(option => {
+                if (option.value === '') return;
+                const text = option.text;
+                if (filter && !text.includes(filter)) return;
+                
+                const optionDiv = document.createElement('div');
+                optionDiv.className = 'searchable-select-option';
+                optionDiv.textContent = text;
+                optionDiv.addEventListener('click', () => {
+                    select.value = option.value;
+                    displayInput.textContent = text;
+                    dropdown.classList.remove('show');
+                    select.dispatchEvent(new Event('change', { bubbles: true }));
+                });
+                optionsContainer.appendChild(optionDiv);
+            });
+        }
+        
+        renderOptions();
+        
+        searchInput.addEventListener('input', (e) => {
+            renderOptions(e.target.value);
         });
-        select._choicesInstance = choices;
+        
+        displayInput.addEventListener('click', (e) => {
+            e.stopPropagation();
+            document.querySelectorAll('.searchable-select-dropdown.show').forEach(d => {
+                if (d !== dropdown) d.classList.remove('show');
+            });
+            dropdown.classList.toggle('show');
+            if (dropdown.classList.contains('show')) {
+                renderOptions();
+                searchInput.focus();
+            }
+        });
+        
+        // Hide dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!wrapper.contains(e.target)) {
+                dropdown.classList.remove('show');
+            }
+        });
+        
+        // Hide original select
+        select.style.display = 'none';
     });
 }
 // ============================================================
@@ -385,14 +444,8 @@ function loadStudentCounts() {
 let rabtCounter = 0;
 
 function loadStudent(studentNum) {
-    // Destroy existing Choices instances before re-rendering
-    document.querySelectorAll('select[data-choice]').forEach(select => {
-        if (select._choicesInstance) {
-            select._choicesInstance.destroy();
-            select._choicesInstance = null;
-        }
-    });
-    
+       // Clean up any existing searchable selects
+    document.querySelectorAll('.searchable-select-wrapper').forEach(w => w.remove());    
     const sid = `${currentSection}-${studentNum}`;
     const saved = localStorage.getItem(`quran_${sid}`);
     let data = { 
@@ -432,12 +485,12 @@ function loadStudent(studentNum) {
                 <div class="task-header task-header-hifz">🔰 حفظ</div>
                 <div class="task-body">
                     <div class="range-input">
-                       <select id="hifzStartSurah" class="range-select" data-choice onchange="updateStartVerses('hifz')"><option value="">اختر السورة</option>${surahOptions}</select>
+                       <select id="hifzStartSurah" class="range-select" data-searchable onchange="updateStartVerses('hifz')"><option value="">اختر السورة</option>${surahOptions}</select>
                         <select id="hifzStartVerse" class="verse-select"><option value="">من آية</option></select>
                     </div>
                     <div class="range-input"><span class="arrow">⬇</span></div>
                     <div class="range-input">
-<select id="hifzEndSurah" class="range-select" data-choice onchange="updateEndVerses('hifz')"><option value="">اختر السورة</option>${surahOptions}</select>
+<select id="hifzEndSurah" class="range-select" data-searchable onchange="updateEndVerses('hifz')"><option value="">اختر السورة</option>${surahOptions}</select>
                         <select id="hifzEndVerse" class="verse-select"><option value="">إلى آية</option></select>
                     </div>
                 </div>
@@ -453,12 +506,12 @@ function loadStudent(studentNum) {
                 <div class="task-header task-header-murajaa">📖 مراجعة</div>
                 <div class="task-body">
                     <div class="range-input">
-                    <select id="murajaaStartSurah" class="range-select" data-choice onchange="updateStartVerses('murajaa')"><option value="">اختر السورة</option>${surahOptions}</select>
+                    <select id="murajaaStartSurah" class="range-select" data-searchable onchange="updateStartVerses('murajaa')"><option value="">اختر السورة</option>${surahOptions}</select>
                         <select id="murajaaStartVerse" class="verse-select"><option value="">من آية</option></select>
                     </div>
                     <div class="range-input"><span class="arrow">⬇</span></div>
                     <div class="range-input">
-                     <select id="murajaaEndSurah" class="range-select" data-choice onchange="updateEndVerses('murajaa')"><option value="">اختر السورة</option>${surahOptions}</select>
+                     <select id="murajaaEndSurah" class="range-select" data-searchable onchange="updateEndVerses('murajaa')"><option value="">اختر السورة</option>${surahOptions}</select>
                         <select id="murajaaEndVerse" class="verse-select"><option value="">إلى آية</option></select>
                     </div>
                 </div>
@@ -483,7 +536,7 @@ function loadStudent(studentNum) {
         </div>
     `;
 
-     setTimeout(() => initChoicesSelects(), 80);  // ✅ ADD THIS LINE HERE
+     setTimeout(() => initSearchableSelects(), 50);  // ✅ ADD THIS LINE HERE
     
     rabtCounter = 0;
     document.getElementById('rabtContainer').innerHTML = '';
@@ -493,22 +546,16 @@ function loadStudent(studentNum) {
         addRabtItem(); 
     }
     
-       if (data.hifz) {
+          if (data.hifz) {
         setTimeout(() => {
             const startSurah = document.getElementById('hifzStartSurah');
             if (startSurah) {
                 startSurah.value = data.hifz.startSurah;
-                if (startSurah._choicesInstance) {
-                    startSurah._choicesInstance.setChoiceByValue(data.hifz.startSurah);
-                }
                 updateStartVerses('hifz');
                 setTimeout(() => {
                     document.getElementById('hifzStartVerse').value = data.hifz.startVerse;
                     const endSurah = document.getElementById('hifzEndSurah');
                     endSurah.value = data.hifz.endSurah;
-                    if (endSurah._choicesInstance) {
-                        endSurah._choicesInstance.setChoiceByValue(data.hifz.endSurah);
-                    }
                     updateEndVerses('hifz');
                     setTimeout(() => document.getElementById('hifzEndVerse').value = data.hifz.endVerse, 30);
                 }, 30);
@@ -516,30 +563,22 @@ function loadStudent(studentNum) {
         }, 120);
     }
     
-      if (data.murajaa) {
+        if (data.murajaa) {
         setTimeout(() => {
             const startSurah = document.getElementById('murajaaStartSurah');
             if (startSurah) {
                 startSurah.value = data.murajaa.startSurah;
-                if (startSurah._choicesInstance) {
-                    startSurah._choicesInstance.setChoiceByValue(data.murajaa.startSurah);
-                }
                 updateStartVerses('murajaa');
                 setTimeout(() => {
                     document.getElementById('murajaaStartVerse').value = data.murajaa.startVerse;
                     const endSurah = document.getElementById('murajaaEndSurah');
                     endSurah.value = data.murajaa.endSurah;
-                    if (endSurah._choicesInstance) {
-                        endSurah._choicesInstance.setChoiceByValue(data.murajaa.endSurah);
-                    }
                     updateEndVerses('murajaa');
                     setTimeout(() => document.getElementById('murajaaEndVerse').value = data.murajaa.endVerse, 30);
                 }, 30);
             }
         }, 120);
     }
-}
-
 function addRabtItem(existing = null) {
     const container = document.getElementById('rabtContainer');
     const id = `rabt-${Date.now()}-${rabtCounter++}`;
@@ -559,34 +598,27 @@ function addRabtItem(existing = null) {
             <button class="remove-btn" onclick="this.closest('.rabt-item').remove()">✖ حذف</button>
         </div>
         <div class="range-input">
-            <select class="range-select rabt-start-surah" data-choice onchange="updateRabtStartVerses('${id}')"><option value="">اختر السورة</option>${surahOptions}</select>
+            <select class="range-select rabt-start-surah" data-searchable onchange="updateRabtStartVerses('${id}')"><option value="">اختر السورة</option>${surahOptions}</select>
             <select class="verse-select rabt-start-verse"><option value="">من آية</option></select>
         </div>
         <div class="range-input"><span class="arrow">⬇</span></div>
         <div class="range-input">
-            <select class="range-select rabt-end-surah" data-choice onchange="updateRabtEndVerses('${id}')"><option value="">اختر السورة</option>${surahOptions}</select>
+            <select class="range-select rabt-end-surah" data-searchable onchange="updateRabtEndVerses('${id}')"><option value="">اختر السورة</option>${surahOptions}</select>
             <select class="verse-select rabt-end-verse"><option value="">إلى آية</option></select>
         </div>
     `;
     container.appendChild(div);
-    
-    if (existing) {
+        if (existing) {
         setTimeout(() => {
             const item = document.getElementById(id);
             if (item) {
                 const startSelect = item.querySelector('.rabt-start-surah');
                 startSelect.value = existing.startSurah;
-                if (startSelect._choicesInstance) {
-                    startSelect._choicesInstance.setChoiceByValue(existing.startSurah);
-                }
                 updateRabtStartVerses(id);
                 setTimeout(() => {
                     item.querySelector('.rabt-start-verse').value = existing.startVerse;
                     const endSelect = item.querySelector('.rabt-end-surah');
                     endSelect.value = existing.endSurah;
-                    if (endSelect._choicesInstance) {
-                        endSelect._choicesInstance.setChoiceByValue(existing.endSurah);
-                    }
                     updateRabtEndVerses(id);
                     setTimeout(() => item.querySelector('.rabt-end-verse').value = existing.endVerse, 30);
                 }, 30);
@@ -594,7 +626,7 @@ function addRabtItem(existing = null) {
         }, 30);
     }
     
-    setTimeout(() => initChoicesSelects(), 120);
+      setTimeout(() => initSearchableSelects(), 50);
 }
 
 function updateVerseOptions(surahInput, selectEl, placeholder) {
