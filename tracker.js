@@ -1007,26 +1007,38 @@ function deleteStudent(sec) {
     markDataChanged();  // ✅ ADD THIS LINE
     syncToCloud();
     alert(`✅ تم حذف الطالب بنجاح!`); 
-}
-async function deleteAllHistoryFromCloud() {
+}async function deleteAllHistoryFromCloud() {
     try {
-        // Delete all records from history_log table
+        // First, get all history record IDs
         const response = await fetch(
             `${SUPABASE_URL}/rest/v1/history_log?select=id`,
             {
-                method: 'DELETE',
                 headers: {
                     'apikey': SUPABASE_KEY,
-                    'Authorization': `Bearer ${SUPABASE_KEY}`,
-                    'Content-Type': 'application/json'
+                    'Authorization': `Bearer ${SUPABASE_KEY}`
                 }
             }
         );
         
-        if (response.ok) {
-            console.log('✅ All history deleted from cloud');
+        const records = await response.json();
+        
+        if (records && records.length > 0) {
+            // Delete each record individually
+            for (const record of records) {
+                await fetch(
+                    `${SUPABASE_URL}/rest/v1/history_log?id=eq.${record.id}`,
+                    {
+                        method: 'DELETE',
+                        headers: {
+                            'apikey': SUPABASE_KEY,
+                            'Authorization': `Bearer ${SUPABASE_KEY}`
+                        }
+                    }
+                );
+            }
+            console.log(`✅ Deleted ${records.length} history records from cloud`);
         } else {
-            console.error('Failed to delete history from cloud');
+            console.log('✅ No history records to delete');
         }
     } catch (e) {
         console.error('Error deleting history:', e);
