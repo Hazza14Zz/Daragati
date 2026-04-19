@@ -1116,47 +1116,32 @@ function deleteMultipleStudents(sec) {
         return;
     }
     
-    // Remove duplicates and sort descending (to delete from end first)
-    const uniqueNumbers = [...new Set(numbers)].sort((a, b) => b - a);
+    // Remove duplicates and sort
+    const uniqueNumbers = [...new Set(numbers)].sort((a, b) => a - b);
     
-    if (!confirm(`حذف ${uniqueNumbers.length} طالب:\nالأرقام: ${uniqueNumbers.reverse().join(', ')}\nمن ${SECTION_NAMES[sec]}؟`)) return;
+    if (!confirm(`حذف ${uniqueNumbers.length} طالب:\nالأرقام: ${uniqueNumbers.join(', ')}\nمن ${SECTION_NAMES[sec]}؟`)) return;
     
-    // Delete from highest to lowest to avoid index shifting issues
-    uniqueNumbers.sort((a, b) => b - a).forEach(n => {
-        localStorage.removeItem(`quran_${sec}-${n}`);
-    });
-    
-    // Renumber remaining students
+    // Collect all remaining student data (skip deleted ones)
+    const remainingData = [];
     for (let i = 1; i <= currentCount; i++) {
-        const oldData = localStorage.getItem(`quran_${sec}-${i}`);
-        if (oldData) {
-            // Find the next available slot
-            let targetIndex = i;
-            while (targetIndex > 1 && !localStorage.getItem(`quran_${sec}-${targetIndex - 1}`)) {
-                targetIndex--;
-            }
-            if (targetIndex !== i) {
-                localStorage.setItem(`quran_${sec}-${targetIndex}`, oldData);
-                localStorage.removeItem(`quran_${sec}-${i}`);
-            }
+        if (!uniqueNumbers.includes(i)) {
+            const data = localStorage.getItem(`quran_${sec}-${i}`);
+            if (data) remainingData.push(data);
         }
     }
     
-    // Compact the numbering (remove gaps)
-    const allData = [];
-    for (let i = 1; i <= currentCount; i++) {
-        const data = localStorage.getItem(`quran_${sec}-${i}`);
-        if (data) allData.push(data);
-    }
-    
-    // Clear all and rewrite sequentially
+    // Clear ALL existing student data for this section
     for (let i = 1; i <= currentCount; i++) {
         localStorage.removeItem(`quran_${sec}-${i}`);
     }
     
-    const newCount = allData.length;
-    allData.forEach((data, index) => {
-        localStorage.setItem(`quran_${sec}-${index + 1}`, data);
+    // Rewrite remaining students sequentially starting from 1
+    const newCount = remainingData.length;
+    remainingData.forEach((data, index) => {
+        const newIndex = index + 1;
+        const parsed = JSON.parse(data);
+        parsed.name = parsed.name || `طالب ${newIndex}`;
+        localStorage.setItem(`quran_${sec}-${newIndex}`, JSON.stringify(parsed));
     });
     
     localStorage.setItem(`studentCount_${sec}`, newCount);
@@ -1171,8 +1156,7 @@ function deleteMultipleStudents(sec) {
     markDataChanged();
     syncToCloud();
     alert(`✅ تم حذف ${uniqueNumbers.length} طالب بنجاح!\nالعدد الآن: ${newCount}`); 
-}
-async function deleteAllHistoryFromCloud() {
+}async function deleteAllHistoryFromCloud() {
     try {
         // First, get all history record IDs
         const response = await fetch(
