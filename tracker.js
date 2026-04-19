@@ -538,6 +538,7 @@ function loadStudent(studentNum) {
             }
         }, 120);
     }
+}
 
 function addRabtItem(existing = null) {
     const container = document.getElementById('rabtContainer');
