@@ -678,7 +678,7 @@ function switchSection(section) {
         document.getElementById('tab-history')?.classList.add('hidden');
     }
     
-    if (section === 'history') {
+       if (section === 'history') {
         loadHistoryTab();
     } else if (section === 'reports') {
         loadReportsData();
