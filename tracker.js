@@ -425,11 +425,14 @@ function loadStudent(studentNum) {
                     </div>
                 </div>
             </div>
-            <div class="attendance-row">
-                <button class="attendance-btn ${currentAttendance === 'حاضر' ? 'active' : ''}" onclick="setAttendance('حاضر')">✅ حاضر</button>
-                <button class="attendance-btn ${currentAttendance === 'غائب' ? 'active' : ''}" onclick="setAttendance('غائب')">❌ غائب</button>
-                <button class="attendance-btn ${currentAttendance === 'معذور' ? 'active' : ''}" onclick="setAttendance('معذور')">⚠️ معذور</button>
-            </div>
+           <div class="attendance-row">
+    <button class="attendance-btn ${currentAttendance === 'حاضر' ? 'active' : ''}" onclick="setAttendance('حاضر')">✅ حاضر</button>
+    <button class="attendance-btn late ${currentAttendance === 'متأخر' ? 'active' : ''}" onclick="setAttendance('متأخر')">🕐 متأخر</button>
+</div>
+<div class="attendance-row">
+    <button class="attendance-btn ${currentAttendance === 'غائب' ? 'active' : ''}" onclick="setAttendance('غائب')">❌ غائب</button>
+    <button class="attendance-btn ${currentAttendance === 'معذور' ? 'active' : ''}" onclick="setAttendance('معذور')">⚠️ معذور</button>
+</div>
             <div class="checks-row">
                 <label class="check-item"><input type="checkbox" id="quranCheck" ${data.hasQuran ? 'checked' : ''}> 📚 مصحف</label>
                 <label class="check-item"><input type="checkbox" id="uniformCheck" ${data.hasUniform ? 'checked' : ''}> 👕 زي</label>
@@ -857,7 +860,8 @@ function loadDailyReport() {
             const hifzText = d.hifz ? `${d.hifz.startSurahName || ''} ${d.hifz.startVerse} ← ${d.hifz.endSurahName || ''} ${d.hifz.endVerse}` : '-';
             const rabtText = d.rabt?.length ? d.rabt.map(r => `${r.startSurahName || ''} ${r.startVerse} ← ${r.endSurahName || ''} ${r.endVerse}`).join('، ') : '-';
             const murajaaText = d.murajaa ? `${d.murajaa.startSurahName || ''} ${d.murajaa.startVerse} ← ${d.murajaa.endSurahName || ''} ${d.murajaa.endVerse}` : '-';
-            h += `<tr><td>${idx+1}</td><td>${d.name || '-'}</td><td>${d.attendance || '-'}</td><td>${hifzText}</td><td>${rabtText}</td><td>${murajaaText}</td><td>${d.hasQuran ? '✅' : '❌'}</td><td>${d.hasUniform ? '✅' : '❌'}</td><td>${d.points || 0}</td></tr>`; 
+                        const attendanceDisplay = {'حاضر':'✅','متأخر':'🕐','غائب':'❌','معذور':'⚠️'}[d.attendance] || d.attendance;
+            h += `<tr><td>${idx+1}</td><td>${d.name || '-'}</td><td>${attendanceDisplay}</td><td>${hifzText}</td><td>${rabtText}</td><td>${murajaaText}</td><td>${d.hasQuran ? '✅' : '❌'}</td><td>${d.hasUniform ? '✅' : '❌'}</td><td>${d.points || 0}</td></tr>`; 
         });
         c.innerHTML = h + '</table>';
     });
