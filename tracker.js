@@ -327,66 +327,10 @@ function initApp() {
     document.getElementById('currentMonthDisplay').textContent = `${months[currentReportMonth.getMonth()]} ${currentReportMonth.getFullYear()}`;
     document.getElementById('currentDateDisplay').textContent = new Date(currentReportDate).toLocaleDateString('ar-SA', { year: 'numeric', month: 'long', day: 'numeric' });
     
-    // ✅ Pre-populate monthly summary tables with zeros
-    ['highschool', 'middleschool', 'elementary'].forEach(s => {
-        const summaryEl = document.getElementById(`${s}-summary`);
-        if (summaryEl) {
-            summaryEl.innerHTML = `
-                <table class="summary-table">
-                    <thead>
-                        <tr><th>المهمة</th><th>إجمالي الصفحات</th><th>إجمالي الختمات</th></tr>
-                    </thead>
-                    <tbody>
-                        <tr><td>📖 حفظ</td><td>0</td><td>0.00</td></tr>
-                        <tr><td>🔗 ربط</td><td>0</td><td>0.00</td></tr>
-                        <tr><td>📚 مراجعة</td><td>0</td><td>0.00</td></tr>
-                        <tr class="total-row"><td><strong>📄 المجموع</strong></td><td><strong>0</strong></td><td><strong>0.00</strong></td></tr>
-                    </tbody>
-                </table>
-            `;
-        }
-    });
-    
-    // ✅ Pre-populate daily report containers with "no data" message
-    ['highschool', 'middleschool', 'elementary'].forEach(s => {
-        const dailyEl = document.getElementById(`daily-${s}`);
-        if (dailyEl) {
-            dailyEl.innerHTML = '<div class="no-data">لا توجد بيانات لهذا اليوم</div>';
-        }
-    });
-    
-    // ✅ Pre-populate points report with all students and zeros
-    ['highschool', 'middleschool', 'elementary'].forEach(s => {
-        const pointsEl = document.getElementById(`points-${s}`);
-        if (pointsEl) {
-            const count = parseInt(localStorage.getItem(`studentCount_${s}`) || '50');
-            const students = [];
-            for (let i = 1; i <= count; i++) {
-                const saved = localStorage.getItem(`quran_${s}-${i}`);
-                let name = `طالب ${i}`;
-                let points = 0;
-                if (saved) {
-                    try {
-                        const d = JSON.parse(saved);
-                        if (d.name) name = d.name;
-                        if (d.points) points = parseInt(d.points) || 0;
-                    } catch(e) {}
-                }
-                students.push({ number: i, name: name, points: points });
-            }
-            students.sort((a, b) => b.points - a.points);
-            let rows = '';
-            students.forEach((student, idx) => {
-                rows += `<tr><td>${idx + 1}</td><td>${student.name}</td><td>${student.points}</td></tr>`;
-            });
-            pointsEl.innerHTML = `
-                <table class="summary-table">
-                    <thead><tr><th>#</th><th>الطالب</th><th>النقاط</th></tr></thead>
-                    <tbody>${rows}</tbody>
-                </table>
-            `;
-        }
-    });
+    // ✅ Load actual report data (not static zeros)
+    loadReportsData();
+    loadDailyReport();
+    loadPointsReport();
 }
 
 function loadStudentCounts() {
