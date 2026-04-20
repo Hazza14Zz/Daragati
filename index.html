@@ -241,11 +241,12 @@
 </div>
 
 <div class="tabs">
-    <button class="tab active" id="tab-highschool" onclick="switchSection('highschool')">🏫 ثانوي</button>
+    <button class="tab" id="tab-highschool" onclick="switchSection('highschool')">🏫 ثانوي</button>
     <button class="tab" id="tab-middleschool" onclick="switchSection('middleschool')">🏫 متوسط</button>
     <button class="tab" id="tab-elementary" onclick="switchSection('elementary')">🏫 ابتدائي</button>
     <button class="tab" id="tab-reports" onclick="switchSection('reports')">📊 تقارير</button>
-    <button class="tab hidden" id="tab-history" onclick="switchSection('history')">📜 سجل التغييرات</button>
+    <button class="tab" id="tab-points" onclick="switchSection('points')">⭐ نقاط</button>
+    <button class="tab hidden" id="tab-history" onclick="switchSection('history')">📜 سجل</button>
 </div>
 
 <div id="trackerView">
@@ -452,6 +453,93 @@
                     <div id="points-alltime-elementary" class="report-content"></div>
                 </div>
             </div>
+        </div>
+        
+    </div>
+</div>
+    <!-- Points View -->
+<div id="pointsView" class="tracker-section hidden">
+    <div class="points-container">
+        
+        <!-- Points Period Tabs -->
+        <div class="points-main-tabs">
+            <button class="points-main-tab active" onclick="switchPointsTab('weekly')">📅 أسبوعي</button>
+            <button class="points-main-tab" onclick="switchPointsTab('monthly')">📆 شهري</button>
+            <button class="points-main-tab" onclick="switchPointsTab('alltime')">🏆 كل الوقت</button>
+        </div>
+        
+        <!-- Weekly Points View -->
+        <div id="points-weekly-view" class="points-tab-content">
+            <!-- Week Selector -->
+            <div class="week-selector">
+                <button class="week-btn" onclick="changeWeek(-1)">◀</button>
+                <span id="currentWeekDisplay" class="week-display"></span>
+                <button class="week-btn" onclick="changeWeek(1)">▶</button>
+            </div>
+            
+            <!-- Three Columns -->
+            <div class="points-columns">
+                <div class="points-column">
+                    <div class="column-header">🏫 ثانوي</div>
+                    <div id="points-weekly-highschool" class="points-column-content"></div>
+                </div>
+                <div class="points-column">
+                    <div class="column-header">🏫 متوسط</div>
+                    <div id="points-weekly-middleschool" class="points-column-content"></div>
+                </div>
+                <div class="points-column">
+                    <div class="column-header">🏫 ابتدائي</div>
+                    <div id="points-weekly-elementary" class="points-column-content"></div>
+                </div>
+            </div>
+            <button class="export-btn full-width" onclick="exportAllPointsReport('weekly')">📄 تصدير تقرير النقاط الأسبوعي PDF</button>
+        </div>
+        
+        <!-- Monthly Points View -->
+        <div id="points-monthly-view" class="points-tab-content hidden">
+            <!-- Month Selector -->
+            <div class="month-selector-points">
+                <button class="month-btn" onclick="changePointsMonth(-1)">◀</button>
+                <span id="currentPointsMonthDisplay" class="month-display"></span>
+                <button class="month-btn" onclick="changePointsMonth(1)">▶</button>
+            </div>
+            
+            <!-- Three Columns -->
+            <div class="points-columns">
+                <div class="points-column">
+                    <div class="column-header">🏫 ثانوي</div>
+                    <div id="points-monthly-highschool" class="points-column-content"></div>
+                </div>
+                <div class="points-column">
+                    <div class="column-header">🏫 متوسط</div>
+                    <div id="points-monthly-middleschool" class="points-column-content"></div>
+                </div>
+                <div class="points-column">
+                    <div class="column-header">🏫 ابتدائي</div>
+                    <div id="points-monthly-elementary" class="points-column-content"></div>
+                </div>
+            </div>
+            <button class="export-btn full-width" onclick="exportAllPointsReport('monthly')">📄 تصدير تقرير النقاط الشهري PDF</button>
+        </div>
+        
+        <!-- All-Time Points View -->
+        <div id="points-alltime-view" class="points-tab-content hidden">
+            <!-- Three Columns -->
+            <div class="points-columns">
+                <div class="points-column">
+                    <div class="column-header">🏫 ثانوي</div>
+                    <div id="points-alltime-highschool" class="points-column-content"></div>
+                </div>
+                <div class="points-column">
+                    <div class="column-header">🏫 متوسط</div>
+                    <div id="points-alltime-middleschool" class="points-column-content"></div>
+                </div>
+                <div class="points-column">
+                    <div class="column-header">🏫 ابتدائي</div>
+                    <div id="points-alltime-elementary" class="points-column-content"></div>
+                </div>
+            </div>
+            <button class="export-btn full-width" onclick="exportAllPointsReport('alltime')">📄 تصدير تقرير النقاط الكلي PDF</button>
         </div>
         
     </div>
