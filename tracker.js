@@ -940,8 +940,9 @@ function loadReportsData() {
 }
 function loadDailyReport() {
     document.getElementById('currentDateDisplay').textContent = new Date(currentReportDate).toLocaleDateString('ar-SA', { year: 'numeric', month: 'long', day: 'numeric' });
-    ['highschool','middleschool','elementary'].forEach(s => {
-        const c = document.getElementById(`daily-${s}`); 
+    
+    ['highschool', 'middleschool', 'elementary'].forEach(s => {
+        const c = document.getElementById(`daily-${s}`);  // Changed from daily-highschool etc.
         const st = [];
         for (let i = 0; i < localStorage.length; i++) { 
             const k = localStorage.key(i); 
@@ -962,20 +963,133 @@ function loadDailyReport() {
             const hifzText = d.hifz ? `${d.hifz.startSurahName || ''} ${d.hifz.startVerse} ← ${d.hifz.endSurahName || ''} ${d.hifz.endVerse}` : '-';
             const rabtText = d.rabt?.length ? d.rabt.map(r => `${r.startSurahName || ''} ${r.startVerse} ← ${r.endSurahName || ''} ${r.endVerse}`).join('، ') : '-';
             const murajaaText = d.murajaa ? `${d.murajaa.startSurahName || ''} ${d.murajaa.startVerse} ← ${d.murajaa.endSurahName || ''} ${d.murajaa.endVerse}` : '-';
-                                   const attendanceIcon = {'حاضر':'✅', 'متأخر':'🕐', 'غائب':'❌', 'معذور':'⚠️'}[d.attendance] || '';
+            const attendanceIcon = {'حاضر':'✅', 'متأخر':'🕐', 'غائب':'❌', 'معذور':'⚠️'}[d.attendance] || '';
             const attendanceDisplay = attendanceIcon ? `${attendanceIcon} ${d.attendance}` : d.attendance;
             h += `<tr><td>${idx+1}</td><td>${d.name || '-'}</td><td>${attendanceDisplay}</td><td>${hifzText}</td><td>${rabtText}</td><td>${murajaaText}</td><td>${d.hasQuran ? '✅' : '❌'}</td><td>${d.hasUniform ? '✅' : '❌'}</td><td>${d.points || 0}</td></tr>`; 
         });
         c.innerHTML = h + '</table>';
     });
 }
+// ============================================================
+// POINTS REPORTS - Weekly, Monthly, All-Time
+// ============================================================
 
-// ============================================================
-// POINTS REPORT
-// ============================================================
 function loadPointsReport() {
+    loadWeeklyPointsReport();
+    loadMonthlyPointsReport();
+    loadAllTimePointsReport();
+}
+
+function loadWeeklyPointsReport() {
+    const today = new Date();
+    const weekStart = new Date(today);
+    weekStart.setDate(today.getDate() - today.getDay()); // Sunday
+    weekStart.setHours(0, 0, 0, 0);
+    
     ['highschool', 'middleschool', 'elementary'].forEach(section => {
-        const container = document.getElementById(`points-${section}`);
+        const container = document.getElementById(`points-weekly-${section}`);
+        if (!container) return;
+        
+        const students = [];
+        const count = parseInt(localStorage.getItem(`studentCount_${section}`) || '50');
+        
+        for (let i = 1; i <= count; i++) {
+            const key = `quran_${section}-${i}`;
+            const saved = localStorage.getItem(key);
+            
+            let name = `طالب ${i}`;
+            let weeklyPoints = 0;
+            
+            if (saved) {
+                try {
+                    const data = JSON.parse(saved);
+                    if (data.name) name = data.name;
+                    
+                    // Check if points were earned this week
+                    if (data.savedAt) {
+                        const savedDate = new Date(data.savedAt);
+                        if (savedDate >= weekStart && savedDate <= today) {
+                            weeklyPoints = parseInt(data.points) || 0;
+                        }
+                    }
+                } catch (e) {}
+            }
+            
+            students.push({ number: i, name: name, points: weeklyPoints });
+        }
+        
+        students.sort((a, b) => b.points - a.points);
+        
+        let html = `
+            <table class="summary-table">
+                <thead><tr><th>#</th><th>الطالب</th><th>النقاط</th></tr></thead>
+                <tbody>
+        `;
+        
+        students.forEach((s, idx) => {
+            html += `<tr><td>${idx + 1}</td><td>${s.name}</td><td>${s.points}</td></tr>`;
+        });
+        
+        html += `</tbody></table>`;
+        container.innerHTML = html;
+    });
+}
+
+function loadMonthlyPointsReport() {
+    const today = new Date();
+    const monthStart = new Date(today.getFullYear(), today.getMonth(), 1);
+    
+    ['highschool', 'middleschool', 'elementary'].forEach(section => {
+        const container = document.getElementById(`points-monthly-${section}`);
+        if (!container) return;
+        
+        const students = [];
+        const count = parseInt(localStorage.getItem(`studentCount_${section}`) || '50');
+        
+        for (let i = 1; i <= count; i++) {
+            const key = `quran_${section}-${i}`;
+            const saved = localStorage.getItem(key);
+            
+            let name = `طالب ${i}`;
+            let monthlyPoints = 0;
+            
+            if (saved) {
+                try {
+                    const data = JSON.parse(saved);
+                    if (data.name) name = data.name;
+                    
+                    if (data.savedAt) {
+                        const savedDate = new Date(data.savedAt);
+                        if (savedDate >= monthStart && savedDate <= today) {
+                            monthlyPoints = parseInt(data.points) || 0;
+                        }
+                    }
+                } catch (e) {}
+            }
+            
+            students.push({ number: i, name: name, points: monthlyPoints });
+        }
+        
+        students.sort((a, b) => b.points - a.points);
+        
+        let html = `
+            <table class="summary-table">
+                <thead><tr><th>#</th><th>الطالب</th><th>النقاط</th></tr></thead>
+                <tbody>
+        `;
+        
+        students.forEach((s, idx) => {
+            html += `<tr><td>${idx + 1}</td><td>${s.name}</td><td>${s.points}</td></tr>`;
+        });
+        
+        html += `</tbody></table>`;
+        container.innerHTML = html;
+    });
+}
+
+function loadAllTimePointsReport() {
+    ['highschool', 'middleschool', 'elementary'].forEach(section => {
+        const container = document.getElementById(`points-alltime-${section}`);
         if (!container) return;
         
         const students = [];
@@ -1015,7 +1129,6 @@ function loadPointsReport() {
         container.innerHTML = html;
     });
 }
-
 // ============================================================
 // PDF EXPORT
 // ============================================================
@@ -1053,16 +1166,29 @@ function exportGrandTotal() {
     printWindow.document.close();
 }
 
-function exportPointsReport(level) {
+function exportPointsReport(level, period = 'alltime') {
     const sectionName = SECTION_NAMES[level];
-    const container = document.getElementById(`points-${level}`);
+    let container;
+    let periodName;
+    
+    if (period === 'weekly') {
+        container = document.getElementById(`points-weekly-${level}`);
+        periodName = 'الأسبوعي';
+    } else if (period === 'monthly') {
+        container = document.getElementById(`points-monthly-${level}`);
+        periodName = 'الشهري';
+    } else {
+        container = document.getElementById(`points-alltime-${level}`);
+        periodName = 'الكلي';
+    }
+    
     const gDate = getGregorianDate();
     const hDate = document.getElementById('hijriDate').textContent;
+    
     const printWindow = window.open('', '_blank');
-    printWindow.document.write(`<!DOCTYPE html><html dir="rtl"><head><meta charset="UTF-8"><title>تقرير نقاط ${sectionName}</title><link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet"><style>body{font-family:'Cairo',sans-serif;direction:rtl;padding:20px}h1{color:#065f46;text-align:center}.date-info{text-align:center;color:#047857;margin-bottom:20px}table{width:100%;border-collapse:collapse;margin-top:20px}th{background:#047857;color:white;padding:10px}td{padding:8px;border-bottom:1px solid #ddd;text-align:center}@media print{button{display:none}}.print-btn{background:#059669;color:white;padding:10px 30px;border:none;border-radius:8px;font-size:16px;cursor:pointer;margin-top:20px}</style></head><body><h1>⭐ تقرير نقاط المرحلة ${sectionName}</h1><div class="date-info">📅 ${hDate} | 📆 ${gDate}</div>${container.innerHTML}<div style="text-align:center;margin-top:20px"><button class="print-btn" onclick="window.print()">🖨️ طباعة / حفظ PDF</button></div></body></html>`);
+    printWindow.document.write(`<!DOCTYPE html><html dir="rtl"><head><meta charset="UTF-8"><title>تقرير نقاط ${sectionName} ${periodName}</title><link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet"><style>body{font-family:'Cairo',sans-serif;direction:rtl;padding:20px}h1{color:#065f46;text-align:center}.date-info{text-align:center;color:#047857;margin-bottom:20px}table{width:100%;border-collapse:collapse;margin-top:20px}th{background:#047857;color:white;padding:10px}td{padding:8px;border-bottom:1px solid #ddd;text-align:center}@media print{button{display:none}}.print-btn{background:#059669;color:white;padding:10px 30px;border:none;border-radius:8px;font-size:16px;cursor:pointer;margin-top:20px}</style></head><body><h1>⭐ تقرير نقاط المرحلة ${sectionName} (${periodName})</h1><div class="date-info">📅 ${hDate} | 📆 ${gDate}</div>${container.innerHTML}<div style="text-align:center;margin-top:20px"><button class="print-btn" onclick="window.print()">🖨️ طباعة / حفظ PDF</button></div></body></html>`);
     printWindow.document.close();
 }
-
 // ============================================================
 // ADMIN PANEL
 // ============================================================
