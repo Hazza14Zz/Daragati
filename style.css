@@ -284,41 +284,29 @@ label, option, optgroup {
     }
 }
 
-/* Points Period Tabs */
-.points-tabs {
+.date-selector {
     display: flex;
-    gap: 8px;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
     margin-bottom: 16px;
-    border-bottom: 2px solid #e5e7eb;
-    padding-bottom: 8px;
 }
 
-.points-tab {
-    flex: 1;
-    padding: 10px 16px;
+.date-selector .month-btn {
+    background-color: #059669;
+    color: white;
+    padding: 8px 16px;
     border-radius: 40px;
     border: none;
-    background: #f3f4f6;
-    color: #4b5563;
-    font-size: 14px;
-    font-weight: 600;
+    font-weight: 700;
     cursor: pointer;
-    transition: all 0.2s;
+    font-size: 14px;
 }
 
-.points-tab.active {
-    background: #059669;
-    color: white;
-}
-
-.points-tab:hover:not(.active) {
-    background: #e5e7eb;
-}
-
-.points-period-section {
-    transition: opacity 0.2s;
-}
-
-.points-period-section.hidden {
-    display: none;
+.date-selector .date-display {
+    flex: 1;
+    text-align: center;
+    font-weight: 700;
+    font-size: 14px;
+    color: #065f46;
 }
