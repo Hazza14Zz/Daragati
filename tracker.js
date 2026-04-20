@@ -1104,31 +1104,61 @@ function addMultipleStudents(sec) {
 
 function deleteMultipleStudents(sec) { 
     const currentCount = parseInt(localStorage.getItem(`studentCount_${sec}`) || '50');
-    const input = prompt(`العدد الحالي: ${currentCount}\nأدخل أرقام الطلاب المراد حذفهم:\n(مثال: 12,33,45,50 أو 13)`);
+    const input = prompt(`العدد الحالي: ${currentCount}\nأدخل أرقام الطلاب المراد حذفهم:\n(مثال: 12,14,32,50 أو 30-45)`);
     
     if (!input) return;
     
-    // Parse numbers from input (supports commas, spaces, or both)
-    const numbers = input.split(/[,\s]+/).map(n => parseInt(n)).filter(n => !isNaN(n) && n >= 1 && n <= currentCount);
+    // Parse numbers and ranges
+    const numbers = [];
+    const parts = input.split(/[,\s]+/);
+    
+    parts.forEach(part => {
+        if (part.includes('-')) {
+            // Handle range like "30-45"
+            const [start, end] = part.split('-').map(n => parseInt(n));
+            if (!isNaN(start) && !isNaN(end)) {
+                const from = Math.min(start, end);
+                const to = Math.max(start, end);
+                for (let i = from; i <= to; i++) {
+                    if (i >= 1 && i <= currentCount) {
+                        numbers.push(i);
+                    }
+                }
+            }
+        } else {
+            // Handle single number
+            const num = parseInt(part);
+            if (!isNaN(num) && num >= 1 && num <= currentCount) {
+                numbers.push(num);
+            }
+        }
+    });
     
     if (numbers.length === 0) {
         alert("❌ لم يتم إدخال أرقام صحيحة");
         return;
     }
     
-    // Remove duplicates and sort
     const uniqueNumbers = [...new Set(numbers)].sort((a, b) => a - b);
     
-    if (!confirm(`حذف ${uniqueNumbers.length} طالب:\nالأرقام: ${uniqueNumbers.join(', ')}\nمن ${SECTION_NAMES[sec]}؟`)) return;
+    if (!confirm(`حذف ${uniqueNumbers.length} طالب:\nالأرقام: ${uniqueNumbers.slice(0, 20).join(', ')}${uniqueNumbers.length > 20 ? '...' : ''}\nمن ${SECTION_NAMES[sec]}؟`)) return;
     
-    // Collect all remaining student data (skip deleted ones)
-    const remainingData = [];
+    // ✅ Collect ALL students with their data (or default empty data)
+    const allStudentsData = [];
     for (let i = 1; i <= currentCount; i++) {
-        if (!uniqueNumbers.includes(i)) {
-            const data = localStorage.getItem(`quran_${sec}-${i}`);
-            if (data) remainingData.push(data);
+        const saved = localStorage.getItem(`quran_${sec}-${i}`);
+        if (saved) {
+            allStudentsData.push({ index: i, data: saved });
+        } else {
+            allStudentsData.push({ 
+                index: i, 
+                data: JSON.stringify({ name: `طالب ${i}`, attendance: 'حاضر', hasQuran: false, hasUniform: false, points: 0 }) 
+            });
         }
     }
+    
+    // Filter out deleted students
+    const remainingStudents = allStudentsData.filter(item => !uniqueNumbers.includes(item.index));
     
     // Clear ALL existing student data for this section
     for (let i = 1; i <= currentCount; i++) {
@@ -1136,10 +1166,10 @@ function deleteMultipleStudents(sec) {
     }
     
     // Rewrite remaining students sequentially starting from 1
-    const newCount = remainingData.length;
-    remainingData.forEach((data, index) => {
-        const newIndex = index + 1;
-        const parsed = JSON.parse(data);
+    const newCount = remainingStudents.length;
+    remainingStudents.forEach((item, idx) => {
+        const newIndex = idx + 1;
+        const parsed = JSON.parse(item.data);
         parsed.name = parsed.name || `طالب ${newIndex}`;
         localStorage.setItem(`quran_${sec}-${newIndex}`, JSON.stringify(parsed));
     });
@@ -1156,7 +1186,8 @@ function deleteMultipleStudents(sec) {
     markDataChanged();
     syncToCloud();
     alert(`✅ تم حذف ${uniqueNumbers.length} طالب بنجاح!\nالعدد الآن: ${newCount}`); 
-}async function deleteAllHistoryFromCloud() {
+}
+async function deleteAllHistoryFromCloud() {
     try {
         // First, get all history record IDs
         const response = await fetch(
