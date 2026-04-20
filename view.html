@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>عرض متابعة الحلقات</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+            -webkit-tap-highlight-color: transparent; 
+            font-family: 'Cairo', sans-serif;
+        }
+        body { 
+            font-family: 'Cairo', sans-serif; 
+            background-color: #f8fafc; 
+            padding: 12px 8px 40px 8px; 
+            min-height: 100vh; 
+            direction: rtl;
+            text-align: right;
+        }
+        .user-bar { 
+            background: linear-gradient(to left, #059669, #047857, #065f46); 
+            color: white; 
+            padding: 12px 16px; 
+            border-radius: 16px; 
+            margin-bottom: 16px; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1); 
+        }
+        .user-info { 
+            display: flex; 
+            align-items: center; 
+            gap: 8px; 
+        }
+        .user-icon { 
+            font-size: 28px; 
+        }
+        .user-name { 
+            font-weight: 700; 
+            font-size: 16px; 
+        }
+        .logout-btn { 
+            background-color: #ef4444; 
+            color: white; 
+            padding: 10px 16px; 
+            border-radius: 40px; 
+            border: none; 
+            font-weight: 700; 
+            font-size: 14px; 
+            cursor: pointer; 
+            display: flex; 
+            align-items: center; 
+            gap: 6px; 
+        }
+        .date-bar { 
+            background: linear-gradient(to left, #059669, #047857, #065f46); 
+            color: white; 
+            padding: 14px; 
+            border-radius: 16px; 
+            margin-bottom: 16px; 
+            text-align: center; 
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1); 
+        }
+        .date-content { 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            gap: 12px; 
+            flex-wrap: wrap; 
+        }
+        .date-item { 
+            display: flex; 
+            align-items: center; 
+            gap: 6px; 
+            font-size: 15px; 
+            font-weight: 700; 
+        }
+        h1 { 
+            font-size: 22px; 
+            font-weight: 700; 
+            color: #065f46; 
+            text-align: center; 
+            margin-bottom: 16px; 
+        }
+        
+        /* View Tabs */
+        .view-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            background: white;
+            padding: 8px;
+            border-radius: 50px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        .view-tab {
+            flex: 1;
+            padding: 14px 8px;
+            border-radius: 40px;
+            border: none;
+            background: #f3f4f6;
+            color: #4b5563;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .view-tab.active {
+            background: #059669;
+            color: white;
+        }
+        
+        /* Tab Content */
+        .tab-content {
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+        .tab-pane {
+            display: none;
+        }
+        .tab-pane.active {
+            display: block;
+        }
+        
+        /* Section Header */
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+        .section-header h3 {
+            font-size: 1.2rem;
+            color: #047857;
+            margin: 0;
+        }
+        
+        /* Search Bar */
+        .search-container {
+            margin-bottom: 16px;
+        }
+        .search-input {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 40px;
+            font-size: 15px;
+            font-family: 'Cairo', sans-serif;
+            direction: rtl;
+            background: white url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="%236b7280" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>') no-repeat 15px center;
+            background-size: 20px;
+        }
+        .search-input:focus {
+            outline: none;
+            border-color: #059669;
+        }
+        .search-input::placeholder {
+            color: #9ca3af;
+        }
+        .result-count {
+            font-size: 13px;
+            color: #6b7280;
+            margin-top: 8px;
+            text-align: left;
+        }
+        
+        /* Date/Week/Month Selector */
+        .selector-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 20px;
+            background: #f9fafb;
+            padding: 12px;
+            border-radius: 50px;
+        }
+        .selector-btn {
+            background: #059669;
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            font-size: 1.2rem;
+            cursor: pointer;
+        }
+        .selector-display {
+            font-size: 1rem;
+            font-weight: bold;
+            color: #065f46;
+            min-width: 180px;
+            text-align: center;
+        }
+        
+        /* Points Sub-tabs */
+        .points-subtabs {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 16px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #e5e7eb;
+        }
+        .points-subtab {
+            flex: 1;
+            padding: 10px 4px;
+            border-radius: 40px;
+            border: none;
+            background: transparent;
+            color: #6b7280;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .points-subtab.active {
+            background: #f0fdf4;
+            color: #059669;
+        }
+        
+        /* Table Styles */
+        .table-wrapper {
+            overflow-x: auto;
+            margin-top: 10px;
+        }
+        .view-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+            min-width: 600px;
+        }
+        .view-table th {
+            background: #047857;
+            color: white;
+            padding: 12px 4px;
+            text-align: center;
+            font-size: 13px;
+        }
+        .view-table td {
+            padding: 10px 4px;
+            border-bottom: 1px solid #e5e7eb;
+            text-align: center;
+        }
+        .view-table .student-name {
+            text-align: right;
+            padding-right: 8px;
+        }
+        .points-value {
+            font-weight: bold;
+            color: #059669;
+        }
+        .no-data {
+            text-align: center;
+            padding: 30px;
+            color: #6b7280;
+            font-style: italic;
+        }
+        .student-row.hidden-by-search {
+            display: none;
+        }
+        
+        /* Attendance Badges */
+        .attendance-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .attendance-present { background: #dcfce7; color: #15803d; }
+        .attendance-late { background: #fef3c7; color: #b45309; }
+        .attendance-absent { background: #fee2e2; color: #dc2626; }
+        .attendance-excused { background: #fef3c7; color: #b45309; }
+        
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #6b7280;
+        }
+        
+        /* Hidden */
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+
+<div class="user-bar">
+    <div class="user-info">
+        <span class="user-icon">👤</span>
+        <span id="sectionDisplay" class="user-name">جاري التحميل...</span>
+    </div>
+    <button class="logout-btn" onclick="logout()">🚪 خروج</button>
+</div>
+
+<div class="date-bar">
+    <div class="date-content">
+        <span class="date-item">📅 <span id="hijriDate">جاري التحميل...</span></span>
+        <span class="date-item">📆 <span id="gregorianDate">جاري التحميل...</span></span>
+    </div>
+</div>
+
+<h1>📖 متابعة الحلقة</h1>
+
+<!-- Main Tabs -->
+<div class="view-tabs">
+    <button class="view-tab active" onclick="switchViewTab('daily')">📅 التقرير اليومي</button>
+    <button class="view-tab" onclick="switchViewTab('points')">⭐ تقرير النقاط</button>
+</div>
+
+<!-- Daily Report Tab Content -->
+<div id="dailyTab" class="tab-pane active">
+    <div class="tab-content">
+        <div class="section-header">
+            <h3 id="dailySectionTitle">📅 التقرير اليومي</h3>
+        </div>
+        
+        <!-- Date Selector -->
+        <div class="selector-row">
+            <button class="selector-btn" onclick="changeViewDate(-1)">◀</button>
+            <span id="viewDateDisplay" class="selector-display"></span>
+            <button class="selector-btn" onclick="changeViewDate(1)">▶</button>
+        </div>
+        
+        <!-- Search Bar -->
+        <div class="search-container">
+            <input type="text" id="dailySearchInput" class="search-input" placeholder="🔍 ابحث عن طالب..." onkeyup="filterDailyTable()">
+            <div id="dailyResultCount" class="result-count"></div>
+        </div>
+        
+        <!-- Daily Report Table -->
+        <div class="table-wrapper">
+            <div id="viewDailyContent" class="loading">⏳ جاري التحميل...</div>
+        </div>
+    </div>
+</div>
+
+<!-- Points Report Tab Content -->
+<div id="pointsTab" class="tab-pane">
+    <div class="tab-content">
+        <div class="section-header">
+            <h3 id="pointsSectionTitle">⭐ تقرير النقاط</h3>
+        </div>
+        
+        <!-- Points Period Sub-tabs -->
+        <div class="points-subtabs">
+            <button class="points-subtab active" onclick="switchPointsSubtab('weekly')">📅 أسبوعي</button>
+            <button class="points-subtab" onclick="switchPointsSubtab('monthly')">📆 شهري</button>
+            <button class="points-subtab" onclick="switchPointsSubtab('alltime')">🏆 كل الوقت</button>
+        </div>
+        
+        <!-- Weekly Points -->
+        <div id="viewWeeklyPoints" class="points-pane">
+            <div class="selector-row">
+                <button class="selector-btn" onclick="changeViewWeek(-1)">◀</button>
+                <span id="viewWeekDisplay" class="selector-display"></span>
+                <button class="selector-btn" onclick="changeViewWeek(1)">▶</button>
+            </div>
+            
+            <!-- Search Bar -->
+            <div class="search-container">
+                <input type="text" id="weeklySearchInput" class="search-input" placeholder="🔍 ابحث عن طالب..." onkeyup="filterPointsTable('weekly')">
+                <div id="weeklyResultCount" class="result-count"></div>
+            </div>
+            
+            <div class="table-wrapper">
+                <div id="viewWeeklyContent" class="loading">⏳ جاري التحميل...</div>
+            </div>
+        </div>
+        
+        <!-- Monthly Points -->
+        <div id="viewMonthlyPoints" class="points-pane hidden">
+            <div class="selector-row">
+                <button class="selector-btn" onclick="changeViewMonth(-1)">◀</button>
+                <span id="viewMonthDisplay" class="selector-display"></span>
+                <button class="selector-btn" onclick="changeViewMonth(1)">▶</button>
+            </div>
+            
+            <!-- Search Bar -->
+            <div class="search-container">
+                <input type="text" id="monthlySearchInput" class="search-input" placeholder="🔍 ابحث عن طالب..." onkeyup="filterPointsTable('monthly')">
+                <div id="monthlyResultCount" class="result-count"></div>
+            </div>
+            
+            <div class="table-wrapper">
+                <div id="viewMonthlyContent" class="loading">⏳ جاري التحميل...</div>
+            </div>
+        </div>
+        
+        <!-- All-Time Points -->
+        <div id="viewAllTimePoints" class="points-pane hidden">
+            <!-- Search Bar -->
+            <div class="search-container">
+                <input type="text" id="alltimeSearchInput" class="search-input" placeholder="🔍 ابحث عن طالب..." onkeyup="filterPointsTable('alltime')">
+                <div id="alltimeResultCount" class="result-count"></div>
+            </div>
+            
+            <div class="table-wrapper">
+                <div id="viewAllTimeContent" class="loading">⏳ جاري التحميل...</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="quran-pages.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="view.js"></script>
+</body>
+</html>
