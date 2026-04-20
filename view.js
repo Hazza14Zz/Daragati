@@ -478,11 +478,90 @@ function updatePointsResultCount(type, visible, total) {
     }
 }
 
+// ============================================================
+// REAL-TIME SYNC FOR VIEW PAGE
+// ============================================================
+let supabaseClient = null;
+if (typeof supabase !== 'undefined') {
+    supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+}
+let realtimeChannel = null;
+
+async function subscribeToRealtimeChanges() {
+    if (!SUPABASE_ENABLED || !supabaseClient) {
+        console.log('⚠️ Realtime sync disabled');
+        return;
+    }
+    
+    if (realtimeChannel) {
+        await realtimeChannel.unsubscribe();
+    }
+    
+    realtimeChannel = supabaseClient
+        .channel('view-page-changes')
+        .on(
+            'postgres_changes',
+            {
+                event: '*',
+                schema: 'public',
+                table: SUPABASE_TABLE
+            },
+            (payload) => {
+                console.log('🔄 Data changed by teacher!');
+                
+                if (document.hidden) {
+                    window.needsReload = true;
+                } else {
+                    refreshViewData();
+                }
+            }
+        )
+        .subscribe((status) => {
+            if (status === 'SUBSCRIBED') {
+                console.log('✅ View page connected to real-time sync');
+            }
+        });
+}
+
+async function refreshViewData() {
+    console.log('🔄 Refreshing view data...');
+    
+    await loadFromCloud();
+    
+    // Refresh current tab
+    const dailyTab = document.getElementById('dailyTab');
+    if (dailyTab && dailyTab.classList.contains('active')) {
+        loadDailyReport();
+    } else {
+        const weeklyPane = document.getElementById('viewWeeklyPoints');
+        if (weeklyPane && !weeklyPane.classList.contains('hidden')) {
+            loadWeeklyPoints();
+        } else {
+            const monthlyPane = document.getElementById('viewMonthlyPoints');
+            if (monthlyPane && !monthlyPane.classList.contains('hidden')) {
+                loadMonthlyPoints();
+            } else {
+                loadAllTimePoints();
+            }
+        }
+    }
+    
+    console.log('✅ View data refreshed');
+}
+
+document.addEventListener('visibilitychange', function() {
+    if (!document.hidden && window.needsReload) {
+        window.needsReload = false;
+        console.log('🔄 Reloading view after tab became active');
+        refreshViewData();
+    }
+});
 // Initialize
 async function init() {
     if (!checkAuth()) return;
     await updateDateDisplay();
     await loadFromCloud();
+    await subscribeToRealtimeChanges();  // ADD THIS LINE
     
     updateViewDateDisplay();
     updateViewWeekDisplay();
