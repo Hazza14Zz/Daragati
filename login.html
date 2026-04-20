@@ -37,6 +37,15 @@
             80% { transform: translateX(8px); }
         }
         .hidden { display: none !important; }
+        .info-box {
+            background: rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 12px;
+            margin-bottom: 20px;
+            color: white;
+            text-align: center;
+            font-size: 14px;
+        }
     </style>
 </head>
 <body class="flex items-center justify-center p-4">
@@ -49,6 +58,11 @@
             </div>
             <h1 class="text-4xl font-bold text-white mt-5 drop-shadow-lg">سجل متابعة القرآن</h1>
             <p class="text-emerald-100 mt-2 text-lg">الرجاء تسجيل الدخول للمتابعة</p>
+        </div>
+
+        <div class="info-box">
+            <p>👨‍🏫 المعلمين: اسم المستخدم وكلمة المرور الخاصة بكم</p>
+            <p>🏫 المراحل: highschool / middleschool / elementary</p>
         </div>
 
         <div class="bg-white rounded-3xl shadow-2xl p-8">
@@ -103,7 +117,7 @@
             </form>
 
             <div class="mt-8 text-center text-gray-400 text-sm">
-                <p>🔒 مخصص للمشرفين والمعلمين فقط</p>
+                <p>🔒 مخصص للمشرفين والمعلمين والمراحل فقط</p>
             </div>
         </div>
         
@@ -112,6 +126,13 @@
     <script>
         const SUPABASE_URL = "https://dklyyzbnapkxlluximzk.supabase.co";
         const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRrbHl5emJuYXBreGxsdXhpbXprIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYyNjEwMDIsImV4cCI6MjA5MTgzNzAwMn0.qpCqvUTia4ywEMPSYJ_rIB4pSlk0zkvq5cQa-sFaFEs";
+
+        // Section display names
+        const SECTION_DISPLAY = {
+            'highschool': 'المرحلة الثانوية',
+            'middleschool': 'المرحلة المتوسطة',
+            'elementary': 'المرحلة الابتدائية'
+        };
 
         function togglePassword() {
             const pass = document.getElementById('password');
@@ -151,20 +172,28 @@
             try {
                 const hashedPassword = hashPassword(password);
                 
-                const response = await fetch(
-                    `${SUPABASE_URL}/rest/v1/masjid_users?username=eq.${encodeURIComponent(username)}&select=*`,
-                    {
+                // Check BOTH tables: masjid_users (teachers) AND section_users (sections)
+                const [teacherResponse, sectionResponse] = await Promise.all([
+                    fetch(`${SUPABASE_URL}/rest/v1/masjid_users?username=eq.${encodeURIComponent(username)}&select=*`, {
                         headers: {
                             'apikey': SUPABASE_KEY,
                             'Authorization': `Bearer ${SUPABASE_KEY}`
                         }
-                    }
-                );
+                    }),
+                    fetch(`${SUPABASE_URL}/rest/v1/section_users?username=eq.${encodeURIComponent(username)}&select=*`, {
+                        headers: {
+                            'apikey': SUPABASE_KEY,
+                            'Authorization': `Bearer ${SUPABASE_KEY}`
+                        }
+                    })
+                ]);
                 
-                const users = await response.json();
+                const teachers = await teacherResponse.json();
+                const sections = await sectionResponse.json();
                 
-                if (users && users.length > 0) {
-                    const user = users[0];
+                // Check teacher accounts first
+                if (teachers && teachers.length > 0) {
+                    const user = teachers[0];
                     
                     if (user.password_hash === hashedPassword) {
                         const sessionData = {
@@ -176,12 +205,31 @@
                         
                         sessionStorage.setItem('quranTrackerSession', JSON.stringify(sessionData));
                         window.location.href = 'index.html';
-                    } else {
-                        showError('❌ اسم المستخدم أو كلمة المرور غير صحيحة');
+                        return false;
                     }
-                } else {
-                    showError('❌ اسم المستخدم أو كلمة المرور غير صحيحة');
                 }
+                
+                // Check section accounts
+                if (sections && sections.length > 0) {
+                    const section = sections[0];
+                    
+                    if (section.password_hash === hashedPassword) {
+                        const sessionData = {
+                            section: section.section_name,
+                            displayName: SECTION_DISPLAY[section.section_name] || section.section_name,
+                            loginTime: new Date().toISOString(),
+                            expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString()
+                        };
+                        
+                        sessionStorage.setItem('viewSectionSession', JSON.stringify(sessionData));
+                        window.location.href = 'view.html';
+                        return false;
+                    }
+                }
+                
+                // If we get here, no match found
+                showError('❌ اسم المستخدم أو كلمة المرور غير صحيحة');
+                
             } catch (e) {
                 console.error('Login error:', e);
                 showError('❌ خطأ في الاتصال. حاول مرة أخرى.');
@@ -203,12 +251,23 @@
         }
 
         (function checkSession() {
-            const session = sessionStorage.getItem('quranTrackerSession');
-            if (session) {
+            const teacherSession = sessionStorage.getItem('quranTrackerSession');
+            const viewSession = sessionStorage.getItem('viewSectionSession');
+            
+            if (teacherSession) {
                 try {
-                    const data = JSON.parse(session);
+                    const data = JSON.parse(teacherSession);
                     if (new Date(data.expiresAt) > new Date()) {
                         window.location.href = 'index.html';
+                    }
+                } catch (e) {}
+            }
+            
+            if (viewSession) {
+                try {
+                    const data = JSON.parse(viewSession);
+                    if (new Date(data.expiresAt) > new Date()) {
+                        window.location.href = 'view.html';
                     }
                 } catch (e) {}
             }
