@@ -253,13 +253,21 @@
     <div class="student-nav">
         <button class="nav-btn" onclick="prevStudent()">◀</button>
         <div class="student-selector">
-            <select id="studentJumpSelect" class="student-select" onchange="jumpToStudent()"></select>
+            <!-- Search Input -->
+            <input type="text" 
+                   id="studentSearchInput" 
+                   class="student-search-input" 
+                   placeholder="🔍 ابحث عن طالب..."
+                   onkeyup="filterStudentDropdown()"
+                   onkeydown="handleSearchKeydown(event)"
+                   autocomplete="off">
+            <!-- Student Dropdown -->
+            <select id="studentJumpSelect" class="student-select" onchange="jumpToStudent()" size="8"></select>
         </div>
         <button class="nav-btn" onclick="nextStudent()">▶</button>
     </div>
     <div id="studentCardContainer"></div>
 </div>
-
 <!-- Reports View -->
 <div id="reportsView" class="tracker-section hidden">
     <div class="reports-container">
