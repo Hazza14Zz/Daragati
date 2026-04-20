@@ -1271,9 +1271,7 @@ function loadWeeklyPointsColumns() {
                 } catch (e) {}
             }
             
-            if (points > 0) {
-                students.push({ number: i, name: name, points: points });
-            }
+                       students.push({ number: i, name: name, points: points });
         }
         
         students.sort((a, b) => b.points - a.points);
@@ -1338,9 +1336,7 @@ function loadMonthlyPointsColumns() {
                 } catch (e) {}
             }
             
-            if (points > 0) {
-                students.push({ number: i, name: name, points: points });
-            }
+                        students.push({ number: i, name: name, points: points });
         }
         
         students.sort((a, b) => b.points - a.points);
@@ -1383,9 +1379,7 @@ function loadAllTimePointsColumns() {
                 } catch (e) {}
             }
             
-            if (points > 0) {
-                students.push({ number: i, name: name, points: points });
-            }
+                       students.push({ number: i, name: name, points: points });
         }
         
         students.sort((a, b) => b.points - a.points);
