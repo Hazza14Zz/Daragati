@@ -822,12 +822,8 @@ function switchSection(section) {
         updateStudentDropdown();
         loadStudent(1);
         
-        // Clear search when switching sections
-        const searchInput = document.getElementById('studentSearchInput');
-        if (searchInput) {
-            searchInput.value = '';
-            filterStudentDropdown();
-        }
+        // Initialize searchable dropdown
+        setTimeout(() => initStudentSearchable(), 100);
     }
 }
 function updateStudentDropdown() {
@@ -848,100 +844,116 @@ function updateStudentDropdown() {
     select.value = currentStudentIndex + 1;
 }
 // ============================================================
-// QUICK SEARCH FUNCTIONS
+// SEARCHABLE STUDENT DROPDOWN (Like Surah Search)
 // ============================================================
 
-// Store all student data for filtering
 let allStudentsData = [];
+
+function initStudentSearchable() {
+    const wrapper = document.getElementById('studentSearchWrapper');
+    const displayInput = document.getElementById('studentDisplayInput');
+    const dropdown = document.getElementById('studentDropdown');
+    const searchInput = document.getElementById('studentSearchInput');
+    
+    if (!wrapper || wrapper._initialized) return;
+    wrapper._initialized = true;
+    
+    // Toggle dropdown on display click
+    displayInput.addEventListener('click', (e) => {
+        e.stopPropagation();
+        
+        // Close other dropdowns
+        document.querySelectorAll('.searchable-select-dropdown.show').forEach(d => {
+            if (d !== dropdown) d.classList.remove('show');
+        });
+        
+        dropdown.classList.toggle('show');
+        if (dropdown.classList.contains('show')) {
+            renderStudentOptions();
+            searchInput.focus();
+            searchInput.value = '';
+            filterStudentDropdown();
+        }
+    });
+    
+    // Hide dropdown when clicking outside
+    document.addEventListener('click', (e) => {
+        if (!wrapper.contains(e.target)) {
+            dropdown.classList.remove('show');
+        }
+    });
+    
+    // Prevent dropdown from closing when clicking inside
+    dropdown.addEventListener('click', (e) => {
+        e.stopPropagation();
+    });
+}
+
+function renderStudentOptions(filter = '') {
+    const container = document.getElementById('studentOptionsContainer');
+    const select = document.getElementById('studentJumpSelect');
+    
+    let html = '';
+    allStudentsData.forEach((student, idx) => {
+        const text = `${student.number} - ${student.name}`;
+        if (filter && !text.includes(filter)) return;
+        
+        html += `<div class="searchable-select-option" data-value="${student.number}" onclick="selectStudent(${student.number})">${text}</div>`;
+    });
+    
+    container.innerHTML = html || '<div class="searchable-select-option" style="color:#9ca3af;">لا توجد نتائج</div>';
+}
 
 function filterStudentDropdown() {
     const searchInput = document.getElementById('studentSearchInput');
-    const select = document.getElementById('studentJumpSelect');
-    const searchTerm = searchInput.value.toLowerCase().trim();
-    
-    // Get all options
-    const options = select.options;
-    let visibleCount = 0;
-    let firstVisibleIndex = -1;
-    
-    for (let i = 0; i < options.length; i++) {
-        const option = options[i];
-        const text = option.text.toLowerCase();
-        
-        if (text.includes(searchTerm)) {
-            option.classList.remove('hidden-option');
-            visibleCount++;
-            if (firstVisibleIndex === -1) {
-                firstVisibleIndex = i;
-            }
-        } else {
-            option.classList.add('hidden-option');
-        }
-    }
-    
-    // Auto-select first visible option
-    if (visibleCount > 0 && firstVisibleIndex !== -1) {
-        select.selectedIndex = firstVisibleIndex;
-    }
+    const searchTerm = searchInput.value.trim();
+    renderStudentOptions(searchTerm);
 }
 
-function handleSearchKeydown(event) {
+function selectStudent(studentNum) {
     const select = document.getElementById('studentJumpSelect');
-    const options = select.options;
-    const visibleOptions = Array.from(options).filter(opt => !opt.classList.contains('hidden-option'));
+    const dropdown = document.getElementById('studentDropdown');
+    const displaySpan = document.getElementById('currentStudentDisplay');
+    const searchInput = document.getElementById('studentSearchInput');
+    
+    // Update hidden select
+    select.value = studentNum;
+    
+    // Update display
+    const student = allStudentsData.find(s => s.number === studentNum);
+    if (student) {
+        displaySpan.textContent = `${student.number} - ${student.name}`;
+    }
+    
+    // Close dropdown
+    dropdown.classList.remove('show');
+    searchInput.value = '';
+    
+    // Load the student
+    currentStudentIndex = studentNum - 1;
+    loadStudent(studentNum);
+}
+
+function handleStudentSearchKeydown(event) {
+    const options = document.querySelectorAll('#studentOptionsContainer .searchable-select-option');
+    const visibleOptions = Array.from(options).filter(opt => opt.style.display !== 'none' && opt.textContent !== 'لا توجد نتائج');
     
     if (event.key === 'Enter') {
         event.preventDefault();
-        
-        // Jump to selected student
         if (visibleOptions.length > 0) {
-            const selectedOption = options[select.selectedIndex];
-            if (selectedOption && !selectedOption.classList.contains('hidden-option')) {
-                jumpToStudent();
-            }
-        }
-        
-        // Clear search
-        document.getElementById('studentSearchInput').value = '';
-        filterStudentDropdown();
-    } else if (event.key === 'ArrowDown') {
-        event.preventDefault();
-        
-        // Find current visible index
-        const currentIndex = select.selectedIndex;
-        let nextIndex = currentIndex + 1;
-        
-        while (nextIndex < options.length && options[nextIndex].classList.contains('hidden-option')) {
-            nextIndex++;
-        }
-        
-        if (nextIndex < options.length) {
-            select.selectedIndex = nextIndex;
-        }
-    } else if (event.key === 'ArrowUp') {
-        event.preventDefault();
-        
-        // Find current visible index
-        const currentIndex = select.selectedIndex;
-        let prevIndex = currentIndex - 1;
-        
-        while (prevIndex >= 0 && options[prevIndex].classList.contains('hidden-option')) {
-            prevIndex--;
-        }
-        
-        if (prevIndex >= 0) {
-            select.selectedIndex = prevIndex;
+            const studentNum = parseInt(visibleOptions[0].getAttribute('data-value'));
+            selectStudent(studentNum);
         }
     } else if (event.key === 'Escape') {
-        // Clear search on Escape
-        document.getElementById('studentSearchInput').value = '';
-        filterStudentDropdown();
+        document.getElementById('studentDropdown').classList.remove('show');
     }
 }
 
-// Modified updateStudentDropdown to store data
+// Modified updateStudentDropdown
 function updateStudentDropdown() {
     const select = document.getElementById('studentJumpSelect'); 
+    const displaySpan = document.getElementById('currentStudentDisplay');
+    
     if (!select) return;
     
     select.innerHTML = '';
@@ -963,34 +975,31 @@ function updateStudentDropdown() {
     
     select.value = currentStudentIndex + 1;
     
-    // Clear search input when section changes
-    const searchInput = document.getElementById('studentSearchInput');
-    if (searchInput) {
-        searchInput.value = '';
-        filterStudentDropdown();
+    // Update display
+    const currentStudent = allStudentsData.find(s => s.number === currentStudentIndex + 1);
+    if (currentStudent && displaySpan) {
+        displaySpan.textContent = `${currentStudent.number} - ${currentStudent.name}`;
     }
+    
+    // Initialize searchable if needed
+    setTimeout(() => initStudentSearchable(), 50);
 }
 
-// Modified jumpToStudent to handle search state
+// Modified jumpToStudent for compatibility
 function jumpToStudent() { 
     const select = document.getElementById('studentJumpSelect');
-    const searchInput = document.getElementById('studentSearchInput');
-    
     if (select) {
-        const selectedOption = select.options[select.selectedIndex];
-        if (selectedOption && !selectedOption.classList.contains('hidden-option')) {
-            currentStudentIndex = parseInt(select.value) - 1; 
-            loadStudent(currentStudentIndex + 1);
-            
-            // Clear search after jumping
-            if (searchInput) {
-                searchInput.value = '';
-                filterStudentDropdown();
-            }
+        currentStudentIndex = parseInt(select.value) - 1; 
+        loadStudent(currentStudentIndex + 1);
+        
+        // Update display
+        const displaySpan = document.getElementById('currentStudentDisplay');
+        const student = allStudentsData.find(s => s.number === currentStudentIndex + 1);
+        if (student && displaySpan) {
+            displaySpan.textContent = `${student.number} - ${student.name}`;
         }
     }
 }
-
 function prevStudent() { 
     if (currentStudentIndex > 0) { 
         currentStudentIndex--; 
