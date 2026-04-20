@@ -1705,17 +1705,27 @@ async function subscribeToRealtimeChanges() {
         .on(
             'postgres_changes',
             {
-                event: 'UPDATE',
+                event: '*',  // Listen to ALL events (INSERT, UPDATE, DELETE)
                 schema: 'public',
-                table: SUPABASE_TABLE,
-                filter: 'key=eq.main_data'
+                table: SUPABASE_TABLE
             },
             (payload) => {
-                if (!isOwnChange) {
-                    console.log('🔄 Change detected from another device! Reloading...');
-                    loadFromCloud().then(() => {
-                        location.reload();
-                    });
+                // Ignore changes made by this device
+                if (isOwnChange) {
+                    console.log('⏭️ Ignoring own change');
+                    return;
+                }
+                
+                console.log('🔄 Change detected from another device!');
+                
+                // Check if tab is active
+                if (document.hidden) {
+                    console.log('💤 Tab inactive - will reload when active');
+                    // Set flag to reload when tab becomes active
+                    window.needsReload = true;
+                } else {
+                    // Reload data without full page refresh
+                    refreshDataFromCloud();
                 }
             }
         )
@@ -1725,6 +1735,41 @@ async function subscribeToRealtimeChanges() {
             }
         });
 }
+
+// New function: Refresh data without full page reload
+async function refreshDataFromCloud() {
+    console.log('🔄 Refreshing data from cloud...');
+    
+    await loadFromCloud();
+    
+    // Refresh current view based on active section
+    if (currentSection === 'reports') {
+        loadReportsData();
+        loadDailyReport();
+        loadPointsReport();
+    } else if (currentSection === 'points') {
+        initPointsTab();
+    } else if (currentSection !== 'history') {
+        // Reload current student
+        loadStudent(currentStudentIndex + 1);
+        updateStudentDropdown();
+    }
+    
+    console.log('✅ Data refreshed from cloud');
+}
+
+// Add visibility change handler to reload when tab becomes active
+document.addEventListener('visibilitychange', function() {
+    isTabActive = !document.hidden;
+    console.log(isTabActive ? '👁️ Tab active' : '💤 Tab inactive');
+    
+    // If tab becomes active and needs reload
+    if (isTabActive && window.needsReload) {
+        window.needsReload = false;
+        console.log('🔄 Reloading after tab became active');
+        refreshDataFromCloud();
+    }
+});
 // ============================================================
 // HISTORY LOGGING
 // ============================================================
