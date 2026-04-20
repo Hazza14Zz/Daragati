@@ -259,71 +259,197 @@
     <div id="studentCardContainer"></div>
 </div>
 
-<div id="reportsView" class="hidden">
-    <div class="report-section">
-        <h2 class="report-title">📊 التقارير الشهرية</h2>
-        <div class="month-selector">
-            <button class="month-btn" onclick="changeMonth(-1)">◀</button>
-            <span id="currentMonthDisplay" class="month-display"></span>
-            <button class="month-btn" onclick="changeMonth(1)">▶</button>
-        </div>
-    </div>
-    
-    <div class="report-section">
-        <h3 style="font-size: 18px; color: #047857; margin-bottom: 15px;">📅 التقارير اليومية</h3>
-        <div class="date-selector">
-            <button class="month-btn" onclick="changeDate(-1)">◀</button>
-            <span id="currentDateDisplay" class="date-display"></span>
-            <button class="month-btn" onclick="changeDate(1)">▶</button>
-        </div>
-        <h4 class="level-title">🏫 المرحلة الثانوية</h4>
-        <div id="daily-highschool"></div>
-        <button class="export-btn" onclick="exportDailyReport('highschool')">📄 تحميل PDF الثانوي</button>
-        <h4 class="level-title">🏫 المرحلة المتوسطة</h4>
-        <div id="daily-middleschool"></div>
-        <button class="export-btn" onclick="exportDailyReport('middleschool')">📄 تحميل PDF المتوسط</button>
-        <h4 class="level-title">🏫 المرحلة الابتدائية</h4>
-        <div id="daily-elementary"></div>
-        <button class="export-btn" onclick="exportDailyReport('elementary')">📄 تحميل PDF الابتدائي</button>
-    </div>
-    
-    <div class="report-section">
-        <h3 style="font-size: 18px; color: #047857; margin-bottom: 15px;">📈 ملخص الشهر</h3>
-        <h4 class="level-title">🏫 المرحلة الثانوية</h4>
-        <div id="highschool-summary"></div>
-        <button class="export-btn" onclick="exportMonthlyReport('highschool')">📄 PDF الثانوي</button>
-        <h4 class="level-title">🏫 المرحلة المتوسطة</h4>
-        <div id="middleschool-summary"></div>
-        <button class="export-btn" onclick="exportMonthlyReport('middleschool')">📄 PDF المتوسط</button>
-        <h4 class="level-title">🏫 المرحلة الابتدائية</h4>
-        <div id="elementary-summary"></div>
-        <button class="export-btn" onclick="exportMonthlyReport('elementary')">📄 PDF الابتدائي</button>
-        <div style="background: linear-gradient(to left, #059669, #047857); color: white; padding: 20px; border-radius: 20px; margin-top: 20px; text-align: center;">
-            <h3 style="margin-bottom: 10px; font-size: 18px;">🎯 إجمالي الختمات</h3>
-            <div style="font-size: 40px; font-weight: 700;" id="grand-total-khatmah">0.00</div>
-            <div style="font-size: 16px;">إجمالي الصفحات: <span id="grand-total-pages">0</span></div>
-        </div>
-        <button class="export-btn" style="margin-top: 16px;" onclick="exportGrandTotal()">📑 تحميل التقرير الشامل</button>
-    </div>
-    
-    <!-- Points Report Section -->
-    <div class="report-section">
-        <h3 style="font-size: 18px; color: #047857; margin-bottom: 15px;">⭐ تقرير النقاط (إجمالي النقاط المكتسبة)</h3>
+<!-- Reports View -->
+<div id="reportsView" class="tracker-section hidden">
+    <div class="reports-container">
         
-        <h4 class="level-title">🏫 المرحلة الثانوية</h4>
-        <div id="points-highschool"></div>
-        <button class="export-btn" onclick="exportPointsReport('highschool')">📄 تحميل PDF نقاط الثانوي</button>
+        <!-- ============================================ -->
+        <!-- DAILY REPORTS SECTION -->
+        <!-- ============================================ -->
+        <div class="report-category">
+            <h2 class="category-title">📅 التقارير اليومية</h2>
+            
+            <!-- High School Daily -->
+            <div class="section-report">
+                <div class="section-header">
+                    <h3>🏫 المرحلة الثانوية</h3>
+                    <button class="export-btn" onclick="exportDailyReport('highschool')">📄 تصدير PDF</button>
+                </div>
+                <div id="daily-highschool" class="report-content"></div>
+            </div>
+            
+            <!-- Middle School Daily -->
+            <div class="section-report">
+                <div class="section-header">
+                    <h3>🏫 المرحلة المتوسطة</h3>
+                    <button class="export-btn" onclick="exportDailyReport('middleschool')">📄 تصدير PDF</button>
+                </div>
+                <div id="daily-middleschool" class="report-content"></div>
+            </div>
+            
+            <!-- Elementary Daily -->
+            <div class="section-report">
+                <div class="section-header">
+                    <h3>🏫 المرحلة الابتدائية</h3>
+                    <button class="export-btn" onclick="exportDailyReport('elementary')">📄 تصدير PDF</button>
+                </div>
+                <div id="daily-elementary" class="report-content"></div>
+            </div>
+        </div>
         
-        <h4 class="level-title" style="margin-top: 25px;">🏫 المرحلة المتوسطة</h4>
-        <div id="points-middleschool"></div>
-        <button class="export-btn" onclick="exportPointsReport('middleschool')">📄 تحميل PDF نقاط المتوسط</button>
+        <!-- ============================================ -->
+        <!-- MONTHLY REPORTS SECTION -->
+        <!-- ============================================ -->
+        <div class="report-category">
+            <h2 class="category-title">📆 التقارير الشهرية</h2>
+            <div class="month-selector">
+                <button onclick="changeMonth(-1)">◀</button>
+                <span id="currentMonthDisplay"></span>
+                <button onclick="changeMonth(1)">▶</button>
+            </div>
+            
+            <!-- High School Monthly -->
+            <div class="section-report">
+                <div class="section-header">
+                    <h3>🏫 المرحلة الثانوية</h3>
+                    <button class="export-btn" onclick="exportMonthlyReport('highschool')">📄 تصدير PDF</button>
+                </div>
+                <div id="highschool-summary" class="report-content"></div>
+            </div>
+            
+            <!-- Middle School Monthly -->
+            <div class="section-report">
+                <div class="section-header">
+                    <h3>🏫 المرحلة المتوسطة</h3>
+                    <button class="export-btn" onclick="exportMonthlyReport('middleschool')">📄 تصدير PDF</button>
+                </div>
+                <div id="middleschool-summary" class="report-content"></div>
+            </div>
+            
+            <!-- Elementary Monthly -->
+            <div class="section-report">
+                <div class="section-header">
+                    <h3>🏫 المرحلة الابتدائية</h3>
+                    <button class="export-btn" onclick="exportMonthlyReport('elementary')">📄 تصدير PDF</button>
+                </div>
+                <div id="elementary-summary" class="report-content"></div>
+            </div>
+        </div>
         
-        <h4 class="level-title" style="margin-top: 25px;">🏫 المرحلة الابتدائية</h4>
-        <div id="points-elementary"></div>
-        <button class="export-btn" onclick="exportPointsReport('elementary')">📄 تحميل PDF نقاط الابتدائي</button>
+        <!-- ============================================ -->
+        <!-- KHATMA TOTAL SECTION -->
+        <!-- ============================================ -->
+        <div class="report-category grand-total-section">
+            <h2 class="category-title">🎯 إجمالي الختمات</h2>
+            <div class="grand-total-box">
+                <div class="grand-total-item">
+                    <span class="grand-total-label">إجمالي الصفحات:</span>
+                    <span id="grand-total-pages" class="grand-total-value">0</span>
+                </div>
+                <div class="grand-total-item">
+                    <span class="grand-total-label">إجمالي الختمات:</span>
+                    <span id="grand-total-khatmah" class="grand-total-value">0.00</span>
+                </div>
+                <button class="export-btn grand-export" onclick="exportGrandTotal()">📄 تصدير التقرير الشامل PDF</button>
+            </div>
+        </div>
+        
+        <!-- ============================================ -->
+        <!-- POINTS REPORTS SECTION -->
+        <!-- ============================================ -->
+        <div class="report-category">
+            <h2 class="category-title">⭐ تقارير النقاط</h2>
+            
+            <!-- Weekly Points -->
+            <div class="points-subcategory">
+                <h3 class="subcategory-title">📅 التقرير الأسبوعي للنقاط</h3>
+                
+                <div class="section-report">
+                    <div class="section-header">
+                        <h4>🏫 المرحلة الثانوية</h4>
+                        <button class="export-btn" onclick="exportPointsReport('highschool', 'weekly')">📄 تصدير PDF</button>
+                    </div>
+                    <div id="points-weekly-highschool" class="report-content"></div>
+                </div>
+                
+                <div class="section-report">
+                    <div class="section-header">
+                        <h4>🏫 المرحلة المتوسطة</h4>
+                        <button class="export-btn" onclick="exportPointsReport('middleschool', 'weekly')">📄 تصدير PDF</button>
+                    </div>
+                    <div id="points-weekly-middleschool" class="report-content"></div>
+                </div>
+                
+                <div class="section-report">
+                    <div class="section-header">
+                        <h4>🏫 المرحلة الابتدائية</h4>
+                        <button class="export-btn" onclick="exportPointsReport('elementary', 'weekly')">📄 تصدير PDF</button>
+                    </div>
+                    <div id="points-weekly-elementary" class="report-content"></div>
+                </div>
+            </div>
+            
+            <!-- Monthly Points -->
+            <div class="points-subcategory">
+                <h3 class="subcategory-title">📆 التقرير الشهري للنقاط</h3>
+                
+                <div class="section-report">
+                    <div class="section-header">
+                        <h4>🏫 المرحلة الثانوية</h4>
+                        <button class="export-btn" onclick="exportPointsReport('highschool', 'monthly')">📄 تصدير PDF</button>
+                    </div>
+                    <div id="points-monthly-highschool" class="report-content"></div>
+                </div>
+                
+                <div class="section-report">
+                    <div class="section-header">
+                        <h4>🏫 المرحلة المتوسطة</h4>
+                        <button class="export-btn" onclick="exportPointsReport('middleschool', 'monthly')">📄 تصدير PDF</button>
+                    </div>
+                    <div id="points-monthly-middleschool" class="report-content"></div>
+                </div>
+                
+                <div class="section-report">
+                    <div class="section-header">
+                        <h4>🏫 المرحلة الابتدائية</h4>
+                        <button class="export-btn" onclick="exportPointsReport('elementary', 'monthly')">📄 تصدير PDF</button>
+                    </div>
+                    <div id="points-monthly-elementary" class="report-content"></div>
+                </div>
+            </div>
+            
+            <!-- All-Time Points -->
+            <div class="points-subcategory">
+                <h3 class="subcategory-title">🏆 التقرير الكلي للنقاط (كل الوقت)</h3>
+                
+                <div class="section-report">
+                    <div class="section-header">
+                        <h4>🏫 المرحلة الثانوية</h4>
+                        <button class="export-btn" onclick="exportPointsReport('highschool', 'alltime')">📄 تصدير PDF</button>
+                    </div>
+                    <div id="points-alltime-highschool" class="report-content"></div>
+                </div>
+                
+                <div class="section-report">
+                    <div class="section-header">
+                        <h4>🏫 المرحلة المتوسطة</h4>
+                        <button class="export-btn" onclick="exportPointsReport('middleschool', 'alltime')">📄 تصدير PDF</button>
+                    </div>
+                    <div id="points-alltime-middleschool" class="report-content"></div>
+                </div>
+                
+                <div class="section-report">
+                    <div class="section-header">
+                        <h4>🏫 المرحلة الابتدائية</h4>
+                        <button class="export-btn" onclick="exportPointsReport('elementary', 'alltime')">📄 تصدير PDF</button>
+                    </div>
+                    <div id="points-alltime-elementary" class="report-content"></div>
+                </div>
+            </div>
+        </div>
+        
+    </div>
 </div>
-</div>
-
 <!-- History Section (Admin Only) -->
 <div id="section-history" class="tracker-section hidden">
     <div class="report-section">
