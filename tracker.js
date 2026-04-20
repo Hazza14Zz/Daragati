@@ -973,8 +973,9 @@ function loadDailyReport() {
         });
         c.innerHTML = h + '</table>';
     });
-}// ============================================================
-// POINTS REPORTS - Weekly, Monthly, All-Time
+}
+// ============================================================
+// POINTS REPORTS - Weekly, Monthly, All-Time (STACKED)
 // ============================================================
 
 function loadPointsReport() {
@@ -986,12 +987,15 @@ function loadPointsReport() {
 function loadWeeklyPointsReport() {
     const today = new Date();
     const weekStart = new Date(today);
-    weekStart.setDate(today.getDate() - today.getDay()); // Sunday
+    weekStart.setDate(today.getDate() - today.getDay());
     weekStart.setHours(0, 0, 0, 0);
     
     ['highschool', 'middleschool', 'elementary'].forEach(section => {
         const container = document.getElementById(`points-weekly-${section}`);
-        if (!container) return;
+        if (!container) {
+            console.log(`Container points-weekly-${section} not found`);
+            return;
+        }
         
         const students = [];
         const count = parseInt(localStorage.getItem(`studentCount_${section}`) || '50');
@@ -1007,21 +1011,22 @@ function loadWeeklyPointsReport() {
                 try {
                     const data = JSON.parse(saved);
                     if (data.name) name = data.name;
-                    
-                    // Check if points were earned this week
-                    if (data.savedAt) {
-                        const savedDate = new Date(data.savedAt);
-                        if (savedDate >= weekStart && savedDate <= today) {
-                            weeklyPoints = parseInt(data.points) || 0;
-                        }
-                    }
+                    if (data.points) weeklyPoints = parseInt(data.points) || 0;
                 } catch (e) {}
             }
             
-            students.push({ number: i, name: name, points: weeklyPoints });
+            if (weeklyPoints > 0) {
+                students.push({ number: i, name: name, points: weeklyPoints });
+            }
         }
         
+        // Sort by points descending
         students.sort((a, b) => b.points - a.points);
+        
+        if (students.length === 0) {
+            container.innerHTML = '<div class="no-data">لا توجد نقاط هذا الأسبوع</div>';
+            return;
+        }
         
         let html = `
             <table class="summary-table">
@@ -1044,7 +1049,10 @@ function loadMonthlyPointsReport() {
     
     ['highschool', 'middleschool', 'elementary'].forEach(section => {
         const container = document.getElementById(`points-monthly-${section}`);
-        if (!container) return;
+        if (!container) {
+            console.log(`Container points-monthly-${section} not found`);
+            return;
+        }
         
         const students = [];
         const count = parseInt(localStorage.getItem(`studentCount_${section}`) || '50');
@@ -1060,20 +1068,21 @@ function loadMonthlyPointsReport() {
                 try {
                     const data = JSON.parse(saved);
                     if (data.name) name = data.name;
-                    
-                    if (data.savedAt) {
-                        const savedDate = new Date(data.savedAt);
-                        if (savedDate >= monthStart && savedDate <= today) {
-                            monthlyPoints = parseInt(data.points) || 0;
-                        }
-                    }
+                    if (data.points) monthlyPoints = parseInt(data.points) || 0;
                 } catch (e) {}
             }
             
-            students.push({ number: i, name: name, points: monthlyPoints });
+            if (monthlyPoints > 0) {
+                students.push({ number: i, name: name, points: monthlyPoints });
+            }
         }
         
         students.sort((a, b) => b.points - a.points);
+        
+        if (students.length === 0) {
+            container.innerHTML = '<div class="no-data">لا توجد نقاط هذا الشهر</div>';
+            return;
+        }
         
         let html = `
             <table class="summary-table">
@@ -1093,7 +1102,10 @@ function loadMonthlyPointsReport() {
 function loadAllTimePointsReport() {
     ['highschool', 'middleschool', 'elementary'].forEach(section => {
         const container = document.getElementById(`points-alltime-${section}`);
-        if (!container) return;
+        if (!container) {
+            console.log(`Container points-alltime-${section} not found`);
+            return;
+        }
         
         const students = [];
         const count = parseInt(localStorage.getItem(`studentCount_${section}`) || '50');
@@ -1113,10 +1125,17 @@ function loadAllTimePointsReport() {
                 } catch (e) {}
             }
             
-            students.push({ number: i, name: name, points: totalPoints });
+            if (totalPoints > 0) {
+                students.push({ number: i, name: name, points: totalPoints });
+            }
         }
         
         students.sort((a, b) => b.points - a.points);
+        
+        if (students.length === 0) {
+            container.innerHTML = '<div class="no-data">لا توجد نقاط مسجلة</div>';
+            return;
+        }
         
         let html = `
             <table class="summary-table">
