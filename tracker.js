@@ -196,6 +196,8 @@ let totalStudents = 50;
 let currentReportMonth = new Date();
 let currentReportDate = new Date().toISOString().split('T')[0];
 let currentAttendance = 'حاضر';
+let currentPointsWeek = new Date();
+let currentPointsMonth = new Date();
 
 const SECTION_NAMES = { 
     highschool: 'ثانوي', 
@@ -773,19 +775,28 @@ function switchSection(section) {
     if (section === 'reports') {
         document.getElementById('reportsView').classList.remove('hidden');
         document.getElementById('trackerView').classList.add('hidden');
+        document.getElementById('pointsView').classList.add('hidden');
         document.getElementById('section-history')?.classList.add('hidden');
+    } else if (section === 'points') {
+        document.getElementById('pointsView').classList.remove('hidden');
+        document.getElementById('trackerView').classList.add('hidden');
+        document.getElementById('reportsView').classList.add('hidden');
+        document.getElementById('section-history')?.classList.add('hidden');
+        initPointsTab();
     } else if (section === 'history') {
         document.getElementById('section-history')?.classList.remove('hidden');
         document.getElementById('trackerView').classList.add('hidden');
         document.getElementById('reportsView').classList.add('hidden');
+        document.getElementById('pointsView').classList.add('hidden');
     } else {
         document.getElementById('trackerView').classList.remove('hidden');
         document.getElementById('reportsView').classList.add('hidden');
+        document.getElementById('pointsView').classList.add('hidden');
         document.getElementById('section-history')?.classList.add('hidden');
     }
     
     // Update tabs
-    const sections = ['highschool', 'middleschool', 'elementary', 'reports', 'history'];
+    const sections = ['highschool', 'middleschool', 'elementary', 'reports', 'points', 'history'];
     document.querySelectorAll('.tab').forEach((t, i) => {
         t.classList.toggle('active', sections[i] === section);
     });
@@ -797,12 +808,14 @@ function switchSection(section) {
         document.getElementById('tab-history')?.classList.add('hidden');
     }
     
-       if (section === 'history') {
+    if (section === 'history') {
         loadHistoryTab();
     } else if (section === 'reports') {
         loadReportsData();
         loadDailyReport();
         loadPointsReport();
+    } else if (section === 'points') {
+        // Already handled by initPointsTab()
     } else if (section !== 'history') {
         loadStudentCounts();
         currentStudentIndex = 0;
@@ -1158,6 +1171,273 @@ function loadAllTimePointsReport() {
         html += `</tbody></table>`;
         container.innerHTML = html;
     });
+}
+// ============================================================
+// POINTS TAB FUNCTIONS - NEW LAYOUT
+// ============================================================
+
+function initPointsTab() {
+    updateWeekDisplay();
+    updatePointsMonthDisplay();
+    loadWeeklyPointsColumns();
+}
+
+function switchPointsTab(period) {
+    // Hide all views
+    document.getElementById('points-weekly-view').classList.add('hidden');
+    document.getElementById('points-monthly-view').classList.add('hidden');
+    document.getElementById('points-alltime-view').classList.add('hidden');
+    
+    // Remove active class from all tabs
+    document.querySelectorAll('.points-main-tab').forEach(tab => {
+        tab.classList.remove('active');
+    });
+    
+    // Show selected view
+    if (period === 'weekly') {
+        document.getElementById('points-weekly-view').classList.remove('hidden');
+        document.querySelectorAll('.points-main-tab')[0].classList.add('active');
+        loadWeeklyPointsColumns();
+    } else if (period === 'monthly') {
+        document.getElementById('points-monthly-view').classList.remove('hidden');
+        document.querySelectorAll('.points-main-tab')[1].classList.add('active');
+        loadMonthlyPointsColumns();
+    } else {
+        document.getElementById('points-alltime-view').classList.remove('hidden');
+        document.querySelectorAll('.points-main-tab')[2].classList.add('active');
+        loadAllTimePointsColumns();
+    }
+}
+
+// Week Functions
+function changeWeek(delta) {
+    currentPointsWeek.setDate(currentPointsWeek.getDate() + (delta * 7));
+    updateWeekDisplay();
+    loadWeeklyPointsColumns();
+}
+
+function updateWeekDisplay() {
+    const weekStart = new Date(currentPointsWeek);
+    weekStart.setDate(currentPointsWeek.getDate() - currentPointsWeek.getDay());
+    const weekEnd = new Date(weekStart);
+    weekEnd.setDate(weekStart.getDate() + 6);
+    
+    const months = ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'];
+    const monthName = months[weekStart.getMonth()];
+    
+    // Calculate week number
+    const firstDayOfMonth = new Date(weekStart.getFullYear(), weekStart.getMonth(), 1);
+    const weekNumber = Math.ceil((weekStart.getDate() + firstDayOfMonth.getDay()) / 7);
+    
+    const display = document.getElementById('currentWeekDisplay');
+    if (display) {
+        display.textContent = `${monthName} - الأسبوع ${weekNumber} (${weekStart.getDate()}/${weekStart.getMonth()+1} - ${weekEnd.getDate()}/${weekEnd.getMonth()+1})`;
+    }
+}
+
+function loadWeeklyPointsColumns() {
+    const weekStart = new Date(currentPointsWeek);
+    weekStart.setDate(currentPointsWeek.getDate() - currentPointsWeek.getDay());
+    weekStart.setHours(0, 0, 0, 0);
+    
+    const weekEnd = new Date(weekStart);
+    weekEnd.setDate(weekStart.getDate() + 6);
+    weekEnd.setHours(23, 59, 59, 999);
+    
+    ['highschool', 'middleschool', 'elementary'].forEach(section => {
+        const container = document.getElementById(`points-weekly-${section}`);
+        if (!container) return;
+        
+        const students = [];
+        const count = parseInt(localStorage.getItem(`studentCount_${section}`) || '50');
+        
+        for (let i = 1; i <= count; i++) {
+            const key = `quran_${section}-${i}`;
+            const saved = localStorage.getItem(key);
+            
+            let name = `طالب ${i}`;
+            let points = 0;
+            
+            if (saved) {
+                try {
+                    const data = JSON.parse(saved);
+                    if (data.name) name = data.name;
+                    if (data.savedAt) {
+                        const savedDate = new Date(data.savedAt);
+                        if (savedDate >= weekStart && savedDate <= weekEnd) {
+                            points = parseInt(data.points) || 0;
+                        }
+                    }
+                } catch (e) {}
+            }
+            
+            if (points > 0) {
+                students.push({ number: i, name: name, points: points });
+            }
+        }
+        
+        students.sort((a, b) => b.points - a.points);
+        
+        if (students.length === 0) {
+            container.innerHTML = '<div class="no-data">لا توجد نقاط</div>';
+            return;
+        }
+        
+        let html = `<table class="points-table"><thead><tr><th>#</th><th>الاسم</th><th>النقاط</th></tr></thead><tbody>`;
+        students.forEach((s, idx) => {
+            html += `<tr><td>${idx + 1}</td><td class="student-name">${s.name}</td><td class="points-value">${s.points}</td></tr>`;
+        });
+        html += `</tbody></table>`;
+        container.innerHTML = html;
+    });
+}
+
+// Month Functions
+function changePointsMonth(delta) {
+    currentPointsMonth.setMonth(currentPointsMonth.getMonth() + delta);
+    updatePointsMonthDisplay();
+    loadMonthlyPointsColumns();
+}
+
+function updatePointsMonthDisplay() {
+    const months = ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'];
+    const display = document.getElementById('currentPointsMonthDisplay');
+    if (display) {
+        display.textContent = `${months[currentPointsMonth.getMonth()]} ${currentPointsMonth.getFullYear()}`;
+    }
+}
+
+function loadMonthlyPointsColumns() {
+    const year = currentPointsMonth.getFullYear();
+    const month = currentPointsMonth.getMonth();
+    
+    ['highschool', 'middleschool', 'elementary'].forEach(section => {
+        const container = document.getElementById(`points-monthly-${section}`);
+        if (!container) return;
+        
+        const students = [];
+        const count = parseInt(localStorage.getItem(`studentCount_${section}`) || '50');
+        
+        for (let i = 1; i <= count; i++) {
+            const key = `quran_${section}-${i}`;
+            const saved = localStorage.getItem(key);
+            
+            let name = `طالب ${i}`;
+            let points = 0;
+            
+            if (saved) {
+                try {
+                    const data = JSON.parse(saved);
+                    if (data.name) name = data.name;
+                    if (data.savedAt) {
+                        const savedDate = new Date(data.savedAt);
+                        if (savedDate.getFullYear() === year && savedDate.getMonth() === month) {
+                            points = parseInt(data.points) || 0;
+                        }
+                    }
+                } catch (e) {}
+            }
+            
+            if (points > 0) {
+                students.push({ number: i, name: name, points: points });
+            }
+        }
+        
+        students.sort((a, b) => b.points - a.points);
+        
+        if (students.length === 0) {
+            container.innerHTML = '<div class="no-data">لا توجد نقاط</div>';
+            return;
+        }
+        
+        let html = `<table class="points-table"><thead><tr><th>#</th><th>الاسم</th><th>النقاط</th></tr></thead><tbody>`;
+        students.forEach((s, idx) => {
+            html += `<tr><td>${idx + 1}</td><td class="student-name">${s.name}</td><td class="points-value">${s.points}</td></tr>`;
+        });
+        html += `</tbody></table>`;
+        container.innerHTML = html;
+    });
+}
+
+// All-Time Functions
+function loadAllTimePointsColumns() {
+    ['highschool', 'middleschool', 'elementary'].forEach(section => {
+        const container = document.getElementById(`points-alltime-${section}`);
+        if (!container) return;
+        
+        const students = [];
+        const count = parseInt(localStorage.getItem(`studentCount_${section}`) || '50');
+        
+        for (let i = 1; i <= count; i++) {
+            const key = `quran_${section}-${i}`;
+            const saved = localStorage.getItem(key);
+            
+            let name = `طالب ${i}`;
+            let points = 0;
+            
+            if (saved) {
+                try {
+                    const data = JSON.parse(saved);
+                    if (data.name) name = data.name;
+                    if (data.points) points = parseInt(data.points) || 0;
+                } catch (e) {}
+            }
+            
+            if (points > 0) {
+                students.push({ number: i, name: name, points: points });
+            }
+        }
+        
+        students.sort((a, b) => b.points - a.points);
+        
+        if (students.length === 0) {
+            container.innerHTML = '<div class="no-data">لا توجد نقاط</div>';
+            return;
+        }
+        
+        let html = `<table class="points-table"><thead><tr><th>#</th><th>الاسم</th><th>النقاط</th></tr></thead><tbody>`;
+        students.forEach((s, idx) => {
+            html += `<tr><td>${idx + 1}</td><td class="student-name">${s.name}</td><td class="points-value">${s.points}</td></tr>`;
+        });
+        html += `</tbody></table>`;
+        container.innerHTML = html;
+    });
+}
+
+// Export All Points Report
+function exportAllPointsReport(period) {
+    const periodNames = { 'weekly': 'الأسبوعي', 'monthly': 'الشهري', 'alltime': 'الكلي' };
+    const periodName = periodNames[period];
+    
+    let highHTML, middleHTML, elemHTML;
+    
+    if (period === 'weekly') {
+        highHTML = document.getElementById('points-weekly-highschool').innerHTML;
+        middleHTML = document.getElementById('points-weekly-middleschool').innerHTML;
+        elemHTML = document.getElementById('points-weekly-elementary').innerHTML;
+    } else if (period === 'monthly') {
+        highHTML = document.getElementById('points-monthly-highschool').innerHTML;
+        middleHTML = document.getElementById('points-monthly-middleschool').innerHTML;
+        elemHTML = document.getElementById('points-monthly-elementary').innerHTML;
+    } else {
+        highHTML = document.getElementById('points-alltime-highschool').innerHTML;
+        middleHTML = document.getElementById('points-alltime-middleschool').innerHTML;
+        elemHTML = document.getElementById('points-alltime-elementary').innerHTML;
+    }
+    
+    const gDate = getGregorianDate();
+    const hDate = document.getElementById('hijriDate').textContent;
+    
+    let dateInfo = '';
+    if (period === 'weekly') {
+        dateInfo = document.getElementById('currentWeekDisplay').textContent;
+    } else if (period === 'monthly') {
+        dateInfo = document.getElementById('currentPointsMonthDisplay').textContent;
+    }
+    
+    const printWindow = window.open('', '_blank');
+    printWindow.document.write(`<!DOCTYPE html><html dir="rtl"><head><meta charset="UTF-8"><title>تقرير النقاط ${periodName}</title><link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet"><style>body{font-family:'Cairo',sans-serif;direction:rtl;padding:20px}h1{color:#065f46;text-align:center}.date-info{text-align:center;color:#047857;margin-bottom:20px}.columns{display:flex;gap:15px}.col{flex:1;background:#f9fafb;border-radius:12px;padding:12px}.col h3{color:#047857;text-align:center;margin-bottom:10px}table{width:100%;border-collapse:collapse}th{background:#047857;color:white;padding:8px}td{padding:6px;border-bottom:1px solid #e5e7eb;text-align:center}@media print{button{display:none}}.print-btn{background:#059669;color:white;padding:10px 30px;border:none;border-radius:8px;font-size:16px;cursor:pointer;margin-top:20px}</style></head><body><h1>⭐ تقرير النقاط ${periodName}</h1><div class="date-info">📅 ${hDate} | 📆 ${gDate}${dateInfo ? ' | ' + dateInfo : ''}</div><div class="columns"><div class="col"><h3>🏫 ثانوي</h3>${highHTML}</div><div class="col"><h3>🏫 متوسط</h3>${middleHTML}</div><div class="col"><h3>🏫 ابتدائي</h3>${elemHTML}</div></div><div style="text-align:center;margin-top:20px"><button class="print-btn" onclick="window.print()">🖨️ طباعة / حفظ PDF</button></div></body></html>`);
+    printWindow.document.close();
 }
 // ============================================================
 // PDF EXPORT
