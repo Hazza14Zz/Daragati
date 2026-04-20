@@ -283,3 +283,42 @@ label, option, optgroup {
         font-size: 1.5rem;
     }
 }
+
+/* Points Period Tabs */
+.points-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+    border-bottom: 2px solid #e5e7eb;
+    padding-bottom: 8px;
+}
+
+.points-tab {
+    flex: 1;
+    padding: 10px 16px;
+    border-radius: 40px;
+    border: none;
+    background: #f3f4f6;
+    color: #4b5563;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.points-tab.active {
+    background: #059669;
+    color: white;
+}
+
+.points-tab:hover:not(.active) {
+    background: #e5e7eb;
+}
+
+.points-period-section {
+    transition: opacity 0.2s;
+}
+
+.points-period-section.hidden {
+    display: none;
+}
