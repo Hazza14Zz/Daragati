@@ -418,17 +418,19 @@ function initApp() {
     updateStudentDropdown();
     loadStudent(currentStudentIndex + 1);
     
-    // ✅ Initialize date displays for reports
     const months = ['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
     document.getElementById('currentMonthDisplay').textContent = `${months[currentReportMonth.getMonth()]} ${currentReportMonth.getFullYear()}`;
-  
     
-    // ✅ Load actual report data (not static zeros)
+    // ADD THIS: Initialize daily date display
+    const dailyDisplay = document.getElementById('dailyDateDisplay');
+    if (dailyDisplay) {
+        dailyDisplay.textContent = new Date(currentReportDate).toLocaleDateString('ar-SA', { year: 'numeric', month: 'long', day: 'numeric' });
+    }
+    
     loadReportsData();
     loadDailyReport();
     loadPointsReport();
 }
-
 function loadStudentCounts() {
     if (!localStorage.getItem('studentCount_highschool')) { 
         localStorage.setItem('studentCount_highschool', '50'); 
@@ -862,7 +864,13 @@ function changeDate(d) {
     const dt = new Date(currentReportDate); 
     dt.setDate(dt.getDate() + d); 
     currentReportDate = dt.toISOString().split('T')[0]; 
-    document.getElementById('currentDateDisplay').textContent = new Date(currentReportDate).toLocaleDateString('ar-SA', { year: 'numeric', month: 'long', day: 'numeric' }); 
+    
+    // Update the daily date display
+    const displayEl = document.getElementById('dailyDateDisplay');
+    if (displayEl) {
+        displayEl.textContent = new Date(currentReportDate).toLocaleDateString('ar-SA', { year: 'numeric', month: 'long', day: 'numeric' });
+    }
+    
     loadDailyReport(); 
 }
 
@@ -1692,32 +1700,7 @@ function exportHistoryPDF() {
     printWindow.document.write(html);
     printWindow.document.close();
 }
-function switchPointsPeriod(period) {
-    // Hide all sections
-    document.getElementById('points-weekly-section').classList.add('hidden');
-    document.getElementById('points-monthly-section').classList.add('hidden');
-    document.getElementById('points-alltime-section').classList.add('hidden');
-    
-    // Remove active class from all tabs
-    document.querySelectorAll('.points-tab').forEach(tab => {
-        tab.classList.remove('active');
-    });
-    
-    // Show selected section
-    if (period === 'weekly') {
-        document.getElementById('points-weekly-section').classList.remove('hidden');
-        document.querySelector('.points-tab:nth-child(1)').classList.add('active');
-        loadWeeklyPointsReport();
-    } else if (period === 'monthly') {
-        document.getElementById('points-monthly-section').classList.remove('hidden');
-        document.querySelector('.points-tab:nth-child(2)').classList.add('active');
-        loadMonthlyPointsReport();
-    } else {
-        document.getElementById('points-alltime-section').classList.remove('hidden');
-        document.querySelector('.points-tab:nth-child(3)').classList.add('active');
-        loadAllTimePointsReport();
-    }
-}
+
 window.onload = () => {
     subscribeToRealtimeChanges();
     loadQuranData();
