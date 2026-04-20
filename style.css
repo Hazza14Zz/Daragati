@@ -310,3 +310,185 @@ label, option, optgroup {
     font-size: 14px;
     color: #065f46;
 }
+
+/* ============================================ */
+/* POINTS TAB STYLES - NEW LAYOUT */
+/* ============================================ */
+
+.points-container {
+    padding: 16px;
+    max-width: 100%;
+}
+
+/* Main Tabs (Weekly | Monthly | All-Time) */
+.points-main-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+    background: white;
+    padding: 8px;
+    border-radius: 50px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.points-main-tab {
+    flex: 1;
+    padding: 12px 8px;
+    border-radius: 40px;
+    border: none;
+    background: #f3f4f6;
+    color: #4b5563;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.points-main-tab.active {
+    background: #059669;
+    color: white;
+}
+
+/* Week/Month Selector */
+.week-selector,
+.month-selector-points {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 20px;
+    background: white;
+    padding: 12px;
+    border-radius: 50px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.week-btn {
+    background: #059669;
+    color: white;
+    border: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    font-size: 1.2rem;
+    cursor: pointer;
+}
+
+.week-display,
+.month-display {
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: #065f46;
+    min-width: 180px;
+    text-align: center;
+}
+
+/* Three Column Layout */
+.points-columns {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+}
+
+.points-column {
+    flex: 1;
+    background: white;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    min-width: 0;
+}
+
+.column-header {
+    background: #047857;
+    color: white;
+    padding: 12px 4px;
+    text-align: center;
+    font-weight: 700;
+    font-size: 14px;
+}
+
+.points-column-content {
+    padding: 8px;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+/* Points Table in Columns */
+.points-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+}
+
+.points-table th {
+    background: #f0fdf4;
+    color: #047857;
+    padding: 6px 2px;
+    text-align: center;
+    font-size: 11px;
+}
+
+.points-table td {
+    padding: 6px 2px;
+    border-bottom: 1px solid #e5e7eb;
+    text-align: center;
+}
+
+.points-table .student-name {
+    text-align: right;
+    padding-right: 6px;
+}
+
+.points-table .points-value {
+    font-weight: bold;
+    color: #059669;
+}
+
+/* No Data Message */
+.points-column-content .no-data {
+    text-align: center;
+    padding: 20px 8px;
+    color: #6b7280;
+    font-style: italic;
+    font-size: 12px;
+}
+
+/* Full Width Export Button */
+.export-btn.full-width {
+    width: 100%;
+    margin-top: 16px;
+    background: #1f2937;
+}
+
+/* Hide/Show Tab Content */
+.points-tab-content.hidden {
+    display: none;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+    .points-container {
+        padding: 8px;
+    }
+    
+    .points-columns {
+        flex-direction: column;
+        gap: 12px;
+    }
+    
+    .points-column {
+        width: 100%;
+    }
+    
+    .week-display,
+    .month-display {
+        font-size: 0.9rem;
+        min-width: 140px;
+    }
+    
+    .points-main-tab {
+        font-size: 12px;
+        padding: 10px 4px;
+    }
+}
