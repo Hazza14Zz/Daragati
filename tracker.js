@@ -816,11 +816,18 @@ function switchSection(section) {
         loadPointsReport();
     } else if (section === 'points') {
         // Already handled by initPointsTab()
-    } else if (section !== 'history') {
+       } else if (section !== 'history') {
         loadStudentCounts();
         currentStudentIndex = 0;
         updateStudentDropdown();
         loadStudent(1);
+        
+        // Clear search when switching sections
+        const searchInput = document.getElementById('studentSearchInput');
+        if (searchInput) {
+            searchInput.value = '';
+            filterStudentDropdown();
+        }
     }
 }
 function updateStudentDropdown() {
@@ -839,6 +846,149 @@ function updateStudentDropdown() {
         select.innerHTML += `<option value="${i}">${i} - ${name}</option>`; 
     }
     select.value = currentStudentIndex + 1;
+}
+// ============================================================
+// QUICK SEARCH FUNCTIONS
+// ============================================================
+
+// Store all student data for filtering
+let allStudentsData = [];
+
+function filterStudentDropdown() {
+    const searchInput = document.getElementById('studentSearchInput');
+    const select = document.getElementById('studentJumpSelect');
+    const searchTerm = searchInput.value.toLowerCase().trim();
+    
+    // Get all options
+    const options = select.options;
+    let visibleCount = 0;
+    let firstVisibleIndex = -1;
+    
+    for (let i = 0; i < options.length; i++) {
+        const option = options[i];
+        const text = option.text.toLowerCase();
+        
+        if (text.includes(searchTerm)) {
+            option.classList.remove('hidden-option');
+            visibleCount++;
+            if (firstVisibleIndex === -1) {
+                firstVisibleIndex = i;
+            }
+        } else {
+            option.classList.add('hidden-option');
+        }
+    }
+    
+    // Auto-select first visible option
+    if (visibleCount > 0 && firstVisibleIndex !== -1) {
+        select.selectedIndex = firstVisibleIndex;
+    }
+}
+
+function handleSearchKeydown(event) {
+    const select = document.getElementById('studentJumpSelect');
+    const options = select.options;
+    const visibleOptions = Array.from(options).filter(opt => !opt.classList.contains('hidden-option'));
+    
+    if (event.key === 'Enter') {
+        event.preventDefault();
+        
+        // Jump to selected student
+        if (visibleOptions.length > 0) {
+            const selectedOption = options[select.selectedIndex];
+            if (selectedOption && !selectedOption.classList.contains('hidden-option')) {
+                jumpToStudent();
+            }
+        }
+        
+        // Clear search
+        document.getElementById('studentSearchInput').value = '';
+        filterStudentDropdown();
+    } else if (event.key === 'ArrowDown') {
+        event.preventDefault();
+        
+        // Find current visible index
+        const currentIndex = select.selectedIndex;
+        let nextIndex = currentIndex + 1;
+        
+        while (nextIndex < options.length && options[nextIndex].classList.contains('hidden-option')) {
+            nextIndex++;
+        }
+        
+        if (nextIndex < options.length) {
+            select.selectedIndex = nextIndex;
+        }
+    } else if (event.key === 'ArrowUp') {
+        event.preventDefault();
+        
+        // Find current visible index
+        const currentIndex = select.selectedIndex;
+        let prevIndex = currentIndex - 1;
+        
+        while (prevIndex >= 0 && options[prevIndex].classList.contains('hidden-option')) {
+            prevIndex--;
+        }
+        
+        if (prevIndex >= 0) {
+            select.selectedIndex = prevIndex;
+        }
+    } else if (event.key === 'Escape') {
+        // Clear search on Escape
+        document.getElementById('studentSearchInput').value = '';
+        filterStudentDropdown();
+    }
+}
+
+// Modified updateStudentDropdown to store data
+function updateStudentDropdown() {
+    const select = document.getElementById('studentJumpSelect'); 
+    if (!select) return;
+    
+    select.innerHTML = '';
+    allStudentsData = [];
+    
+    for (let i = 1; i <= totalStudents; i++) { 
+        const saved = localStorage.getItem(`quran_${currentSection}-${i}`); 
+        let name = `طالب ${i}`; 
+        if (saved) { 
+            try { 
+                const d = JSON.parse(saved); 
+                if (d.name) name = d.name; 
+            } catch(e) {} 
+        }
+        
+        allStudentsData.push({ number: i, name: name });
+        select.innerHTML += `<option value="${i}">${i} - ${name}</option>`; 
+    }
+    
+    select.value = currentStudentIndex + 1;
+    
+    // Clear search input when section changes
+    const searchInput = document.getElementById('studentSearchInput');
+    if (searchInput) {
+        searchInput.value = '';
+        filterStudentDropdown();
+    }
+}
+
+// Modified jumpToStudent to handle search state
+function jumpToStudent() { 
+    const select = document.getElementById('studentJumpSelect');
+    const searchInput = document.getElementById('studentSearchInput');
+    
+    if (select) {
+        const selectedOption = select.options[select.selectedIndex];
+        if (selectedOption && !selectedOption.classList.contains('hidden-option')) {
+            currentStudentIndex = parseInt(select.value) - 1; 
+            loadStudent(currentStudentIndex + 1);
+            
+            // Clear search after jumping
+            if (searchInput) {
+                searchInput.value = '';
+                filterStudentDropdown();
+            }
+        }
+    }
 }
 
 function prevStudent() { 
