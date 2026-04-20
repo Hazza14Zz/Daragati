@@ -253,22 +253,31 @@
     <div class="student-nav">
         <button class="nav-btn" onclick="prevStudent()">◀</button>
         <div class="student-selector">
-            <!-- Search Input -->
-            <input type="text" 
-                   id="studentSearchInput" 
-                   class="student-search-input" 
-                   placeholder="🔍 ابحث عن طالب..."
-                   onkeyup="filterStudentDropdown()"
-                   onkeydown="handleSearchKeydown(event)"
-                   autocomplete="off">
-            <!-- Student Dropdown -->
-            <select id="studentJumpSelect" class="student-select" onchange="jumpToStudent()" size="8"></select>
+            <!-- Custom Searchable Student Dropdown -->
+            <div class="searchable-select-wrapper" id="studentSearchWrapper">
+                <div class="searchable-select-input" id="studentDisplayInput">
+                    <span id="currentStudentDisplay">1 - طالب 1</span>
+                </div>
+                <div class="searchable-select-dropdown" id="studentDropdown">
+                    <input type="text" 
+                           id="studentSearchInput" 
+                           class="searchable-select-search" 
+                           placeholder="🔍 ابحث عن طالب..."
+                           onkeyup="filterStudentDropdown()"
+                           onkeydown="handleStudentSearchKeydown(event)"
+                           autocomplete="off"
+                           dir="rtl">
+                    <div id="studentOptionsContainer"></div>
+                </div>
+            </div>
+            <!-- Hidden select for compatibility -->
+            <select id="studentJumpSelect" class="student-select hidden" onchange="jumpToStudent()"></select>
         </div>
         <button class="nav-btn" onclick="nextStudent()">▶</button>
     </div>
     <div id="studentCardContainer"></div>
 </div>
-<!-- Reports View -->
+    <!-- Reports View -->
 <div id="reportsView" class="tracker-section hidden">
     <div class="reports-container">
         
