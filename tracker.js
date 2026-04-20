@@ -939,10 +939,13 @@ function loadReportsData() {
     document.getElementById('grand-total-khatmah').textContent = grandKhatmah;
 }
 function loadDailyReport() {
-    document.getElementById('currentDateDisplay').textContent = new Date(currentReportDate).toLocaleDateString('ar-SA', { year: 'numeric', month: 'long', day: 'numeric' });
-    
     ['highschool', 'middleschool', 'elementary'].forEach(s => {
-        const c = document.getElementById(`daily-${s}`);  // Changed from daily-highschool etc.
+        const c = document.getElementById(`daily-${s}`);  // This is correct - matches HTML
+        if (!c) {
+            console.error(`Container daily-${s} not found`);
+            return;
+        }
+        
         const st = [];
         for (let i = 0; i < localStorage.length; i++) { 
             const k = localStorage.key(i); 
@@ -953,6 +956,7 @@ function loadDailyReport() {
                 } catch (e) {} 
             } 
         }
+        
         if (st.length === 0) { 
             c.innerHTML = '<div class="no-data">لا توجد بيانات لهذا اليوم</div>'; 
             return; 
@@ -969,8 +973,7 @@ function loadDailyReport() {
         });
         c.innerHTML = h + '</table>';
     });
-}
-// ============================================================
+}// ============================================================
 // POINTS REPORTS - Weekly, Monthly, All-Time
 // ============================================================
 
@@ -1669,6 +1672,32 @@ function exportHistoryPDF() {
     
     printWindow.document.write(html);
     printWindow.document.close();
+}
+function switchPointsPeriod(period) {
+    // Hide all sections
+    document.getElementById('points-weekly-section').classList.add('hidden');
+    document.getElementById('points-monthly-section').classList.add('hidden');
+    document.getElementById('points-alltime-section').classList.add('hidden');
+    
+    // Remove active class from all tabs
+    document.querySelectorAll('.points-tab').forEach(tab => {
+        tab.classList.remove('active');
+    });
+    
+    // Show selected section
+    if (period === 'weekly') {
+        document.getElementById('points-weekly-section').classList.remove('hidden');
+        document.querySelector('.points-tab:nth-child(1)').classList.add('active');
+        loadWeeklyPointsReport();
+    } else if (period === 'monthly') {
+        document.getElementById('points-monthly-section').classList.remove('hidden');
+        document.querySelector('.points-tab:nth-child(2)').classList.add('active');
+        loadMonthlyPointsReport();
+    } else {
+        document.getElementById('points-alltime-section').classList.remove('hidden');
+        document.querySelector('.points-tab:nth-child(3)').classList.add('active');
+        loadAllTimePointsReport();
+    }
 }
 window.onload = () => {
     subscribeToRealtimeChanges();
