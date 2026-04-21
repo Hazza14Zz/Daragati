@@ -260,13 +260,13 @@
 <div id="trackerView">
     <div class="student-nav">
         <button class="nav-btn" onclick="prevStudent()">◀</button>
-        <div class="student-selector">
+        <div class="student-selector" style="overflow: visible !important; position: relative; z-index: 100;">
             <!-- Custom Searchable Student Dropdown -->
-            <div class="searchable-select-wrapper" id="studentSearchWrapper">
-                <div class="searchable-select-input" id="studentDisplayInput">
+            <div class="searchable-select-wrapper" id="studentSearchWrapper" style="position: relative; width: 100%; z-index: 100;">
+                <div class="searchable-select-input" id="studentDisplayInput" style="width: 100%; padding: 14px 16px; border: 2px solid #e5e7eb; border-radius: 40px; background: white; cursor: pointer; text-align: right; min-height: 60px; display: flex; align-items: center;">
                     <span id="currentStudentDisplay">1 - طالب 1</span>
                 </div>
-                <div class="searchable-select-dropdown" id="studentDropdown">
+                <div class="searchable-select-dropdown" id="studentDropdown" style="position: absolute; top: 100%; left: 0; right: 0; max-height: 400px; overflow-y: auto; background: white; border: 2px solid #e5e7eb; border-top: none; border-radius: 0 0 12px 12px; z-index: 9999; display: none; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
                     <input type="text" 
                            id="studentSearchInput" 
                            class="searchable-select-search" 
@@ -274,12 +274,13 @@
                            onkeyup="filterStudentDropdown()"
                            onkeydown="handleStudentSearchKeydown(event)"
                            autocomplete="off"
-                           dir="rtl">
-                    <div id="studentOptionsContainer"></div>
+                           dir="rtl"
+                           style="width: 100%; padding: 12px 16px; border: none; border-bottom: 2px solid #e5e7eb; font-size: 15px; direction: rtl; text-align: right; background: white; position: sticky; top: 0; z-index: 10;">
+                    <div id="studentOptionsContainer" style="max-height: 350px; overflow-y: auto;"></div>
                 </div>
             </div>
             <!-- Hidden select for compatibility -->
-            <select id="studentJumpSelect" class="student-select hidden" onchange="jumpToStudent()"></select>
+            <select id="studentJumpSelect" class="student-select" onchange="jumpToStudent()" style="display: none !important;"></select>
         </div>
         <button class="nav-btn" onclick="nextStudent()">▶</button>
     </div>
