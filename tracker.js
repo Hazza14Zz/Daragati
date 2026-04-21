@@ -861,46 +861,87 @@ function switchSection(section) {
 let allStudentsData = [];
 
 function initStudentSearchable() {
-    const wrapper = document.getElementById('studentSearchWrapper');
-    const displayInput = document.getElementById('studentDisplayInput');
-    const dropdown = document.getElementById('studentDropdown');
-    const searchInput = document.getElementById('studentSearchInput');
+    console.log('🔍 Looking for dropdown elements...');
     
-    // Debug: Log what's missing
-    if (!wrapper) console.log('❌ studentSearchWrapper is missing');
-    if (!displayInput) console.log('❌ studentDisplayInput is missing');
-    if (!dropdown) console.log('❌ studentDropdown is missing');
-    if (!searchInput) console.log('❌ studentSearchInput is missing');
+    // Try to find elements
+    let wrapper = document.getElementById('studentSearchWrapper');
+    let displayInput = document.getElementById('studentDisplayInput');
+    let dropdown = document.getElementById('studentDropdown');
+    let searchInput = document.getElementById('studentSearchInput');
     
+    // If not found, set up a MutationObserver to wait for them
     if (!wrapper || !displayInput || !dropdown || !searchInput) {
-        console.log('⏳ Elements not ready, retrying...');
-        setTimeout(() => initStudentSearchable(), 100);
+        console.log('⏳ Elements not found, setting up observer...');
+        
+        // Create an observer to watch for DOM changes
+        const observer = new MutationObserver(function(mutations) {
+            wrapper = document.getElementById('studentSearchWrapper');
+            displayInput = document.getElementById('studentDisplayInput');
+            dropdown = document.getElementById('studentDropdown');
+            searchInput = document.getElementById('studentSearchInput');
+            
+            if (wrapper && displayInput && dropdown && searchInput) {
+                console.log('✅ Elements found by observer!');
+                observer.disconnect();
+                setupDropdown(wrapper, displayInput, dropdown, searchInput);
+            }
+        });
+        
+        // Start observing
+        observer.observe(document.body, {
+            childList: true,
+            subtree: true
+        });
+        
+        // Also try again after delays
+        setTimeout(() => {
+            wrapper = document.getElementById('studentSearchWrapper');
+            displayInput = document.getElementById('studentDisplayInput');
+            dropdown = document.getElementById('studentDropdown');
+            searchInput = document.getElementById('studentSearchInput');
+            
+            if (wrapper && displayInput && dropdown && searchInput) {
+                console.log('✅ Elements found by timeout!');
+                setupDropdown(wrapper, displayInput, dropdown, searchInput);
+            } else {
+                console.log('❌ Elements still not found after waiting');
+            }
+        }, 2000);
+        
         return;
     }
     
-    console.log('✅ All elements found! Initializing dropdown...');
-    
+    // If found immediately
+    setupDropdown(wrapper, displayInput, dropdown, searchInput);
+}
+
+function setupDropdown(wrapper, displayInput, dropdown, searchInput) {
     if (wrapper._initialized) {
         console.log('⚠️ Dropdown already initialized');
         return;
     }
     wrapper._initialized = true;
     
+    console.log('✅ Setting up dropdown...');
+    
     // Toggle dropdown on display click
     displayInput.addEventListener('click', (e) => {
         e.stopPropagation();
         
-        // Close other dropdowns
         document.querySelectorAll('.searchable-select-dropdown.show').forEach(d => {
             if (d !== dropdown) d.classList.remove('show');
         });
         
         dropdown.classList.toggle('show');
         if (dropdown.classList.contains('show')) {
-            renderStudentOptions();
+            if (typeof renderStudentOptions === 'function') {
+                renderStudentOptions();
+            }
             searchInput.focus();
             searchInput.value = '';
-            filterStudentDropdown();
+            if (typeof filterStudentDropdown === 'function') {
+                filterStudentDropdown();
+            }
         }
     });
     
@@ -916,7 +957,7 @@ function initStudentSearchable() {
         e.stopPropagation();
     });
     
-    console.log('✅ Dropdown initialized successfully!');
+    console.log('✅ Dropdown setup complete!');
 }
 
 function renderStudentOptions(filter = '') {
