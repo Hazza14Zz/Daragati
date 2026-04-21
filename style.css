@@ -526,7 +526,7 @@ label, option, optgroup {
     top: 100%;
     left: 0;
     right: 0;
-    max-height: 350px;
+    max-height: 700px;
     overflow-y: auto;
     background: white;
     border: 2px solid #e5e7eb;
@@ -557,7 +557,7 @@ label, option, optgroup {
 }
 
 #studentOptionsContainer {
-    max-height: 300px;
+    max-height: 700px;
     overflow-y: auto;
 }
 
