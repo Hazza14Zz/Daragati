@@ -444,7 +444,7 @@ function initApp() {
     loadDailyReport();
     loadPointsReport();
         // ✅ ADD THIS LINE:
-    setTimeout(() => initStudentSearchable(), 100);
+    setTimeout(() => initStudentSearchable(), 200);
 
 }
 function loadStudentCounts() {
@@ -837,7 +837,7 @@ function switchSection(section) {
         loadStudent(1);
         
         // Initialize searchable dropdown
-        setTimeout(() => initStudentSearchable(), 100);
+        setTimeout(() => initStudentSearchable(), 200);
     }
 }
 // ============================================================
@@ -852,7 +852,14 @@ function initStudentSearchable() {
     const dropdown = document.getElementById('studentDropdown');
     const searchInput = document.getElementById('studentSearchInput');
     
-    if (!wrapper || wrapper._initialized) return;
+    // ✅ ADD THIS CHECK:
+    if (!wrapper || !displayInput || !dropdown || !searchInput) {
+        console.log('⏳ Elements not ready, retrying...');
+        setTimeout(() => initStudentSearchable(), 100);
+        return;
+    }
+    
+    if (wrapper._initialized) return;
     wrapper._initialized = true;
     
     // Toggle dropdown on display click
