@@ -165,10 +165,11 @@ function checkAuth() {
         }
         document.getElementById('loggedInUser').textContent = `مرحباً، ${data.displayName}`;
         
-        // ✅ Set default section to highschool
-        currentSection = 'highschool';
+        // ✅ ADD THIS LINE - Hide overlay if it exists
+        const overlay = document.getElementById('authCheckOverlay');
+        if (overlay) overlay.classList.add('hidden');
         
-        // ✅ Activate the high school tab
+        currentSection = 'highschool';
         document.querySelectorAll('.tab').forEach((t, i) => {
             t.classList.remove('active');
         });
