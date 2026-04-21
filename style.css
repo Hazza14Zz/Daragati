@@ -584,3 +584,17 @@ label, option, optgroup {
     display: block !important;
     width: 100%;
 }
+
+/* Fix dropdown cutoff */
+.student-selector {
+    overflow: visible !important;
+    z-index: 100;
+}
+
+#studentSearchWrapper {
+    z-index: 999 !important;
+}
+
+#studentSearchWrapper .searchable-select-dropdown {
+    z-index: 9999 !important;
+}
