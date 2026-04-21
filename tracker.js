@@ -866,14 +866,24 @@ function initStudentSearchable() {
     const dropdown = document.getElementById('studentDropdown');
     const searchInput = document.getElementById('studentSearchInput');
     
-    // ✅ ADD THIS CHECK:
+    // Debug: Log what's missing
+    if (!wrapper) console.log('❌ studentSearchWrapper is missing');
+    if (!displayInput) console.log('❌ studentDisplayInput is missing');
+    if (!dropdown) console.log('❌ studentDropdown is missing');
+    if (!searchInput) console.log('❌ studentSearchInput is missing');
+    
     if (!wrapper || !displayInput || !dropdown || !searchInput) {
         console.log('⏳ Elements not ready, retrying...');
         setTimeout(() => initStudentSearchable(), 100);
         return;
     }
     
-    if (wrapper._initialized) return;
+    console.log('✅ All elements found! Initializing dropdown...');
+    
+    if (wrapper._initialized) {
+        console.log('⚠️ Dropdown already initialized');
+        return;
+    }
     wrapper._initialized = true;
     
     // Toggle dropdown on display click
@@ -905,6 +915,8 @@ function initStudentSearchable() {
     dropdown.addEventListener('click', (e) => {
         e.stopPropagation();
     });
+    
+    console.log('✅ Dropdown initialized successfully!');
 }
 
 function renderStudentOptions(filter = '') {
