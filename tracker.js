@@ -152,7 +152,10 @@ async function loadFromCloud() {
 // ============================================================
 function checkAuth() {
     const session = sessionStorage.getItem('quranTrackerSession');
-    if (!session) { window.location.href = 'login.html'; return false; }
+    if (!session) { 
+        window.location.href = 'login.html'; 
+        return false; 
+    }
     try {
         const data = JSON.parse(session);
         if (new Date(data.expiresAt) < new Date()) { 
@@ -161,6 +164,16 @@ function checkAuth() {
             return false; 
         }
         document.getElementById('loggedInUser').textContent = `مرحباً، ${data.displayName}`;
+        
+        // ✅ Set default section to highschool
+        currentSection = 'highschool';
+        
+        // ✅ Activate the high school tab
+        document.querySelectorAll('.tab').forEach((t, i) => {
+            t.classList.remove('active');
+        });
+        document.getElementById('tab-highschool').classList.add('active');
+        
         return true;
     } catch (e) { 
         sessionStorage.removeItem('quranTrackerSession'); 
@@ -168,7 +181,6 @@ function checkAuth() {
         return false; 
     }
 }
-
 function logout() { 
     if (confirm('تسجيل الخروج؟')) { 
         sessionStorage.removeItem('quranTrackerSession'); 
@@ -389,7 +401,6 @@ async function updateDateDisplay() {
 async function loadQuranData() {
     if (!checkAuth()) return;
     await updateDateDisplay();
-    
     await loadFromCloud();
     
     try { 
@@ -403,7 +414,8 @@ async function loadQuranData() {
             numberOfAyahs: surah.numberOfAyahs
         }));
         
-        initApp(); 
+        // ✅ Ensure high school is shown on load
+        switchSection('highschool');
     } catch (e) {
         surahsData = SURAH_NAMES_AR.map((name, index) => ({
             number: index + 1,
@@ -411,10 +423,9 @@ async function loadQuranData() {
             englishName: name,
             numberOfAyahs: AYAH_COUNTS[index] || 10
         }));
-        initApp();
+        switchSection('highschool');
     }
 }
-
 function initApp() {
     loadStudentCounts();
     updateStudentDropdown();
