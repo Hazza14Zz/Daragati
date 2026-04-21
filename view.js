@@ -17,9 +17,9 @@ let currentViewMonth = new Date();
 
 // Section names mapping
 const SECTION_NAMES = { 
-    highschool: 'ثانوي', 
-    middleschool: 'متوسط', 
-    elementary: 'ابتدائي' 
+    highschool: 'قسم الثانوي ', 
+    middleschool: ' قسم المتوسط', 
+    elementary: ' قسم الابتدائي' 
 };
 
 // Check auth and get section from session
