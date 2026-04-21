@@ -432,6 +432,9 @@ function initApp() {
     loadReportsData();
     loadDailyReport();
     loadPointsReport();
+        // ✅ ADD THIS LINE:
+    setTimeout(() => initStudentSearchable(), 100);
+
 }
 function loadStudentCounts() {
     if (!localStorage.getItem('studentCount_highschool')) { 
@@ -825,23 +828,6 @@ function switchSection(section) {
         // Initialize searchable dropdown
         setTimeout(() => initStudentSearchable(), 100);
     }
-}
-function updateStudentDropdown() {
-    const select = document.getElementById('studentJumpSelect'); 
-    if (!select) return;
-    select.innerHTML = '';
-    for (let i = 1; i <= totalStudents; i++) { 
-        const saved = localStorage.getItem(`quran_${currentSection}-${i}`); 
-        let name = `طالب ${i}`; 
-        if (saved) { 
-            try { 
-                const d = JSON.parse(saved); 
-                if (d.name) name = d.name; 
-            } catch(e) {} 
-        } 
-        select.innerHTML += `<option value="${i}">${i} - ${name}</option>`; 
-    }
-    select.value = currentStudentIndex + 1;
 }
 // ============================================================
 // SEARCHABLE STUDENT DROPDOWN (Like Surah Search)
