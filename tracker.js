@@ -414,8 +414,13 @@ async function loadQuranData() {
             numberOfAyahs: surah.numberOfAyahs
         }));
         
-        // ✅ Ensure high school is shown on load
         switchSection('highschool');
+        
+        // ✅ Force one more initialization attempt after everything loads
+        setTimeout(() => {
+            console.log('Final initialization attempt...');
+            initStudentSearchable();
+        }, 1000);
     } catch (e) {
         surahsData = SURAH_NAMES_AR.map((name, index) => ({
             number: index + 1,
@@ -424,6 +429,10 @@ async function loadQuranData() {
             numberOfAyahs: AYAH_COUNTS[index] || 10
         }));
         switchSection('highschool');
+        
+        setTimeout(() => {
+            initStudentSearchable();
+        }, 1000);
     }
 }
 function initApp() {
@@ -444,7 +453,10 @@ function initApp() {
     loadDailyReport();
     loadPointsReport();
         // ✅ ADD THIS LINE:
-    setTimeout(() => initStudentSearchable(), 200);
+       setTimeout(() => {
+        console.log('Initializing student search from initApp...');
+        initStudentSearchable();
+    }, 500);
 
 }
 function loadStudentCounts() {
@@ -830,16 +842,18 @@ function switchSection(section) {
         loadPointsReport();
     } else if (section === 'points') {
         // Already handled by initPointsTab()
-       } else if (section !== 'history') {
+      } else if (section !== 'history') {
         loadStudentCounts();
         currentStudentIndex = 0;
         updateStudentDropdown();
         loadStudent(1);
         
-        // Initialize searchable dropdown
-        setTimeout(() => initStudentSearchable(), 200);
-    }
-}
+        // Wait longer for DOM to be fully ready
+        setTimeout(() => {
+            console.log('Initializing student search after section switch...');
+            initStudentSearchable();
+        }, 500);
+    }}
 // ============================================================
 // SEARCHABLE STUDENT DROPDOWN (Like Surah Search)
 // ============================================================
