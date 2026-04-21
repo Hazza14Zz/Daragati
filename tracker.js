@@ -414,13 +414,7 @@ async function loadQuranData() {
             numberOfAyahs: surah.numberOfAyahs
         }));
         
-        switchSection('highschool');
-        
-        // ✅ Force one more initialization attempt after everything loads
-        setTimeout(() => {
-            console.log('Final initialization attempt...');
-            initStudentSearchable();
-        }, 1000);
+              switchSection('highschool');
     } catch (e) {
         surahsData = SURAH_NAMES_AR.map((name, index) => ({
             number: index + 1,
@@ -429,10 +423,6 @@ async function loadQuranData() {
             numberOfAyahs: AYAH_COUNTS[index] || 10
         }));
         switchSection('highschool');
-        
-        setTimeout(() => {
-            initStudentSearchable();
-        }, 1000);
     }
 }
 function initApp() {
@@ -449,16 +439,11 @@ function initApp() {
         dailyDisplay.textContent = new Date(currentReportDate).toLocaleDateString('ar-SA', { year: 'numeric', month: 'long', day: 'numeric' });
     }
     
-    loadReportsData();
+       loadReportsData();
     loadDailyReport();
     loadPointsReport();
-        // ✅ ADD THIS LINE:
-       setTimeout(() => {
-        console.log('Initializing student search from initApp...');
-        initStudentSearchable();
-    }, 500);
-
 }
+
 function loadStudentCounts() {
     if (!localStorage.getItem('studentCount_highschool')) { 
         localStorage.setItem('studentCount_highschool', '50'); 
@@ -842,193 +827,21 @@ function switchSection(section) {
         loadPointsReport();
     } else if (section === 'points') {
         // Already handled by initPointsTab()
-      } else if (section !== 'history') {
+        } else if (section !== 'history') {
         loadStudentCounts();
         currentStudentIndex = 0;
         updateStudentDropdown();
         loadStudent(1);
-        
-        // Wait longer for DOM to be fully ready
-        setTimeout(() => {
-            console.log('Initializing student search after section switch...');
-            initStudentSearchable();
-        }, 500);
     }}
 // ============================================================
-// SEARCHABLE STUDENT DROPDOWN (Like Surah Search)
+// SIMPLE STUDENT DROPDOWN
 // ============================================================
 
-let allStudentsData = [];
-
-function initStudentSearchable() {
-    console.log('🔍 Looking for dropdown elements...');
-    
-    // Try to find elements
-    let wrapper = document.getElementById('studentSearchWrapper');
-    let displayInput = document.getElementById('studentDisplayInput');
-    let dropdown = document.getElementById('studentDropdown');
-    let searchInput = document.getElementById('studentSearchInput');
-    
-    // If not found, set up a MutationObserver to wait for them
-    if (!wrapper || !displayInput || !dropdown || !searchInput) {
-        console.log('⏳ Elements not found, setting up observer...');
-        
-        // Create an observer to watch for DOM changes
-        const observer = new MutationObserver(function(mutations) {
-            wrapper = document.getElementById('studentSearchWrapper');
-            displayInput = document.getElementById('studentDisplayInput');
-            dropdown = document.getElementById('studentDropdown');
-            searchInput = document.getElementById('studentSearchInput');
-            
-            if (wrapper && displayInput && dropdown && searchInput) {
-                console.log('✅ Elements found by observer!');
-                observer.disconnect();
-                setupDropdown(wrapper, displayInput, dropdown, searchInput);
-            }
-        });
-        
-        // Start observing
-        observer.observe(document.body, {
-            childList: true,
-            subtree: true
-        });
-        
-        // Also try again after delays
-        setTimeout(() => {
-            wrapper = document.getElementById('studentSearchWrapper');
-            displayInput = document.getElementById('studentDisplayInput');
-            dropdown = document.getElementById('studentDropdown');
-            searchInput = document.getElementById('studentSearchInput');
-            
-            if (wrapper && displayInput && dropdown && searchInput) {
-                console.log('✅ Elements found by timeout!');
-                setupDropdown(wrapper, displayInput, dropdown, searchInput);
-            } else {
-                console.log('❌ Elements still not found after waiting');
-            }
-        }, 2000);
-        
-        return;
-    }
-    
-    // If found immediately
-    setupDropdown(wrapper, displayInput, dropdown, searchInput);
-}
-
-function setupDropdown(wrapper, displayInput, dropdown, searchInput) {
-    if (wrapper._initialized) {
-        console.log('⚠️ Dropdown already initialized');
-        return;
-    }
-    wrapper._initialized = true;
-    
-    console.log('✅ Setting up dropdown...');
-    
-    // Toggle dropdown on display click
-    displayInput.addEventListener('click', (e) => {
-        e.stopPropagation();
-        
-        document.querySelectorAll('.searchable-select-dropdown.show').forEach(d => {
-            if (d !== dropdown) d.classList.remove('show');
-        });
-        
-        dropdown.classList.toggle('show');
-        if (dropdown.classList.contains('show')) {
-            if (typeof renderStudentOptions === 'function') {
-                renderStudentOptions();
-            }
-            searchInput.focus();
-            searchInput.value = '';
-            if (typeof filterStudentDropdown === 'function') {
-                filterStudentDropdown();
-            }
-        }
-    });
-    
-    // Hide dropdown when clicking outside
-    document.addEventListener('click', (e) => {
-        if (!wrapper.contains(e.target)) {
-            dropdown.classList.remove('show');
-        }
-    });
-    
-    // Prevent dropdown from closing when clicking inside
-    dropdown.addEventListener('click', (e) => {
-        e.stopPropagation();
-    });
-    
-    console.log('✅ Dropdown setup complete!');
-}
-
-function renderStudentOptions(filter = '') {
-    const container = document.getElementById('studentOptionsContainer');
-    const select = document.getElementById('studentJumpSelect');
-    
-    let html = '';
-    allStudentsData.forEach((student, idx) => {
-        const text = `${student.number} - ${student.name}`;
-        if (filter && !text.includes(filter)) return;
-        
-        html += `<div class="searchable-select-option" data-value="${student.number}" onclick="selectStudent(${student.number})">${text}</div>`;
-    });
-    
-    container.innerHTML = html || '<div class="searchable-select-option" style="color:#9ca3af;">لا توجد نتائج</div>';
-}
-
-function filterStudentDropdown() {
-    const searchInput = document.getElementById('studentSearchInput');
-    const searchTerm = searchInput.value.trim();
-    renderStudentOptions(searchTerm);
-}
-
-function selectStudent(studentNum) {
-    const select = document.getElementById('studentJumpSelect');
-    const dropdown = document.getElementById('studentDropdown');
-    const displaySpan = document.getElementById('currentStudentDisplay');
-    const searchInput = document.getElementById('studentSearchInput');
-    
-    // Update hidden select
-    select.value = studentNum;
-    
-    // Update display
-    const student = allStudentsData.find(s => s.number === studentNum);
-    if (student) {
-        displaySpan.textContent = `${student.number} - ${student.name}`;
-    }
-    
-    // Close dropdown
-    dropdown.classList.remove('show');
-    searchInput.value = '';
-    
-    // Load the student
-    currentStudentIndex = studentNum - 1;
-    loadStudent(studentNum);
-}
-
-function handleStudentSearchKeydown(event) {
-    const options = document.querySelectorAll('#studentOptionsContainer .searchable-select-option');
-    const visibleOptions = Array.from(options).filter(opt => opt.style.display !== 'none' && opt.textContent !== 'لا توجد نتائج');
-    
-    if (event.key === 'Enter') {
-        event.preventDefault();
-        if (visibleOptions.length > 0) {
-            const studentNum = parseInt(visibleOptions[0].getAttribute('data-value'));
-            selectStudent(studentNum);
-        }
-    } else if (event.key === 'Escape') {
-        document.getElementById('studentDropdown').classList.remove('show');
-    }
-}
-
-// Modified updateStudentDropdown
 function updateStudentDropdown() {
     const select = document.getElementById('studentJumpSelect'); 
-    const displaySpan = document.getElementById('currentStudentDisplay');
-    
     if (!select) return;
     
     select.innerHTML = '';
-    allStudentsData = [];
     
     for (let i = 1; i <= totalStudents; i++) { 
         const saved = localStorage.getItem(`quran_${currentSection}-${i}`); 
@@ -1038,39 +851,21 @@ function updateStudentDropdown() {
                 const d = JSON.parse(saved); 
                 if (d.name) name = d.name; 
             } catch(e) {} 
-        }
-        
-        allStudentsData.push({ number: i, name: name });
+        } 
         select.innerHTML += `<option value="${i}">${i} - ${name}</option>`; 
     }
     
     select.value = currentStudentIndex + 1;
-    
-    // Update display
-    const currentStudent = allStudentsData.find(s => s.number === currentStudentIndex + 1);
-    if (currentStudent && displaySpan) {
-        displaySpan.textContent = `${currentStudent.number} - ${currentStudent.name}`;
-    }
-    
-    // Initialize searchable if needed
-    setTimeout(() => initStudentSearchable(), 50);
 }
 
-// Modified jumpToStudent for compatibility
 function jumpToStudent() { 
     const select = document.getElementById('studentJumpSelect');
     if (select) {
         currentStudentIndex = parseInt(select.value) - 1; 
-        loadStudent(currentStudentIndex + 1);
-        
-        // Update display
-        const displaySpan = document.getElementById('currentStudentDisplay');
-        const student = allStudentsData.find(s => s.number === currentStudentIndex + 1);
-        if (student && displaySpan) {
-            displaySpan.textContent = `${student.number} - ${student.name}`;
-        }
+        loadStudent(currentStudentIndex + 1); 
     }
 }
+
 function prevStudent() { 
     if (currentStudentIndex > 0) { 
         currentStudentIndex--; 
@@ -1086,15 +881,6 @@ function nextStudent() {
         updateStudentDropdown(); 
     } 
 }
-
-function jumpToStudent() { 
-    const select = document.getElementById('studentJumpSelect');
-    if (select) {
-        currentStudentIndex = parseInt(select.value) - 1; 
-        loadStudent(currentStudentIndex + 1); 
-    }
-}
-
 // ============================================================
 // REPORTS
 // ============================================================
