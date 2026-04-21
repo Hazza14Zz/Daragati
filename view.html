@@ -293,9 +293,43 @@
         .hidden {
             display: none !important;
         }
+
+        /* Loading Animation */
+@keyframes bounce {
+    0%, 80%, 100% {
+        transform: scale(0);
+        opacity: 0.5;
+    }
+    40% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* Hide overlay by default if logged in */
+#authCheckOverlay.hidden {
+    display: none !important;
+}
     </style>
 </head>
 <body>
+<!-- ============================================ -->
+<!-- LOADING OVERLAY - Shows while checking auth  -->
+<!-- ============================================ -->
+<div id="authCheckOverlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, #065f46 0%, #059669 50%, #10b981 100%); z-index: 99999; display: flex; align-items: center; justify-content: center;">
+    <div style="text-align: center;">
+        <div style="background: white; width: 100px; height: 100px; border-radius: 30px; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.2);">
+            <span style="font-size: 60px;">📖</span>
+        </div>
+        <h2 style="color: white; font-size: 24px; margin-bottom: 20px; text-shadow: 0 2px 10px rgba(0,0,0,0.1);">سجل متابعة القرآن</h2>
+        <div style="display: flex; gap: 8px; justify-content: center;">
+            <div class="loading-dot" style="width: 12px; height: 12px; background: white; border-radius: 50%; animation: bounce 1.4s infinite ease-in-out;"></div>
+            <div class="loading-dot" style="width: 12px; height: 12px; background: white; border-radius: 50%; animation: bounce 1.4s infinite ease-in-out 0.2s;"></div>
+            <div class="loading-dot" style="width: 12px; height: 12px; background: white; border-radius: 50%; animation: bounce 1.4s infinite ease-in-out 0.4s;"></div>
+        </div>
+        <p style="color: rgba(255,255,255,0.9); margin-top: 20px; font-size: 16px;">جاري التحميل...</p>
+    </div>
+</div>
 
 <div class="user-bar">
     <div class="user-info">
@@ -417,5 +451,21 @@
 <script src="quran-pages.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="view.js"></script>
+    <script>
+    // Check if user is already logged in
+    (function() {
+        const viewSession = sessionStorage.getItem('viewSectionSession');
+        
+        if (viewSession) {
+            // User is logged in - hide overlay
+            document.getElementById('authCheckOverlay').classList.add('hidden');
+        } else {
+            // Not logged in - redirect to login after a short delay
+            setTimeout(function() {
+                window.location.replace('login.html');
+            }, 1000); // Shows beautiful loading for 1 second then redirects
+        }
+    })();
+</script>
 </body>
 </html>
