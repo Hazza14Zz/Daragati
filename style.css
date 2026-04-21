@@ -573,3 +573,14 @@ label, option, optgroup {
     background-color: #059669;
     color: white;
 }
+
+/* Hide the old select completely */
+#studentJumpSelect.hidden {
+    display: none !important;
+}
+
+/* Ensure wrapper is visible */
+#studentSearchWrapper {
+    display: block !important;
+    width: 100%;
+}
