@@ -2240,37 +2240,46 @@ function loadStudentReport() {
         }
     }
     
-    for (let day = 1; day <= daysInMonth; day++) {
-        const found = studentData.find(d => d.day === day);
-        
-        if (found) {
-            const d = found.data;
-            records.push({
-                date: day,
-                attendance: d.attendance || '-',
-                points: d.points || 0,
-                hifz: d.hifz ? `${d.hifz.startSurahName || ''} ${d.hifz.startVerse}-${d.hifz.endVerse}` : '-',
-                rabt: d.rabt?.length ? d.rabt.map(r => `${r.startSurahName || ''} ${r.startVerse}-${r.endVerse}`).join('، ') : '-',
-                murajaa: d.murajaa ? `${d.murajaa.startSurahName || ''} ${d.murajaa.startVerse}-${d.murajaa.endVerse}` : '-',
-                hifzPages: d.hifz?.pages || 0,
-                rabtPages: d.rabt?.reduce((sum, r) => sum + (r.pages || 0), 0) || 0,
-                murajaaPages: d.murajaa?.pages || 0
-            });
-        } else {
-            records.push({
-                date: day,
-                attendance: '-',
-                points: 0,
-                hifz: '-',
-                rabt: '-',
-                murajaa: '-',
-                hifzPages: 0,
-                rabtPages: 0,
-                murajaaPages: 0
-            });
-        }
+   for (let day = 1; day <= daysInMonth; day++) {
+    // Create date object for this day
+    const currentDate = new Date(year, month, day);
+    const dayOfWeek = currentDate.getDay(); // 0 = Sunday, 6 = Saturday
+    
+    // ONLY include Sunday (0) through Thursday (4)
+    // Skip Friday (5) and Saturday (6)
+    if (dayOfWeek === 5 || dayOfWeek === 6) {
+        continue; // Skip Friday and Saturday
     }
     
+    const found = studentData.find(d => d.day === day);
+    
+    if (found) {
+        const d = found.data;
+        records.push({
+            date: day,
+            attendance: d.attendance || '-',
+            points: d.points || 0,
+            hifz: d.hifz ? `${d.hifz.startSurahName || ''} ${d.hifz.startVerse}-${d.hifz.endVerse}` : '-',
+            rabt: d.rabt?.length ? d.rabt.map(r => `${r.startSurahName || ''} ${r.startVerse}-${r.endVerse}`).join('، ') : '-',
+            murajaa: d.murajaa ? `${d.murajaa.startSurahName || ''} ${d.murajaa.startVerse}-${d.murajaa.endVerse}` : '-',
+            hifzPages: d.hifz?.pages || 0,
+            rabtPages: d.rabt?.reduce((sum, r) => sum + (r.pages || 0), 0) || 0,
+            murajaaPages: d.murajaa?.pages || 0
+        });
+    } else {
+        records.push({
+            date: day,
+            attendance: '-',
+            points: 0,
+            hifz: '-',
+            rabt: '-',
+            murajaa: '-',
+            hifzPages: 0,
+            rabtPages: 0,
+            murajaaPages: 0
+        });
+    }
+}    
     // Render table
     let tableHtml = '';
     let totalPoints = 0;
@@ -2306,7 +2315,7 @@ function loadStudentReport() {
     const attendedDays = presentDays + lateDays;
     document.getElementById('studentReportStats').innerHTML = `
         <div>⭐ إجمالي النقاط<br><strong>${Number(totalPoints).toFixed(1).replace(/\.0$/, '')}</strong></div>
-        <div>📅 أيام الحضور<br><strong>${attendedDays}/${daysInMonth}</strong></div>
+        <div>📅 أيام الحضور<br><strong>${attendedDays}/${records.length}</strong></div>
         <div>📖 صفحات الحفظ<br><strong>${totalHifzPages}</strong></div>
         <div>🔗 صفحات الربط<br><strong>${totalRabtPages}</strong></div>
         <div>📚 صفحات المراجعة<br><strong>${totalMurajaaPages}</strong></div>
