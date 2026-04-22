@@ -337,6 +337,7 @@ function toggleSidebar() {
     overlay.classList.add('show');
     
     updateAdminVisibility();
+    updateSidebarTrackerVisibility();  // ✅ ADD THIS
 }
 
 function closeSidebar() {
@@ -356,10 +357,33 @@ function updateAdminVisibility() {
     }
 }
 
+function updateSidebarTrackerVisibility() {
+    const trackerItem = document.getElementById('sidebar-tracker');
+    const trackerDivider = document.getElementById('sidebar-tracker-divider');
+    
+    if (!trackerItem || !trackerDivider) return;
+    
+    // Check if we're on the main tracker page
+    const isOnMainTracker = document.getElementById('trackerView') && 
+                           !document.getElementById('trackerView').classList.contains('hidden');
+    
+    if (isOnMainTracker) {
+        trackerItem.style.display = 'none';
+        trackerDivider.style.display = 'none';
+    } else {
+        trackerItem.style.display = 'flex';
+        trackerDivider.style.display = 'block';
+    }
+}
+
 function navigateTo(page) {
     closeSidebar();
     
     switch(page) {
+        case 'tracker':
+            // Return to main tracker
+            switchSection(currentSection);
+            break;
         case 'reports':
             switchSection('reports');
             break;
@@ -1039,6 +1063,8 @@ function switchSection(section) {
         updateStudentDropdown();
         loadStudent(1);
     }
+     // ✅ ADD THIS LINE
+    updateSidebarTrackerVisibility();
 }
 // ============================================================
 // SIMPLE STUDENT DROPDOWN
