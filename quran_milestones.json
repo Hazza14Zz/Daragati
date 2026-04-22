@@ -1,0 +1,4230 @@
+{
+  "1": {
+    "total_verses": 7,
+    "quarter": "1:2",
+    "half": "1:4",
+    "threeQuarter": "1:6",
+    "lastVerse": "1:7"
+  },
+  "2": {
+    "total_verses": 5,
+    "quarter": "2:2",
+    "half": "2:3",
+    "threeQuarter": "2:4",
+    "lastVerse": "2:5"
+  },
+  "3": {
+    "total_verses": 11,
+    "quarter": "2:8",
+    "half": "2:11",
+    "threeQuarter": "2:14",
+    "lastVerse": "2:16"
+  },
+  "4": {
+    "total_verses": 8,
+    "quarter": "2:19",
+    "half": "2:21",
+    "threeQuarter": "2:23",
+    "lastVerse": "2:24"
+  },
+  "5": {
+    "total_verses": 5,
+    "quarter": "2:26",
+    "half": "2:27",
+    "threeQuarter": "2:28",
+    "lastVerse": "2:29"
+  },
+  "6": {
+    "total_verses": 8,
+    "quarter": "2:32",
+    "half": "2:34",
+    "threeQuarter": "2:36",
+    "lastVerse": "2:37"
+  },
+  "7": {
+    "total_verses": 11,
+    "quarter": "2:40",
+    "half": "2:43",
+    "threeQuarter": "2:46",
+    "lastVerse": "2:48"
+  },
+  "8": {
+    "total_verses": 9,
+    "quarter": "2:51",
+    "half": "2:53",
+    "threeQuarter": "2:55",
+    "lastVerse": "2:57"
+  },
+  "9": {
+    "total_verses": 4,
+    "quarter": "2:59",
+    "half": "2:60",
+    "threeQuarter": "2:61",
+    "lastVerse": "2:61"
+  },
+  "10": {
+    "total_verses": 8,
+    "quarter": "2:64",
+    "half": "2:66",
+    "threeQuarter": "2:68",
+    "lastVerse": "2:69"
+  },
+  "11": {
+    "total_verses": 7,
+    "quarter": "2:71",
+    "half": "2:73",
+    "threeQuarter": "2:75",
+    "lastVerse": "2:76"
+  },
+  "12": {
+    "total_verses": 7,
+    "quarter": "2:78",
+    "half": "2:80",
+    "threeQuarter": "2:82",
+    "lastVerse": "2:83"
+  },
+  "13": {
+    "total_verses": 5,
+    "quarter": "2:85",
+    "half": "2:86",
+    "threeQuarter": "2:87",
+    "lastVerse": "2:88"
+  },
+  "14": {
+    "total_verses": 5,
+    "quarter": "2:90",
+    "half": "2:91",
+    "threeQuarter": "2:92",
+    "lastVerse": "2:93"
+  },
+  "15": {
+    "total_verses": 8,
+    "quarter": "2:96",
+    "half": "2:98",
+    "threeQuarter": "2:100",
+    "lastVerse": "2:101"
+  },
+  "16": {
+    "total_verses": 4,
+    "quarter": "2:103",
+    "half": "2:104",
+    "threeQuarter": "2:105",
+    "lastVerse": "2:105"
+  },
+  "17": {
+    "total_verses": 7,
+    "quarter": "2:107",
+    "half": "2:109",
+    "threeQuarter": "2:111",
+    "lastVerse": "2:112"
+  },
+  "18": {
+    "total_verses": 7,
+    "quarter": "2:114",
+    "half": "2:116",
+    "threeQuarter": "2:118",
+    "lastVerse": "2:119"
+  },
+  "19": {
+    "total_verses": 7,
+    "quarter": "2:121",
+    "half": "2:123",
+    "threeQuarter": "2:125",
+    "lastVerse": "2:126"
+  },
+  "20": {
+    "total_verses": 8,
+    "quarter": "2:129",
+    "half": "2:131",
+    "threeQuarter": "2:133",
+    "lastVerse": "2:134"
+  },
+  "21": {
+    "total_verses": 7,
+    "quarter": "2:136",
+    "half": "2:138",
+    "threeQuarter": "2:140",
+    "lastVerse": "2:141"
+  },
+  "22": {
+    "total_verses": 4,
+    "quarter": "2:143",
+    "half": "2:144",
+    "threeQuarter": "2:145",
+    "lastVerse": "2:145"
+  },
+  "23": {
+    "total_verses": 8,
+    "quarter": "2:148",
+    "half": "2:150",
+    "threeQuarter": "2:152",
+    "lastVerse": "2:153"
+  },
+  "24": {
+    "total_verses": 10,
+    "quarter": "2:156",
+    "half": "2:159",
+    "threeQuarter": "2:161",
+    "lastVerse": "2:163"
+  },
+  "25": {
+    "total_verses": 6,
+    "quarter": "2:165",
+    "half": "2:167",
+    "threeQuarter": "2:168",
+    "lastVerse": "2:169"
+  },
+  "26": {
+    "total_verses": 7,
+    "quarter": "2:171",
+    "half": "2:173",
+    "threeQuarter": "2:175",
+    "lastVerse": "2:176"
+  },
+  "27": {
+    "total_verses": 5,
+    "quarter": "2:178",
+    "half": "2:179",
+    "threeQuarter": "2:180",
+    "lastVerse": "2:181"
+  },
+  "28": {
+    "total_verses": 5,
+    "quarter": "2:183",
+    "half": "2:184",
+    "threeQuarter": "2:185",
+    "lastVerse": "2:186"
+  },
+  "29": {
+    "total_verses": 4,
+    "quarter": "2:188",
+    "half": "2:189",
+    "threeQuarter": "2:190",
+    "lastVerse": "2:190"
+  },
+  "30": {
+    "total_verses": 6,
+    "quarter": "2:192",
+    "half": "2:194",
+    "threeQuarter": "2:195",
+    "lastVerse": "2:196"
+  },
+  "31": {
+    "total_verses": 6,
+    "quarter": "2:198",
+    "half": "2:200",
+    "threeQuarter": "2:201",
+    "lastVerse": "2:202"
+  },
+  "32": {
+    "total_verses": 8,
+    "quarter": "2:205",
+    "half": "2:207",
+    "threeQuarter": "2:209",
+    "lastVerse": "2:210"
+  },
+  "33": {
+    "total_verses": 5,
+    "quarter": "2:212",
+    "half": "2:213",
+    "threeQuarter": "2:214",
+    "lastVerse": "2:215"
+  },
+  "34": {
+    "total_verses": 4,
+    "quarter": "2:217",
+    "half": "2:218",
+    "threeQuarter": "2:219",
+    "lastVerse": "2:219"
+  },
+  "35": {
+    "total_verses": 5,
+    "quarter": "2:221",
+    "half": "2:222",
+    "threeQuarter": "2:223",
+    "lastVerse": "2:224"
+  },
+  "36": {
+    "total_verses": 6,
+    "quarter": "2:226",
+    "half": "2:228",
+    "threeQuarter": "2:229",
+    "lastVerse": "2:230"
+  },
+  "37": {
+    "total_verses": 3,
+    "quarter": "2:231",
+    "half": "2:232",
+    "threeQuarter": "2:233",
+    "lastVerse": "2:233"
+  },
+  "38": {
+    "total_verses": 4,
+    "quarter": "2:235",
+    "half": "2:236",
+    "threeQuarter": "2:237",
+    "lastVerse": "2:237"
+  },
+  "39": {
+    "total_verses": 8,
+    "quarter": "2:240",
+    "half": "2:242",
+    "threeQuarter": "2:244",
+    "lastVerse": "2:245"
+  },
+  "40": {
+    "total_verses": 3,
+    "quarter": "2:246",
+    "half": "2:247",
+    "threeQuarter": "2:248",
+    "lastVerse": "2:248"
+  },
+  "41": {
+    "total_verses": 4,
+    "quarter": "2:250",
+    "half": "2:251",
+    "threeQuarter": "2:252",
+    "lastVerse": "2:252"
+  },
+  "42": {
+    "total_verses": 4,
+    "quarter": "2:254",
+    "half": "2:255",
+    "threeQuarter": "2:256",
+    "lastVerse": "2:256"
+  },
+  "43": {
+    "total_verses": 3,
+    "quarter": "2:257",
+    "half": "2:258",
+    "threeQuarter": "2:259",
+    "lastVerse": "2:259"
+  },
+  "44": {
+    "total_verses": 5,
+    "quarter": "2:261",
+    "half": "2:262",
+    "threeQuarter": "2:263",
+    "lastVerse": "2:264"
+  },
+  "45": {
+    "total_verses": 5,
+    "quarter": "2:266",
+    "half": "2:267",
+    "threeQuarter": "2:268",
+    "lastVerse": "2:269"
+  },
+  "46": {
+    "total_verses": 5,
+    "quarter": "2:271",
+    "half": "2:272",
+    "threeQuarter": "2:273",
+    "lastVerse": "2:274"
+  },
+  "47": {
+    "total_verses": 7,
+    "quarter": "2:276",
+    "half": "2:278",
+    "threeQuarter": "2:280",
+    "lastVerse": "2:281"
+  },
+  "48": {
+    "total_verses": 1,
+    "quarter": "2:282",
+    "half": "2:282",
+    "threeQuarter": "2:282",
+    "lastVerse": "2:282"
+  },
+  "49": {
+    "total_verses": 4,
+    "quarter": "2:284",
+    "half": "2:285",
+    "threeQuarter": "2:286",
+    "lastVerse": "2:286"
+  },
+  "50": {
+    "total_verses": 9,
+    "quarter": "3:3",
+    "half": "3:5",
+    "threeQuarter": "3:7",
+    "lastVerse": "3:9"
+  },
+  "51": {
+    "total_verses": 6,
+    "quarter": "3:11",
+    "half": "3:13",
+    "threeQuarter": "3:14",
+    "lastVerse": "3:15"
+  },
+  "52": {
+    "total_verses": 7,
+    "quarter": "3:17",
+    "half": "3:19",
+    "threeQuarter": "3:21",
+    "lastVerse": "3:22"
+  },
+  "53": {
+    "total_verses": 7,
+    "quarter": "3:24",
+    "half": "3:26",
+    "threeQuarter": "3:28",
+    "lastVerse": "3:29"
+  },
+  "54": {
+    "total_verses": 8,
+    "quarter": "3:32",
+    "half": "3:34",
+    "threeQuarter": "3:36",
+    "lastVerse": "3:37"
+  },
+  "55": {
+    "total_verses": 8,
+    "quarter": "3:40",
+    "half": "3:42",
+    "threeQuarter": "3:44",
+    "lastVerse": "3:45"
+  },
+  "56": {
+    "total_verses": 7,
+    "quarter": "3:47",
+    "half": "3:49",
+    "threeQuarter": "3:51",
+    "lastVerse": "3:52"
+  },
+  "57": {
+    "total_verses": 9,
+    "quarter": "3:55",
+    "half": "3:57",
+    "threeQuarter": "3:59",
+    "lastVerse": "3:61"
+  },
+  "58": {
+    "total_verses": 9,
+    "quarter": "3:64",
+    "half": "3:66",
+    "threeQuarter": "3:68",
+    "lastVerse": "3:70"
+  },
+  "59": {
+    "total_verses": 7,
+    "quarter": "3:72",
+    "half": "3:74",
+    "threeQuarter": "3:76",
+    "lastVerse": "3:77"
+  },
+  "60": {
+    "total_verses": 6,
+    "quarter": "3:79",
+    "half": "3:81",
+    "threeQuarter": "3:82",
+    "lastVerse": "3:83"
+  },
+  "61": {
+    "total_verses": 8,
+    "quarter": "3:86",
+    "half": "3:88",
+    "threeQuarter": "3:90",
+    "lastVerse": "3:91"
+  },
+  "62": {
+    "total_verses": 9,
+    "quarter": "3:94",
+    "half": "3:96",
+    "threeQuarter": "3:98",
+    "lastVerse": "3:100"
+  },
+  "63": {
+    "total_verses": 8,
+    "quarter": "3:103",
+    "half": "3:105",
+    "threeQuarter": "3:107",
+    "lastVerse": "3:108"
+  },
+  "64": {
+    "total_verses": 7,
+    "quarter": "3:110",
+    "half": "3:112",
+    "threeQuarter": "3:114",
+    "lastVerse": "3:115"
+  },
+  "65": {
+    "total_verses": 6,
+    "quarter": "3:117",
+    "half": "3:119",
+    "threeQuarter": "3:120",
+    "lastVerse": "3:121"
+  },
+  "66": {
+    "total_verses": 11,
+    "quarter": "3:124",
+    "half": "3:127",
+    "threeQuarter": "3:130",
+    "lastVerse": "3:132"
+  },
+  "67": {
+    "total_verses": 8,
+    "quarter": "3:135",
+    "half": "3:137",
+    "threeQuarter": "3:139",
+    "lastVerse": "3:140"
+  },
+  "68": {
+    "total_verses": 8,
+    "quarter": "3:143",
+    "half": "3:145",
+    "threeQuarter": "3:147",
+    "lastVerse": "3:148"
+  },
+  "69": {
+    "total_verses": 5,
+    "quarter": "3:150",
+    "half": "3:151",
+    "threeQuarter": "3:152",
+    "lastVerse": "3:153"
+  },
+  "70": {
+    "total_verses": 4,
+    "quarter": "3:155",
+    "half": "3:156",
+    "threeQuarter": "3:157",
+    "lastVerse": "3:157"
+  },
+  "71": {
+    "total_verses": 8,
+    "quarter": "3:160",
+    "half": "3:162",
+    "threeQuarter": "3:164",
+    "lastVerse": "3:165"
+  },
+  "72": {
+    "total_verses": 8,
+    "quarter": "3:168",
+    "half": "3:170",
+    "threeQuarter": "3:172",
+    "lastVerse": "3:173"
+  },
+  "73": {
+    "total_verses": 7,
+    "quarter": "3:175",
+    "half": "3:177",
+    "threeQuarter": "3:179",
+    "lastVerse": "3:180"
+  },
+  "74": {
+    "total_verses": 6,
+    "quarter": "3:182",
+    "half": "3:184",
+    "threeQuarter": "3:185",
+    "lastVerse": "3:186"
+  },
+  "75": {
+    "total_verses": 8,
+    "quarter": "3:189",
+    "half": "3:191",
+    "threeQuarter": "3:193",
+    "lastVerse": "3:194"
+  },
+  "76": {
+    "total_verses": 6,
+    "quarter": "3:196",
+    "half": "3:198",
+    "threeQuarter": "3:199",
+    "lastVerse": "3:200"
+  },
+  "77": {
+    "total_verses": 6,
+    "quarter": "4:2",
+    "half": "4:4",
+    "threeQuarter": "4:5",
+    "lastVerse": "4:6"
+  },
+  "78": {
+    "total_verses": 5,
+    "quarter": "4:8",
+    "half": "4:9",
+    "threeQuarter": "4:10",
+    "lastVerse": "4:11"
+  },
+  "79": {
+    "total_verses": 3,
+    "quarter": "4:12",
+    "half": "4:13",
+    "threeQuarter": "4:14",
+    "lastVerse": "4:14"
+  },
+  "80": {
+    "total_verses": 5,
+    "quarter": "4:16",
+    "half": "4:17",
+    "threeQuarter": "4:18",
+    "lastVerse": "4:19"
+  },
+  "81": {
+    "total_verses": 4,
+    "quarter": "4:21",
+    "half": "4:22",
+    "threeQuarter": "4:23",
+    "lastVerse": "4:23"
+  },
+  "82": {
+    "total_verses": 3,
+    "quarter": "4:24",
+    "half": "4:25",
+    "threeQuarter": "4:26",
+    "lastVerse": "4:26"
+  },
+  "83": {
+    "total_verses": 7,
+    "quarter": "4:28",
+    "half": "4:30",
+    "threeQuarter": "4:32",
+    "lastVerse": "4:33"
+  },
+  "84": {
+    "total_verses": 4,
+    "quarter": "4:35",
+    "half": "4:36",
+    "threeQuarter": "4:37",
+    "lastVerse": "4:37"
+  },
+  "85": {
+    "total_verses": 7,
+    "quarter": "4:39",
+    "half": "4:41",
+    "threeQuarter": "4:43",
+    "lastVerse": "4:44"
+  },
+  "86": {
+    "total_verses": 7,
+    "quarter": "4:46",
+    "half": "4:48",
+    "threeQuarter": "4:50",
+    "lastVerse": "4:51"
+  },
+  "87": {
+    "total_verses": 8,
+    "quarter": "4:54",
+    "half": "4:56",
+    "threeQuarter": "4:58",
+    "lastVerse": "4:59"
+  },
+  "88": {
+    "total_verses": 6,
+    "quarter": "4:61",
+    "half": "4:63",
+    "threeQuarter": "4:64",
+    "lastVerse": "4:65"
+  },
+  "89": {
+    "total_verses": 9,
+    "quarter": "4:68",
+    "half": "4:70",
+    "threeQuarter": "4:72",
+    "lastVerse": "4:74"
+  },
+  "90": {
+    "total_verses": 5,
+    "quarter": "4:76",
+    "half": "4:77",
+    "threeQuarter": "4:78",
+    "lastVerse": "4:79"
+  },
+  "91": {
+    "total_verses": 7,
+    "quarter": "4:81",
+    "half": "4:83",
+    "threeQuarter": "4:85",
+    "lastVerse": "4:86"
+  },
+  "92": {
+    "total_verses": 5,
+    "quarter": "4:88",
+    "half": "4:89",
+    "threeQuarter": "4:90",
+    "lastVerse": "4:91"
+  },
+  "93": {
+    "total_verses": 3,
+    "quarter": "4:92",
+    "half": "4:93",
+    "threeQuarter": "4:94",
+    "lastVerse": "4:94"
+  },
+  "94": {
+    "total_verses": 7,
+    "quarter": "4:96",
+    "half": "4:98",
+    "threeQuarter": "4:100",
+    "lastVerse": "4:101"
+  },
+  "95": {
+    "total_verses": 4,
+    "quarter": "4:103",
+    "half": "4:104",
+    "threeQuarter": "4:105",
+    "lastVerse": "4:105"
+  },
+  "96": {
+    "total_verses": 8,
+    "quarter": "4:108",
+    "half": "4:110",
+    "threeQuarter": "4:112",
+    "lastVerse": "4:113"
+  },
+  "97": {
+    "total_verses": 8,
+    "quarter": "4:116",
+    "half": "4:118",
+    "threeQuarter": "4:120",
+    "lastVerse": "4:121"
+  },
+  "98": {
+    "total_verses": 6,
+    "quarter": "4:123",
+    "half": "4:125",
+    "threeQuarter": "4:126",
+    "lastVerse": "4:127"
+  },
+  "99": {
+    "total_verses": 7,
+    "quarter": "4:129",
+    "half": "4:131",
+    "threeQuarter": "4:133",
+    "lastVerse": "4:134"
+  },
+  "100": {
+    "total_verses": 6,
+    "quarter": "4:136",
+    "half": "4:138",
+    "threeQuarter": "4:139",
+    "lastVerse": "4:140"
+  },
+  "101": {
+    "total_verses": 7,
+    "quarter": "4:142",
+    "half": "4:144",
+    "threeQuarter": "4:146",
+    "lastVerse": "4:147"
+  },
+  "102": {
+    "total_verses": 7,
+    "quarter": "4:149",
+    "half": "4:151",
+    "threeQuarter": "4:153",
+    "lastVerse": "4:154"
+  },
+  "103": {
+    "total_verses": 8,
+    "quarter": "4:157",
+    "half": "4:159",
+    "threeQuarter": "4:161",
+    "lastVerse": "4:162"
+  },
+  "104": {
+    "total_verses": 8,
+    "quarter": "4:165",
+    "half": "4:167",
+    "threeQuarter": "4:169",
+    "lastVerse": "4:170"
+  },
+  "105": {
+    "total_verses": 5,
+    "quarter": "4:172",
+    "half": "4:173",
+    "threeQuarter": "4:174",
+    "lastVerse": "4:175"
+  },
+  "106": {
+    "total_verses": 3,
+    "quarter": "4:176",
+    "half": "5:1",
+    "threeQuarter": "5:2",
+    "lastVerse": "5:2"
+  },
+  "107": {
+    "total_verses": 3,
+    "quarter": "5:3",
+    "half": "5:4",
+    "threeQuarter": "5:5",
+    "lastVerse": "5:5"
+  },
+  "108": {
+    "total_verses": 4,
+    "quarter": "5:7",
+    "half": "5:8",
+    "threeQuarter": "5:9",
+    "lastVerse": "5:9"
+  },
+  "109": {
+    "total_verses": 4,
+    "quarter": "5:11",
+    "half": "5:12",
+    "threeQuarter": "5:13",
+    "lastVerse": "5:13"
+  },
+  "110": {
+    "total_verses": 4,
+    "quarter": "5:15",
+    "half": "5:16",
+    "threeQuarter": "5:17",
+    "lastVerse": "5:17"
+  },
+  "111": {
+    "total_verses": 6,
+    "quarter": "5:19",
+    "half": "5:21",
+    "threeQuarter": "5:22",
+    "lastVerse": "5:23"
+  },
+  "112": {
+    "total_verses": 8,
+    "quarter": "5:26",
+    "half": "5:28",
+    "threeQuarter": "5:30",
+    "lastVerse": "5:31"
+  },
+  "113": {
+    "total_verses": 5,
+    "quarter": "5:33",
+    "half": "5:34",
+    "threeQuarter": "5:35",
+    "lastVerse": "5:36"
+  },
+  "114": {
+    "total_verses": 5,
+    "quarter": "5:38",
+    "half": "5:39",
+    "threeQuarter": "5:40",
+    "lastVerse": "5:41"
+  },
+  "115": {
+    "total_verses": 4,
+    "quarter": "5:43",
+    "half": "5:44",
+    "threeQuarter": "5:45",
+    "lastVerse": "5:45"
+  },
+  "116": {
+    "total_verses": 5,
+    "quarter": "5:47",
+    "half": "5:48",
+    "threeQuarter": "5:49",
+    "lastVerse": "5:50"
+  },
+  "117": {
+    "total_verses": 7,
+    "quarter": "5:52",
+    "half": "5:54",
+    "threeQuarter": "5:56",
+    "lastVerse": "5:57"
+  },
+  "118": {
+    "total_verses": 7,
+    "quarter": "5:59",
+    "half": "5:61",
+    "threeQuarter": "5:63",
+    "lastVerse": "5:64"
+  },
+  "119": {
+    "total_verses": 6,
+    "quarter": "5:66",
+    "half": "5:68",
+    "threeQuarter": "5:69",
+    "lastVerse": "5:70"
+  },
+  "120": {
+    "total_verses": 6,
+    "quarter": "5:72",
+    "half": "5:74",
+    "threeQuarter": "5:75",
+    "lastVerse": "5:76"
+  },
+  "121": {
+    "total_verses": 6,
+    "quarter": "5:78",
+    "half": "5:80",
+    "threeQuarter": "5:81",
+    "lastVerse": "5:82"
+  },
+  "122": {
+    "total_verses": 7,
+    "quarter": "5:84",
+    "half": "5:86",
+    "threeQuarter": "5:88",
+    "lastVerse": "5:89"
+  },
+  "123": {
+    "total_verses": 6,
+    "quarter": "5:91",
+    "half": "5:93",
+    "threeQuarter": "5:94",
+    "lastVerse": "5:95"
+  },
+  "124": {
+    "total_verses": 8,
+    "quarter": "5:98",
+    "half": "5:100",
+    "threeQuarter": "5:102",
+    "lastVerse": "5:103"
+  },
+  "125": {
+    "total_verses": 5,
+    "quarter": "5:105",
+    "half": "5:106",
+    "threeQuarter": "5:107",
+    "lastVerse": "5:108"
+  },
+  "126": {
+    "total_verses": 5,
+    "quarter": "5:110",
+    "half": "5:111",
+    "threeQuarter": "5:112",
+    "lastVerse": "5:113"
+  },
+  "127": {
+    "total_verses": 7,
+    "quarter": "5:115",
+    "half": "5:117",
+    "threeQuarter": "5:119",
+    "lastVerse": "5:120"
+  },
+  "128": {
+    "total_verses": 8,
+    "quarter": "6:3",
+    "half": "6:5",
+    "threeQuarter": "6:7",
+    "lastVerse": "6:8"
+  },
+  "129": {
+    "total_verses": 10,
+    "quarter": "6:11",
+    "half": "6:14",
+    "threeQuarter": "6:16",
+    "lastVerse": "6:18"
+  },
+  "130": {
+    "total_verses": 9,
+    "quarter": "6:21",
+    "half": "6:23",
+    "threeQuarter": "6:25",
+    "lastVerse": "6:27"
+  },
+  "131": {
+    "total_verses": 8,
+    "quarter": "6:30",
+    "half": "6:32",
+    "threeQuarter": "6:34",
+    "lastVerse": "6:35"
+  },
+  "132": {
+    "total_verses": 9,
+    "quarter": "6:38",
+    "half": "6:40",
+    "threeQuarter": "6:42",
+    "lastVerse": "6:44"
+  },
+  "133": {
+    "total_verses": 8,
+    "quarter": "6:47",
+    "half": "6:49",
+    "threeQuarter": "6:51",
+    "lastVerse": "6:52"
+  },
+  "134": {
+    "total_verses": 7,
+    "quarter": "6:54",
+    "half": "6:56",
+    "threeQuarter": "6:58",
+    "lastVerse": "6:59"
+  },
+  "135": {
+    "total_verses": 9,
+    "quarter": "6:62",
+    "half": "6:64",
+    "threeQuarter": "6:66",
+    "lastVerse": "6:68"
+  },
+  "136": {
+    "total_verses": 5,
+    "quarter": "6:70",
+    "half": "6:71",
+    "threeQuarter": "6:72",
+    "lastVerse": "6:73"
+  },
+  "137": {
+    "total_verses": 8,
+    "quarter": "6:76",
+    "half": "6:78",
+    "threeQuarter": "6:80",
+    "lastVerse": "6:81"
+  },
+  "138": {
+    "total_verses": 9,
+    "quarter": "6:84",
+    "half": "6:86",
+    "threeQuarter": "6:88",
+    "lastVerse": "6:90"
+  },
+  "139": {
+    "total_verses": 4,
+    "quarter": "6:92",
+    "half": "6:93",
+    "threeQuarter": "6:94",
+    "lastVerse": "6:94"
+  },
+  "140": {
+    "total_verses": 7,
+    "quarter": "6:96",
+    "half": "6:98",
+    "threeQuarter": "6:100",
+    "lastVerse": "6:101"
+  },
+  "141": {
+    "total_verses": 9,
+    "quarter": "6:104",
+    "half": "6:106",
+    "threeQuarter": "6:108",
+    "lastVerse": "6:110"
+  },
+  "142": {
+    "total_verses": 8,
+    "quarter": "6:113",
+    "half": "6:115",
+    "threeQuarter": "6:117",
+    "lastVerse": "6:118"
+  },
+  "143": {
+    "total_verses": 6,
+    "quarter": "6:120",
+    "half": "6:122",
+    "threeQuarter": "6:123",
+    "lastVerse": "6:124"
+  },
+  "144": {
+    "total_verses": 7,
+    "quarter": "6:126",
+    "half": "6:128",
+    "threeQuarter": "6:130",
+    "lastVerse": "6:131"
+  },
+  "145": {
+    "total_verses": 6,
+    "quarter": "6:133",
+    "half": "6:135",
+    "threeQuarter": "6:136",
+    "lastVerse": "6:137"
+  },
+  "146": {
+    "total_verses": 5,
+    "quarter": "6:139",
+    "half": "6:140",
+    "threeQuarter": "6:141",
+    "lastVerse": "6:142"
+  },
+  "147": {
+    "total_verses": 4,
+    "quarter": "6:144",
+    "half": "6:145",
+    "threeQuarter": "6:146",
+    "lastVerse": "6:146"
+  },
+  "148": {
+    "total_verses": 5,
+    "quarter": "6:148",
+    "half": "6:149",
+    "threeQuarter": "6:150",
+    "lastVerse": "6:151"
+  },
+  "149": {
+    "total_verses": 6,
+    "quarter": "6:153",
+    "half": "6:155",
+    "threeQuarter": "6:156",
+    "lastVerse": "6:157"
+  },
+  "150": {
+    "total_verses": 8,
+    "quarter": "6:160",
+    "half": "6:162",
+    "threeQuarter": "6:164",
+    "lastVerse": "6:165"
+  },
+  "151": {
+    "total_verses": 11,
+    "quarter": "7:3",
+    "half": "7:6",
+    "threeQuarter": "7:9",
+    "lastVerse": "7:11"
+  },
+  "152": {
+    "total_verses": 11,
+    "quarter": "7:14",
+    "half": "7:17",
+    "threeQuarter": "7:20",
+    "lastVerse": "7:22"
+  },
+  "153": {
+    "total_verses": 8,
+    "quarter": "7:25",
+    "half": "7:27",
+    "threeQuarter": "7:29",
+    "lastVerse": "7:30"
+  },
+  "154": {
+    "total_verses": 7,
+    "quarter": "7:32",
+    "half": "7:34",
+    "threeQuarter": "7:36",
+    "lastVerse": "7:37"
+  },
+  "155": {
+    "total_verses": 6,
+    "quarter": "7:39",
+    "half": "7:41",
+    "threeQuarter": "7:42",
+    "lastVerse": "7:43"
+  },
+  "156": {
+    "total_verses": 8,
+    "quarter": "7:46",
+    "half": "7:48",
+    "threeQuarter": "7:50",
+    "lastVerse": "7:51"
+  },
+  "157": {
+    "total_verses": 6,
+    "quarter": "7:53",
+    "half": "7:55",
+    "threeQuarter": "7:56",
+    "lastVerse": "7:57"
+  },
+  "158": {
+    "total_verses": 10,
+    "quarter": "7:60",
+    "half": "7:63",
+    "threeQuarter": "7:65",
+    "lastVerse": "7:67"
+  },
+  "159": {
+    "total_verses": 6,
+    "quarter": "7:69",
+    "half": "7:71",
+    "threeQuarter": "7:72",
+    "lastVerse": "7:73"
+  },
+  "160": {
+    "total_verses": 8,
+    "quarter": "7:76",
+    "half": "7:78",
+    "threeQuarter": "7:80",
+    "lastVerse": "7:81"
+  },
+  "161": {
+    "total_verses": 6,
+    "quarter": "7:83",
+    "half": "7:85",
+    "threeQuarter": "7:86",
+    "lastVerse": "7:87"
+  },
+  "162": {
+    "total_verses": 8,
+    "quarter": "7:90",
+    "half": "7:92",
+    "threeQuarter": "7:94",
+    "lastVerse": "7:95"
+  },
+  "163": {
+    "total_verses": 9,
+    "quarter": "7:98",
+    "half": "7:100",
+    "threeQuarter": "7:102",
+    "lastVerse": "7:104"
+  },
+  "164": {
+    "total_verses": 16,
+    "quarter": "7:109",
+    "half": "7:113",
+    "threeQuarter": "7:117",
+    "lastVerse": "7:120"
+  },
+  "165": {
+    "total_verses": 10,
+    "quarter": "7:123",
+    "half": "7:126",
+    "threeQuarter": "7:128",
+    "lastVerse": "7:130"
+  },
+  "166": {
+    "total_verses": 7,
+    "quarter": "7:132",
+    "half": "7:134",
+    "threeQuarter": "7:136",
+    "lastVerse": "7:137"
+  },
+  "167": {
+    "total_verses": 6,
+    "quarter": "7:139",
+    "half": "7:141",
+    "threeQuarter": "7:142",
+    "lastVerse": "7:143"
+  },
+  "168": {
+    "total_verses": 6,
+    "quarter": "7:145",
+    "half": "7:147",
+    "threeQuarter": "7:148",
+    "lastVerse": "7:149"
+  },
+  "169": {
+    "total_verses": 6,
+    "quarter": "7:151",
+    "half": "7:153",
+    "threeQuarter": "7:154",
+    "lastVerse": "7:155"
+  },
+  "170": {
+    "total_verses": 4,
+    "quarter": "7:157",
+    "half": "7:158",
+    "threeQuarter": "7:159",
+    "lastVerse": "7:159"
+  },
+  "171": {
+    "total_verses": 4,
+    "quarter": "7:161",
+    "half": "7:162",
+    "threeQuarter": "7:163",
+    "lastVerse": "7:163"
+  },
+  "172": {
+    "total_verses": 7,
+    "quarter": "7:165",
+    "half": "7:167",
+    "threeQuarter": "7:169",
+    "lastVerse": "7:170"
+  },
+  "173": {
+    "total_verses": 8,
+    "quarter": "7:173",
+    "half": "7:175",
+    "threeQuarter": "7:177",
+    "lastVerse": "7:178"
+  },
+  "174": {
+    "total_verses": 9,
+    "quarter": "7:181",
+    "half": "7:183",
+    "threeQuarter": "7:185",
+    "lastVerse": "7:187"
+  },
+  "175": {
+    "total_verses": 8,
+    "quarter": "7:190",
+    "half": "7:192",
+    "threeQuarter": "7:194",
+    "lastVerse": "7:195"
+  },
+  "176": {
+    "total_verses": 11,
+    "quarter": "7:198",
+    "half": "7:201",
+    "threeQuarter": "7:204",
+    "lastVerse": "7:206"
+  },
+  "177": {
+    "total_verses": 8,
+    "quarter": "8:3",
+    "half": "8:5",
+    "threeQuarter": "8:7",
+    "lastVerse": "8:8"
+  },
+  "178": {
+    "total_verses": 8,
+    "quarter": "8:11",
+    "half": "8:13",
+    "threeQuarter": "8:15",
+    "lastVerse": "8:16"
+  },
+  "179": {
+    "total_verses": 9,
+    "quarter": "8:19",
+    "half": "8:21",
+    "threeQuarter": "8:23",
+    "lastVerse": "8:25"
+  },
+  "180": {
+    "total_verses": 8,
+    "quarter": "8:28",
+    "half": "8:30",
+    "threeQuarter": "8:32",
+    "lastVerse": "8:33"
+  },
+  "181": {
+    "total_verses": 7,
+    "quarter": "8:35",
+    "half": "8:37",
+    "threeQuarter": "8:39",
+    "lastVerse": "8:40"
+  },
+  "182": {
+    "total_verses": 5,
+    "quarter": "8:42",
+    "half": "8:43",
+    "threeQuarter": "8:44",
+    "lastVerse": "8:45"
+  },
+  "183": {
+    "total_verses": 7,
+    "quarter": "8:47",
+    "half": "8:49",
+    "threeQuarter": "8:51",
+    "lastVerse": "8:52"
+  },
+  "184": {
+    "total_verses": 9,
+    "quarter": "8:55",
+    "half": "8:57",
+    "threeQuarter": "8:59",
+    "lastVerse": "8:61"
+  },
+  "185": {
+    "total_verses": 8,
+    "quarter": "8:64",
+    "half": "8:66",
+    "threeQuarter": "8:68",
+    "lastVerse": "8:69"
+  },
+  "186": {
+    "total_verses": 6,
+    "quarter": "8:71",
+    "half": "8:73",
+    "threeQuarter": "8:74",
+    "lastVerse": "8:75"
+  },
+  "187": {
+    "total_verses": 6,
+    "quarter": "9:2",
+    "half": "9:4",
+    "threeQuarter": "9:5",
+    "lastVerse": "9:6"
+  },
+  "188": {
+    "total_verses": 7,
+    "quarter": "9:8",
+    "half": "9:10",
+    "threeQuarter": "9:12",
+    "lastVerse": "9:13"
+  },
+  "189": {
+    "total_verses": 7,
+    "quarter": "9:15",
+    "half": "9:17",
+    "threeQuarter": "9:19",
+    "lastVerse": "9:20"
+  },
+  "190": {
+    "total_verses": 6,
+    "quarter": "9:22",
+    "half": "9:24",
+    "threeQuarter": "9:25",
+    "lastVerse": "9:26"
+  },
+  "191": {
+    "total_verses": 5,
+    "quarter": "9:28",
+    "half": "9:29",
+    "threeQuarter": "9:30",
+    "lastVerse": "9:31"
+  },
+  "192": {
+    "total_verses": 5,
+    "quarter": "9:33",
+    "half": "9:34",
+    "threeQuarter": "9:35",
+    "lastVerse": "9:36"
+  },
+  "193": {
+    "total_verses": 4,
+    "quarter": "9:38",
+    "half": "9:39",
+    "threeQuarter": "9:40",
+    "lastVerse": "9:40"
+  },
+  "194": {
+    "total_verses": 7,
+    "quarter": "9:42",
+    "half": "9:44",
+    "threeQuarter": "9:46",
+    "lastVerse": "9:47"
+  },
+  "195": {
+    "total_verses": 7,
+    "quarter": "9:49",
+    "half": "9:51",
+    "threeQuarter": "9:53",
+    "lastVerse": "9:54"
+  },
+  "196": {
+    "total_verses": 7,
+    "quarter": "9:56",
+    "half": "9:58",
+    "threeQuarter": "9:60",
+    "lastVerse": "9:61"
+  },
+  "197": {
+    "total_verses": 7,
+    "quarter": "9:63",
+    "half": "9:65",
+    "threeQuarter": "9:67",
+    "lastVerse": "9:68"
+  },
+  "198": {
+    "total_verses": 4,
+    "quarter": "9:70",
+    "half": "9:71",
+    "threeQuarter": "9:72",
+    "lastVerse": "9:72"
+  },
+  "199": {
+    "total_verses": 7,
+    "quarter": "9:74",
+    "half": "9:76",
+    "threeQuarter": "9:78",
+    "lastVerse": "9:79"
+  },
+  "200": {
+    "total_verses": 7,
+    "quarter": "9:81",
+    "half": "9:83",
+    "threeQuarter": "9:85",
+    "lastVerse": "9:86"
+  },
+  "201": {
+    "total_verses": 7,
+    "quarter": "9:88",
+    "half": "9:90",
+    "threeQuarter": "9:92",
+    "lastVerse": "9:93"
+  },
+  "202": {
+    "total_verses": 6,
+    "quarter": "9:95",
+    "half": "9:97",
+    "threeQuarter": "9:98",
+    "lastVerse": "9:99"
+  },
+  "203": {
+    "total_verses": 7,
+    "quarter": "9:101",
+    "half": "9:103",
+    "threeQuarter": "9:105",
+    "lastVerse": "9:106"
+  },
+  "204": {
+    "total_verses": 5,
+    "quarter": "9:108",
+    "half": "9:109",
+    "threeQuarter": "9:110",
+    "lastVerse": "9:111"
+  },
+  "205": {
+    "total_verses": 6,
+    "quarter": "9:113",
+    "half": "9:115",
+    "threeQuarter": "9:116",
+    "lastVerse": "9:117"
+  },
+  "206": {
+    "total_verses": 5,
+    "quarter": "9:119",
+    "half": "9:120",
+    "threeQuarter": "9:121",
+    "lastVerse": "9:122"
+  },
+  "207": {
+    "total_verses": 7,
+    "quarter": "9:124",
+    "half": "9:126",
+    "threeQuarter": "9:128",
+    "lastVerse": "9:129"
+  },
+  "208": {
+    "total_verses": 6,
+    "quarter": "10:2",
+    "half": "10:4",
+    "threeQuarter": "10:5",
+    "lastVerse": "10:6"
+  },
+  "209": {
+    "total_verses": 8,
+    "quarter": "10:9",
+    "half": "10:11",
+    "threeQuarter": "10:13",
+    "lastVerse": "10:14"
+  },
+  "210": {
+    "total_verses": 6,
+    "quarter": "10:16",
+    "half": "10:18",
+    "threeQuarter": "10:19",
+    "lastVerse": "10:20"
+  },
+  "211": {
+    "total_verses": 5,
+    "quarter": "10:22",
+    "half": "10:23",
+    "threeQuarter": "10:24",
+    "lastVerse": "10:25"
+  },
+  "212": {
+    "total_verses": 8,
+    "quarter": "10:28",
+    "half": "10:30",
+    "threeQuarter": "10:32",
+    "lastVerse": "10:33"
+  },
+  "213": {
+    "total_verses": 9,
+    "quarter": "10:36",
+    "half": "10:38",
+    "threeQuarter": "10:40",
+    "lastVerse": "10:42"
+  },
+  "214": {
+    "total_verses": 11,
+    "quarter": "10:45",
+    "half": "10:48",
+    "threeQuarter": "10:51",
+    "lastVerse": "10:53"
+  },
+  "215": {
+    "total_verses": 8,
+    "quarter": "10:56",
+    "half": "10:58",
+    "threeQuarter": "10:60",
+    "lastVerse": "10:61"
+  },
+  "216": {
+    "total_verses": 9,
+    "quarter": "10:64",
+    "half": "10:66",
+    "threeQuarter": "10:68",
+    "lastVerse": "10:70"
+  },
+  "217": {
+    "total_verses": 8,
+    "quarter": "10:73",
+    "half": "10:75",
+    "threeQuarter": "10:77",
+    "lastVerse": "10:78"
+  },
+  "218": {
+    "total_verses": 10,
+    "quarter": "10:81",
+    "half": "10:84",
+    "threeQuarter": "10:86",
+    "lastVerse": "10:88"
+  },
+  "219": {
+    "total_verses": 9,
+    "quarter": "10:91",
+    "half": "10:93",
+    "threeQuarter": "10:95",
+    "lastVerse": "10:97"
+  },
+  "220": {
+    "total_verses": 9,
+    "quarter": "10:100",
+    "half": "10:102",
+    "threeQuarter": "10:104",
+    "lastVerse": "10:106"
+  },
+  "221": {
+    "total_verses": 8,
+    "quarter": "10:109",
+    "half": "11:2",
+    "threeQuarter": "11:4",
+    "lastVerse": "11:5"
+  },
+  "222": {
+    "total_verses": 7,
+    "quarter": "11:7",
+    "half": "11:9",
+    "threeQuarter": "11:11",
+    "lastVerse": "11:12"
+  },
+  "223": {
+    "total_verses": 7,
+    "quarter": "11:14",
+    "half": "11:16",
+    "threeQuarter": "11:18",
+    "lastVerse": "11:19"
+  },
+  "224": {
+    "total_verses": 9,
+    "quarter": "11:22",
+    "half": "11:24",
+    "threeQuarter": "11:26",
+    "lastVerse": "11:28"
+  },
+  "225": {
+    "total_verses": 9,
+    "quarter": "11:31",
+    "half": "11:33",
+    "threeQuarter": "11:35",
+    "lastVerse": "11:37"
+  },
+  "226": {
+    "total_verses": 8,
+    "quarter": "11:40",
+    "half": "11:42",
+    "threeQuarter": "11:44",
+    "lastVerse": "11:45"
+  },
+  "227": {
+    "total_verses": 8,
+    "quarter": "11:48",
+    "half": "11:50",
+    "threeQuarter": "11:52",
+    "lastVerse": "11:53"
+  },
+  "228": {
+    "total_verses": 9,
+    "quarter": "11:56",
+    "half": "11:58",
+    "threeQuarter": "11:60",
+    "lastVerse": "11:62"
+  },
+  "229": {
+    "total_verses": 9,
+    "quarter": "11:65",
+    "half": "11:67",
+    "threeQuarter": "11:69",
+    "lastVerse": "11:71"
+  },
+  "230": {
+    "total_verses": 10,
+    "quarter": "11:74",
+    "half": "11:77",
+    "threeQuarter": "11:79",
+    "lastVerse": "11:81"
+  },
+  "231": {
+    "total_verses": 7,
+    "quarter": "11:83",
+    "half": "11:85",
+    "threeQuarter": "11:87",
+    "lastVerse": "11:88"
+  },
+  "232": {
+    "total_verses": 9,
+    "quarter": "11:91",
+    "half": "11:93",
+    "threeQuarter": "11:95",
+    "lastVerse": "11:97"
+  },
+  "233": {
+    "total_verses": 11,
+    "quarter": "11:100",
+    "half": "11:103",
+    "threeQuarter": "11:106",
+    "lastVerse": "11:108"
+  },
+  "234": {
+    "total_verses": 9,
+    "quarter": "11:111",
+    "half": "11:113",
+    "threeQuarter": "11:115",
+    "lastVerse": "11:117"
+  },
+  "235": {
+    "total_verses": 10,
+    "quarter": "11:120",
+    "half": "11:123",
+    "threeQuarter": "12:2",
+    "lastVerse": "12:4"
+  },
+  "236": {
+    "total_verses": 10,
+    "quarter": "12:7",
+    "half": "12:10",
+    "threeQuarter": "12:12",
+    "lastVerse": "12:14"
+  },
+  "237": {
+    "total_verses": 8,
+    "quarter": "12:17",
+    "half": "12:19",
+    "threeQuarter": "12:21",
+    "lastVerse": "12:22"
+  },
+  "238": {
+    "total_verses": 8,
+    "quarter": "12:25",
+    "half": "12:27",
+    "threeQuarter": "12:29",
+    "lastVerse": "12:30"
+  },
+  "239": {
+    "total_verses": 7,
+    "quarter": "12:32",
+    "half": "12:34",
+    "threeQuarter": "12:36",
+    "lastVerse": "12:37"
+  },
+  "240": {
+    "total_verses": 6,
+    "quarter": "12:39",
+    "half": "12:41",
+    "threeQuarter": "12:42",
+    "lastVerse": "12:43"
+  },
+  "241": {
+    "total_verses": 9,
+    "quarter": "12:46",
+    "half": "12:48",
+    "threeQuarter": "12:50",
+    "lastVerse": "12:52"
+  },
+  "242": {
+    "total_verses": 11,
+    "quarter": "12:55",
+    "half": "12:58",
+    "threeQuarter": "12:61",
+    "lastVerse": "12:63"
+  },
+  "243": {
+    "total_verses": 6,
+    "quarter": "12:65",
+    "half": "12:67",
+    "threeQuarter": "12:68",
+    "lastVerse": "12:69"
+  },
+  "244": {
+    "total_verses": 9,
+    "quarter": "12:72",
+    "half": "12:74",
+    "threeQuarter": "12:76",
+    "lastVerse": "12:78"
+  },
+  "245": {
+    "total_verses": 8,
+    "quarter": "12:81",
+    "half": "12:83",
+    "threeQuarter": "12:85",
+    "lastVerse": "12:86"
+  },
+  "246": {
+    "total_verses": 9,
+    "quarter": "12:89",
+    "half": "12:91",
+    "threeQuarter": "12:93",
+    "lastVerse": "12:95"
+  },
+  "247": {
+    "total_verses": 8,
+    "quarter": "12:98",
+    "half": "12:100",
+    "threeQuarter": "12:102",
+    "lastVerse": "12:103"
+  },
+  "248": {
+    "total_verses": 8,
+    "quarter": "12:106",
+    "half": "12:108",
+    "threeQuarter": "12:110",
+    "lastVerse": "12:111"
+  },
+  "249": {
+    "total_verses": 5,
+    "quarter": "13:2",
+    "half": "13:3",
+    "threeQuarter": "13:4",
+    "lastVerse": "13:5"
+  },
+  "250": {
+    "total_verses": 8,
+    "quarter": "13:8",
+    "half": "13:10",
+    "threeQuarter": "13:12",
+    "lastVerse": "13:13"
+  },
+  "251": {
+    "total_verses": 5,
+    "quarter": "13:15",
+    "half": "13:16",
+    "threeQuarter": "13:17",
+    "lastVerse": "13:18"
+  },
+  "252": {
+    "total_verses": 10,
+    "quarter": "13:21",
+    "half": "13:24",
+    "threeQuarter": "13:26",
+    "lastVerse": "13:28"
+  },
+  "253": {
+    "total_verses": 6,
+    "quarter": "13:30",
+    "half": "13:32",
+    "threeQuarter": "13:33",
+    "lastVerse": "13:34"
+  },
+  "254": {
+    "total_verses": 8,
+    "quarter": "13:37",
+    "half": "13:39",
+    "threeQuarter": "13:41",
+    "lastVerse": "13:42"
+  },
+  "255": {
+    "total_verses": 6,
+    "quarter": "14:1",
+    "half": "14:3",
+    "threeQuarter": "14:4",
+    "lastVerse": "14:5"
+  },
+  "256": {
+    "total_verses": 5,
+    "quarter": "14:7",
+    "half": "14:8",
+    "threeQuarter": "14:9",
+    "lastVerse": "14:10"
+  },
+  "257": {
+    "total_verses": 8,
+    "quarter": "14:13",
+    "half": "14:15",
+    "threeQuarter": "14:17",
+    "lastVerse": "14:18"
+  },
+  "258": {
+    "total_verses": 6,
+    "quarter": "14:20",
+    "half": "14:22",
+    "threeQuarter": "14:23",
+    "lastVerse": "14:24"
+  },
+  "259": {
+    "total_verses": 9,
+    "quarter": "14:27",
+    "half": "14:29",
+    "threeQuarter": "14:31",
+    "lastVerse": "14:33"
+  },
+  "260": {
+    "total_verses": 9,
+    "quarter": "14:36",
+    "half": "14:38",
+    "threeQuarter": "14:40",
+    "lastVerse": "14:42"
+  },
+  "261": {
+    "total_verses": 10,
+    "quarter": "14:45",
+    "half": "14:48",
+    "threeQuarter": "14:50",
+    "lastVerse": "14:52"
+  },
+  "262": {
+    "total_verses": 15,
+    "quarter": "15:4",
+    "half": "15:8",
+    "threeQuarter": "15:12",
+    "lastVerse": "15:15"
+  },
+  "263": {
+    "total_verses": 16,
+    "quarter": "15:20",
+    "half": "15:24",
+    "threeQuarter": "15:28",
+    "lastVerse": "15:31"
+  },
+  "264": {
+    "total_verses": 20,
+    "quarter": "15:37",
+    "half": "15:42",
+    "threeQuarter": "15:47",
+    "lastVerse": "15:51"
+  },
+  "265": {
+    "total_verses": 19,
+    "quarter": "15:56",
+    "half": "15:61",
+    "threeQuarter": "15:66",
+    "lastVerse": "15:70"
+  },
+  "266": {
+    "total_verses": 20,
+    "quarter": "15:76",
+    "half": "15:81",
+    "threeQuarter": "15:86",
+    "lastVerse": "15:90"
+  },
+  "267": {
+    "total_verses": 15,
+    "quarter": "15:94",
+    "half": "15:98",
+    "threeQuarter": "16:3",
+    "lastVerse": "16:6"
+  },
+  "268": {
+    "total_verses": 8,
+    "quarter": "16:9",
+    "half": "16:11",
+    "threeQuarter": "16:13",
+    "lastVerse": "16:14"
+  },
+  "269": {
+    "total_verses": 12,
+    "quarter": "16:18",
+    "half": "16:21",
+    "threeQuarter": "16:24",
+    "lastVerse": "16:26"
+  },
+  "270": {
+    "total_verses": 8,
+    "quarter": "16:29",
+    "half": "16:31",
+    "threeQuarter": "16:33",
+    "lastVerse": "16:34"
+  },
+  "271": {
+    "total_verses": 8,
+    "quarter": "16:37",
+    "half": "16:39",
+    "threeQuarter": "16:41",
+    "lastVerse": "16:42"
+  },
+  "272": {
+    "total_verses": 12,
+    "quarter": "16:46",
+    "half": "16:49",
+    "threeQuarter": "16:52",
+    "lastVerse": "16:54"
+  },
+  "273": {
+    "total_verses": 10,
+    "quarter": "16:57",
+    "half": "16:60",
+    "threeQuarter": "16:62",
+    "lastVerse": "16:64"
+  },
+  "274": {
+    "total_verses": 8,
+    "quarter": "16:67",
+    "half": "16:69",
+    "threeQuarter": "16:71",
+    "lastVerse": "16:72"
+  },
+  "275": {
+    "total_verses": 7,
+    "quarter": "16:74",
+    "half": "16:76",
+    "threeQuarter": "16:78",
+    "lastVerse": "16:79"
+  },
+  "276": {
+    "total_verses": 8,
+    "quarter": "16:82",
+    "half": "16:84",
+    "threeQuarter": "16:86",
+    "lastVerse": "16:87"
+  },
+  "277": {
+    "total_verses": 6,
+    "quarter": "16:89",
+    "half": "16:91",
+    "threeQuarter": "16:92",
+    "lastVerse": "16:93"
+  },
+  "278": {
+    "total_verses": 9,
+    "quarter": "16:96",
+    "half": "16:98",
+    "threeQuarter": "16:100",
+    "lastVerse": "16:102"
+  },
+  "279": {
+    "total_verses": 8,
+    "quarter": "16:105",
+    "half": "16:107",
+    "threeQuarter": "16:109",
+    "lastVerse": "16:110"
+  },
+  "280": {
+    "total_verses": 8,
+    "quarter": "16:113",
+    "half": "16:115",
+    "threeQuarter": "16:117",
+    "lastVerse": "16:118"
+  },
+  "281": {
+    "total_verses": 10,
+    "quarter": "16:121",
+    "half": "16:124",
+    "threeQuarter": "16:126",
+    "lastVerse": "16:128"
+  },
+  "282": {
+    "total_verses": 7,
+    "quarter": "17:2",
+    "half": "17:4",
+    "threeQuarter": "17:6",
+    "lastVerse": "17:7"
+  },
+  "283": {
+    "total_verses": 10,
+    "quarter": "17:10",
+    "half": "17:13",
+    "threeQuarter": "17:15",
+    "lastVerse": "17:17"
+  },
+  "284": {
+    "total_verses": 10,
+    "quarter": "17:20",
+    "half": "17:23",
+    "threeQuarter": "17:25",
+    "lastVerse": "17:27"
+  },
+  "285": {
+    "total_verses": 11,
+    "quarter": "17:30",
+    "half": "17:33",
+    "threeQuarter": "17:36",
+    "lastVerse": "17:38"
+  },
+  "286": {
+    "total_verses": 11,
+    "quarter": "17:41",
+    "half": "17:44",
+    "threeQuarter": "17:47",
+    "lastVerse": "17:49"
+  },
+  "287": {
+    "total_verses": 9,
+    "quarter": "17:52",
+    "half": "17:54",
+    "threeQuarter": "17:56",
+    "lastVerse": "17:58"
+  },
+  "288": {
+    "total_verses": 8,
+    "quarter": "17:61",
+    "half": "17:63",
+    "threeQuarter": "17:65",
+    "lastVerse": "17:66"
+  },
+  "289": {
+    "total_verses": 9,
+    "quarter": "17:69",
+    "half": "17:71",
+    "threeQuarter": "17:73",
+    "lastVerse": "17:75"
+  },
+  "290": {
+    "total_verses": 11,
+    "quarter": "17:78",
+    "half": "17:81",
+    "threeQuarter": "17:84",
+    "lastVerse": "17:86"
+  },
+  "291": {
+    "total_verses": 10,
+    "quarter": "17:89",
+    "half": "17:92",
+    "threeQuarter": "17:94",
+    "lastVerse": "17:96"
+  },
+  "292": {
+    "total_verses": 8,
+    "quarter": "17:99",
+    "half": "17:101",
+    "threeQuarter": "17:103",
+    "lastVerse": "17:104"
+  },
+  "293": {
+    "total_verses": 11,
+    "quarter": "17:107",
+    "half": "17:110",
+    "threeQuarter": "18:2",
+    "lastVerse": "18:4"
+  },
+  "294": {
+    "total_verses": 11,
+    "quarter": "18:7",
+    "half": "18:10",
+    "threeQuarter": "18:13",
+    "lastVerse": "18:15"
+  },
+  "295": {
+    "total_verses": 5,
+    "quarter": "18:17",
+    "half": "18:18",
+    "threeQuarter": "18:19",
+    "lastVerse": "18:20"
+  },
+  "296": {
+    "total_verses": 7,
+    "quarter": "18:22",
+    "half": "18:24",
+    "threeQuarter": "18:26",
+    "lastVerse": "18:27"
+  },
+  "297": {
+    "total_verses": 7,
+    "quarter": "18:29",
+    "half": "18:31",
+    "threeQuarter": "18:33",
+    "lastVerse": "18:34"
+  },
+  "298": {
+    "total_verses": 11,
+    "quarter": "18:37",
+    "half": "18:40",
+    "threeQuarter": "18:43",
+    "lastVerse": "18:45"
+  },
+  "299": {
+    "total_verses": 8,
+    "quarter": "18:48",
+    "half": "18:50",
+    "threeQuarter": "18:52",
+    "lastVerse": "18:53"
+  },
+  "300": {
+    "total_verses": 8,
+    "quarter": "18:56",
+    "half": "18:58",
+    "threeQuarter": "18:60",
+    "lastVerse": "18:61"
+  },
+  "301": {
+    "total_verses": 13,
+    "quarter": "18:65",
+    "half": "18:68",
+    "threeQuarter": "18:71",
+    "lastVerse": "18:74"
+  },
+  "302": {
+    "total_verses": 9,
+    "quarter": "18:77",
+    "half": "18:79",
+    "threeQuarter": "18:81",
+    "lastVerse": "18:83"
+  },
+  "303": {
+    "total_verses": 14,
+    "quarter": "18:87",
+    "half": "18:91",
+    "threeQuarter": "18:94",
+    "lastVerse": "18:97"
+  },
+  "304": {
+    "total_verses": 13,
+    "quarter": "18:101",
+    "half": "18:104",
+    "threeQuarter": "18:107",
+    "lastVerse": "18:110"
+  },
+  "305": {
+    "total_verses": 11,
+    "quarter": "19:3",
+    "half": "19:6",
+    "threeQuarter": "19:9",
+    "lastVerse": "19:11"
+  },
+  "306": {
+    "total_verses": 14,
+    "quarter": "19:15",
+    "half": "19:19",
+    "threeQuarter": "19:22",
+    "lastVerse": "19:25"
+  },
+  "307": {
+    "total_verses": 13,
+    "quarter": "19:29",
+    "half": "19:32",
+    "threeQuarter": "19:35",
+    "lastVerse": "19:38"
+  },
+  "308": {
+    "total_verses": 13,
+    "quarter": "19:42",
+    "half": "19:45",
+    "threeQuarter": "19:48",
+    "lastVerse": "19:51"
+  },
+  "309": {
+    "total_verses": 13,
+    "quarter": "19:55",
+    "half": "19:58",
+    "threeQuarter": "19:61",
+    "lastVerse": "19:64"
+  },
+  "310": {
+    "total_verses": 12,
+    "quarter": "19:68",
+    "half": "19:71",
+    "threeQuarter": "19:74",
+    "lastVerse": "19:76"
+  },
+  "311": {
+    "total_verses": 19,
+    "quarter": "19:81",
+    "half": "19:86",
+    "threeQuarter": "19:91",
+    "lastVerse": "19:95"
+  },
+  "312": {
+    "total_verses": 15,
+    "quarter": "20:1",
+    "half": "20:5",
+    "threeQuarter": "20:9",
+    "lastVerse": "20:12"
+  },
+  "313": {
+    "total_verses": 25,
+    "quarter": "20:19",
+    "half": "20:25",
+    "threeQuarter": "20:31",
+    "lastVerse": "20:37"
+  },
+  "314": {
+    "total_verses": 14,
+    "quarter": "20:41",
+    "half": "20:45",
+    "threeQuarter": "20:48",
+    "lastVerse": "20:51"
+  },
+  "315": {
+    "total_verses": 13,
+    "quarter": "20:55",
+    "half": "20:58",
+    "threeQuarter": "20:61",
+    "lastVerse": "20:64"
+  },
+  "316": {
+    "total_verses": 12,
+    "quarter": "20:68",
+    "half": "20:71",
+    "threeQuarter": "20:74",
+    "lastVerse": "20:76"
+  },
+  "317": {
+    "total_verses": 11,
+    "quarter": "20:79",
+    "half": "20:82",
+    "threeQuarter": "20:85",
+    "lastVerse": "20:87"
+  },
+  "318": {
+    "total_verses": 11,
+    "quarter": "20:90",
+    "half": "20:93",
+    "threeQuarter": "20:96",
+    "lastVerse": "20:98"
+  },
+  "319": {
+    "total_verses": 15,
+    "quarter": "20:102",
+    "half": "20:106",
+    "threeQuarter": "20:110",
+    "lastVerse": "20:113"
+  },
+  "320": {
+    "total_verses": 12,
+    "quarter": "20:117",
+    "half": "20:120",
+    "threeQuarter": "20:123",
+    "lastVerse": "20:125"
+  },
+  "321": {
+    "total_verses": 10,
+    "quarter": "20:128",
+    "half": "20:131",
+    "threeQuarter": "20:133",
+    "lastVerse": "20:135"
+  },
+  "322": {
+    "total_verses": 10,
+    "quarter": "21:3",
+    "half": "21:6",
+    "threeQuarter": "21:8",
+    "lastVerse": "21:10"
+  },
+  "323": {
+    "total_verses": 14,
+    "quarter": "21:14",
+    "half": "21:18",
+    "threeQuarter": "21:21",
+    "lastVerse": "21:24"
+  },
+  "324": {
+    "total_verses": 11,
+    "quarter": "21:27",
+    "half": "21:30",
+    "threeQuarter": "21:33",
+    "lastVerse": "21:35"
+  },
+  "325": {
+    "total_verses": 9,
+    "quarter": "21:38",
+    "half": "21:40",
+    "threeQuarter": "21:42",
+    "lastVerse": "21:44"
+  },
+  "326": {
+    "total_verses": 13,
+    "quarter": "21:48",
+    "half": "21:51",
+    "threeQuarter": "21:54",
+    "lastVerse": "21:57"
+  },
+  "327": {
+    "total_verses": 15,
+    "quarter": "21:61",
+    "half": "21:65",
+    "threeQuarter": "21:69",
+    "lastVerse": "21:72"
+  },
+  "328": {
+    "total_verses": 9,
+    "quarter": "21:75",
+    "half": "21:77",
+    "threeQuarter": "21:79",
+    "lastVerse": "21:81"
+  },
+  "329": {
+    "total_verses": 9,
+    "quarter": "21:84",
+    "half": "21:86",
+    "threeQuarter": "21:88",
+    "lastVerse": "21:90"
+  },
+  "330": {
+    "total_verses": 11,
+    "quarter": "21:93",
+    "half": "21:96",
+    "threeQuarter": "21:99",
+    "lastVerse": "21:101"
+  },
+  "331": {
+    "total_verses": 11,
+    "quarter": "21:104",
+    "half": "21:107",
+    "threeQuarter": "21:110",
+    "lastVerse": "21:112"
+  },
+  "332": {
+    "total_verses": 5,
+    "quarter": "22:2",
+    "half": "22:3",
+    "threeQuarter": "22:4",
+    "lastVerse": "22:5"
+  },
+  "333": {
+    "total_verses": 10,
+    "quarter": "22:8",
+    "half": "22:11",
+    "threeQuarter": "22:13",
+    "lastVerse": "22:15"
+  },
+  "334": {
+    "total_verses": 8,
+    "quarter": "22:18",
+    "half": "22:20",
+    "threeQuarter": "22:22",
+    "lastVerse": "22:23"
+  },
+  "335": {
+    "total_verses": 7,
+    "quarter": "22:25",
+    "half": "22:27",
+    "threeQuarter": "22:29",
+    "lastVerse": "22:30"
+  },
+  "336": {
+    "total_verses": 8,
+    "quarter": "22:33",
+    "half": "22:35",
+    "threeQuarter": "22:37",
+    "lastVerse": "22:38"
+  },
+  "337": {
+    "total_verses": 8,
+    "quarter": "22:41",
+    "half": "22:43",
+    "threeQuarter": "22:45",
+    "lastVerse": "22:46"
+  },
+  "338": {
+    "total_verses": 9,
+    "quarter": "22:49",
+    "half": "22:51",
+    "threeQuarter": "22:53",
+    "lastVerse": "22:55"
+  },
+  "339": {
+    "total_verses": 9,
+    "quarter": "22:58",
+    "half": "22:60",
+    "threeQuarter": "22:62",
+    "lastVerse": "22:64"
+  },
+  "340": {
+    "total_verses": 8,
+    "quarter": "22:67",
+    "half": "22:69",
+    "threeQuarter": "22:71",
+    "lastVerse": "22:72"
+  },
+  "341": {
+    "total_verses": 6,
+    "quarter": "22:74",
+    "half": "22:76",
+    "threeQuarter": "22:77",
+    "lastVerse": "22:78"
+  },
+  "342": {
+    "total_verses": 17,
+    "quarter": "23:5",
+    "half": "23:9",
+    "threeQuarter": "23:13",
+    "lastVerse": "23:17"
+  },
+  "343": {
+    "total_verses": 10,
+    "quarter": "23:20",
+    "half": "23:23",
+    "threeQuarter": "23:25",
+    "lastVerse": "23:27"
+  },
+  "344": {
+    "total_verses": 15,
+    "quarter": "23:31",
+    "half": "23:35",
+    "threeQuarter": "23:39",
+    "lastVerse": "23:42"
+  },
+  "345": {
+    "total_verses": 17,
+    "quarter": "23:47",
+    "half": "23:51",
+    "threeQuarter": "23:55",
+    "lastVerse": "23:59"
+  },
+  "346": {
+    "total_verses": 15,
+    "quarter": "23:63",
+    "half": "23:67",
+    "threeQuarter": "23:71",
+    "lastVerse": "23:74"
+  },
+  "347": {
+    "total_verses": 15,
+    "quarter": "23:78",
+    "half": "23:82",
+    "threeQuarter": "23:86",
+    "lastVerse": "23:89"
+  },
+  "348": {
+    "total_verses": 15,
+    "quarter": "23:93",
+    "half": "23:97",
+    "threeQuarter": "23:101",
+    "lastVerse": "23:104"
+  },
+  "349": {
+    "total_verses": 14,
+    "quarter": "23:108",
+    "half": "23:112",
+    "threeQuarter": "23:115",
+    "lastVerse": "23:118"
+  },
+  "350": {
+    "total_verses": 10,
+    "quarter": "24:3",
+    "half": "24:6",
+    "threeQuarter": "24:8",
+    "lastVerse": "24:10"
+  },
+  "351": {
+    "total_verses": 10,
+    "quarter": "24:13",
+    "half": "24:16",
+    "threeQuarter": "24:18",
+    "lastVerse": "24:20"
+  },
+  "352": {
+    "total_verses": 7,
+    "quarter": "24:22",
+    "half": "24:24",
+    "threeQuarter": "24:26",
+    "lastVerse": "24:27"
+  },
+  "353": {
+    "total_verses": 4,
+    "quarter": "24:29",
+    "half": "24:30",
+    "threeQuarter": "24:31",
+    "lastVerse": "24:31"
+  },
+  "354": {
+    "total_verses": 5,
+    "quarter": "24:33",
+    "half": "24:34",
+    "threeQuarter": "24:35",
+    "lastVerse": "24:36"
+  },
+  "355": {
+    "total_verses": 7,
+    "quarter": "24:38",
+    "half": "24:40",
+    "threeQuarter": "24:42",
+    "lastVerse": "24:43"
+  },
+  "356": {
+    "total_verses": 10,
+    "quarter": "24:46",
+    "half": "24:49",
+    "threeQuarter": "24:51",
+    "lastVerse": "24:53"
+  },
+  "357": {
+    "total_verses": 5,
+    "quarter": "24:55",
+    "half": "24:56",
+    "threeQuarter": "24:57",
+    "lastVerse": "24:58"
+  },
+  "358": {
+    "total_verses": 3,
+    "quarter": "24:59",
+    "half": "24:60",
+    "threeQuarter": "24:61",
+    "lastVerse": "24:61"
+  },
+  "359": {
+    "total_verses": 5,
+    "quarter": "24:63",
+    "half": "24:64",
+    "threeQuarter": "25:1",
+    "lastVerse": "25:2"
+  },
+  "360": {
+    "total_verses": 9,
+    "quarter": "25:5",
+    "half": "25:7",
+    "threeQuarter": "25:9",
+    "lastVerse": "25:11"
+  },
+  "361": {
+    "total_verses": 9,
+    "quarter": "25:14",
+    "half": "25:16",
+    "threeQuarter": "25:18",
+    "lastVerse": "25:20"
+  },
+  "362": {
+    "total_verses": 12,
+    "quarter": "25:24",
+    "half": "25:27",
+    "threeQuarter": "25:30",
+    "lastVerse": "25:32"
+  },
+  "363": {
+    "total_verses": 11,
+    "quarter": "25:35",
+    "half": "25:38",
+    "threeQuarter": "25:41",
+    "lastVerse": "25:43"
+  },
+  "364": {
+    "total_verses": 12,
+    "quarter": "25:47",
+    "half": "25:50",
+    "threeQuarter": "25:53",
+    "lastVerse": "25:55"
+  },
+  "365": {
+    "total_verses": 12,
+    "quarter": "25:59",
+    "half": "25:62",
+    "threeQuarter": "25:65",
+    "lastVerse": "25:67"
+  },
+  "366": {
+    "total_verses": 10,
+    "quarter": "25:70",
+    "half": "25:73",
+    "threeQuarter": "25:75",
+    "lastVerse": "25:77"
+  },
+  "367": {
+    "total_verses": 19,
+    "quarter": "26:5",
+    "half": "26:10",
+    "threeQuarter": "26:15",
+    "lastVerse": "26:19"
+  },
+  "368": {
+    "total_verses": 20,
+    "quarter": "26:25",
+    "half": "26:30",
+    "threeQuarter": "26:35",
+    "lastVerse": "26:39"
+  },
+  "369": {
+    "total_verses": 21,
+    "quarter": "26:45",
+    "half": "26:50",
+    "threeQuarter": "26:55",
+    "lastVerse": "26:60"
+  },
+  "370": {
+    "total_verses": 23,
+    "quarter": "26:66",
+    "half": "26:72",
+    "threeQuarter": "26:78",
+    "lastVerse": "26:83"
+  },
+  "371": {
+    "total_verses": 28,
+    "quarter": "26:91",
+    "half": "26:98",
+    "threeQuarter": "26:105",
+    "lastVerse": "26:111"
+  },
+  "372": {
+    "total_verses": 25,
+    "quarter": "26:118",
+    "half": "26:124",
+    "threeQuarter": "26:130",
+    "lastVerse": "26:136"
+  },
+  "373": {
+    "total_verses": 23,
+    "quarter": "26:142",
+    "half": "26:148",
+    "threeQuarter": "26:154",
+    "lastVerse": "26:159"
+  },
+  "374": {
+    "total_verses": 24,
+    "quarter": "26:166",
+    "half": "26:172",
+    "threeQuarter": "26:178",
+    "lastVerse": "26:183"
+  },
+  "375": {
+    "total_verses": 23,
+    "quarter": "26:189",
+    "half": "26:195",
+    "threeQuarter": "26:201",
+    "lastVerse": "26:206"
+  },
+  "376": {
+    "total_verses": 21,
+    "quarter": "26:212",
+    "half": "26:217",
+    "threeQuarter": "26:222",
+    "lastVerse": "26:227"
+  },
+  "377": {
+    "total_verses": 13,
+    "quarter": "27:4",
+    "half": "27:7",
+    "threeQuarter": "27:10",
+    "lastVerse": "27:13"
+  },
+  "378": {
+    "total_verses": 9,
+    "quarter": "27:16",
+    "half": "27:18",
+    "threeQuarter": "27:20",
+    "lastVerse": "27:22"
+  },
+  "379": {
+    "total_verses": 13,
+    "quarter": "27:26",
+    "half": "27:29",
+    "threeQuarter": "27:32",
+    "lastVerse": "27:35"
+  },
+  "380": {
+    "total_verses": 9,
+    "quarter": "27:38",
+    "half": "27:40",
+    "threeQuarter": "27:42",
+    "lastVerse": "27:44"
+  },
+  "381": {
+    "total_verses": 11,
+    "quarter": "27:47",
+    "half": "27:50",
+    "threeQuarter": "27:53",
+    "lastVerse": "27:55"
+  },
+  "382": {
+    "total_verses": 8,
+    "quarter": "27:58",
+    "half": "27:60",
+    "threeQuarter": "27:62",
+    "lastVerse": "27:63"
+  },
+  "383": {
+    "total_verses": 13,
+    "quarter": "27:67",
+    "half": "27:70",
+    "threeQuarter": "27:73",
+    "lastVerse": "27:76"
+  },
+  "384": {
+    "total_verses": 12,
+    "quarter": "27:80",
+    "half": "27:83",
+    "threeQuarter": "27:86",
+    "lastVerse": "27:88"
+  },
+  "385": {
+    "total_verses": 10,
+    "quarter": "27:91",
+    "half": "28:1",
+    "threeQuarter": "28:3",
+    "lastVerse": "28:5"
+  },
+  "386": {
+    "total_verses": 8,
+    "quarter": "28:8",
+    "half": "28:10",
+    "threeQuarter": "28:12",
+    "lastVerse": "28:13"
+  },
+  "387": {
+    "total_verses": 8,
+    "quarter": "28:16",
+    "half": "28:18",
+    "threeQuarter": "28:20",
+    "lastVerse": "28:21"
+  },
+  "388": {
+    "total_verses": 7,
+    "quarter": "28:23",
+    "half": "28:25",
+    "threeQuarter": "28:27",
+    "lastVerse": "28:28"
+  },
+  "389": {
+    "total_verses": 7,
+    "quarter": "28:30",
+    "half": "28:32",
+    "threeQuarter": "28:34",
+    "lastVerse": "28:35"
+  },
+  "390": {
+    "total_verses": 8,
+    "quarter": "28:38",
+    "half": "28:40",
+    "threeQuarter": "28:42",
+    "lastVerse": "28:43"
+  },
+  "391": {
+    "total_verses": 7,
+    "quarter": "28:45",
+    "half": "28:47",
+    "threeQuarter": "28:49",
+    "lastVerse": "28:50"
+  },
+  "392": {
+    "total_verses": 9,
+    "quarter": "28:53",
+    "half": "28:55",
+    "threeQuarter": "28:57",
+    "lastVerse": "28:59"
+  },
+  "393": {
+    "total_verses": 11,
+    "quarter": "28:62",
+    "half": "28:65",
+    "threeQuarter": "28:68",
+    "lastVerse": "28:70"
+  },
+  "394": {
+    "total_verses": 7,
+    "quarter": "28:72",
+    "half": "28:74",
+    "threeQuarter": "28:76",
+    "lastVerse": "28:77"
+  },
+  "395": {
+    "total_verses": 7,
+    "quarter": "28:79",
+    "half": "28:81",
+    "threeQuarter": "28:83",
+    "lastVerse": "28:84"
+  },
+  "396": {
+    "total_verses": 10,
+    "quarter": "28:87",
+    "half": "29:2",
+    "threeQuarter": "29:4",
+    "lastVerse": "29:6"
+  },
+  "397": {
+    "total_verses": 8,
+    "quarter": "29:9",
+    "half": "29:11",
+    "threeQuarter": "29:13",
+    "lastVerse": "29:14"
+  },
+  "398": {
+    "total_verses": 9,
+    "quarter": "29:17",
+    "half": "29:19",
+    "threeQuarter": "29:21",
+    "lastVerse": "29:23"
+  },
+  "399": {
+    "total_verses": 7,
+    "quarter": "29:25",
+    "half": "29:27",
+    "threeQuarter": "29:29",
+    "lastVerse": "29:30"
+  },
+  "400": {
+    "total_verses": 8,
+    "quarter": "29:33",
+    "half": "29:35",
+    "threeQuarter": "29:37",
+    "lastVerse": "29:38"
+  },
+  "401": {
+    "total_verses": 7,
+    "quarter": "29:40",
+    "half": "29:42",
+    "threeQuarter": "29:44",
+    "lastVerse": "29:45"
+  },
+  "402": {
+    "total_verses": 7,
+    "quarter": "29:47",
+    "half": "29:49",
+    "threeQuarter": "29:51",
+    "lastVerse": "29:52"
+  },
+  "403": {
+    "total_verses": 11,
+    "quarter": "29:55",
+    "half": "29:58",
+    "threeQuarter": "29:61",
+    "lastVerse": "29:63"
+  },
+  "404": {
+    "total_verses": 11,
+    "quarter": "29:66",
+    "half": "29:69",
+    "threeQuarter": "30:3",
+    "lastVerse": "30:5"
+  },
+  "405": {
+    "total_verses": 10,
+    "quarter": "30:8",
+    "half": "30:11",
+    "threeQuarter": "30:13",
+    "lastVerse": "30:15"
+  },
+  "406": {
+    "total_verses": 9,
+    "quarter": "30:18",
+    "half": "30:20",
+    "threeQuarter": "30:22",
+    "lastVerse": "30:24"
+  },
+  "407": {
+    "total_verses": 8,
+    "quarter": "30:27",
+    "half": "30:29",
+    "threeQuarter": "30:31",
+    "lastVerse": "30:32"
+  },
+  "408": {
+    "total_verses": 9,
+    "quarter": "30:35",
+    "half": "30:37",
+    "threeQuarter": "30:39",
+    "lastVerse": "30:41"
+  },
+  "409": {
+    "total_verses": 9,
+    "quarter": "30:44",
+    "half": "30:46",
+    "threeQuarter": "30:48",
+    "lastVerse": "30:50"
+  },
+  "410": {
+    "total_verses": 10,
+    "quarter": "30:53",
+    "half": "30:56",
+    "threeQuarter": "30:58",
+    "lastVerse": "30:60"
+  },
+  "411": {
+    "total_verses": 11,
+    "quarter": "31:3",
+    "half": "31:6",
+    "threeQuarter": "31:9",
+    "lastVerse": "31:11"
+  },
+  "412": {
+    "total_verses": 8,
+    "quarter": "31:14",
+    "half": "31:16",
+    "threeQuarter": "31:18",
+    "lastVerse": "31:19"
+  },
+  "413": {
+    "total_verses": 9,
+    "quarter": "31:22",
+    "half": "31:24",
+    "threeQuarter": "31:26",
+    "lastVerse": "31:28"
+  },
+  "414": {
+    "total_verses": 6,
+    "quarter": "31:30",
+    "half": "31:32",
+    "threeQuarter": "31:33",
+    "lastVerse": "31:34"
+  },
+  "415": {
+    "total_verses": 11,
+    "quarter": "32:3",
+    "half": "32:6",
+    "threeQuarter": "32:9",
+    "lastVerse": "32:11"
+  },
+  "416": {
+    "total_verses": 9,
+    "quarter": "32:14",
+    "half": "32:16",
+    "threeQuarter": "32:18",
+    "lastVerse": "32:20"
+  },
+  "417": {
+    "total_verses": 10,
+    "quarter": "32:23",
+    "half": "32:26",
+    "threeQuarter": "32:28",
+    "lastVerse": "32:30"
+  },
+  "418": {
+    "total_verses": 6,
+    "quarter": "33:2",
+    "half": "33:4",
+    "threeQuarter": "33:5",
+    "lastVerse": "33:6"
+  },
+  "419": {
+    "total_verses": 9,
+    "quarter": "33:9",
+    "half": "33:11",
+    "threeQuarter": "33:13",
+    "lastVerse": "33:15"
+  },
+  "420": {
+    "total_verses": 7,
+    "quarter": "33:17",
+    "half": "33:19",
+    "threeQuarter": "33:21",
+    "lastVerse": "33:22"
+  },
+  "421": {
+    "total_verses": 8,
+    "quarter": "33:25",
+    "half": "33:27",
+    "threeQuarter": "33:29",
+    "lastVerse": "33:30"
+  },
+  "422": {
+    "total_verses": 5,
+    "quarter": "33:32",
+    "half": "33:33",
+    "threeQuarter": "33:34",
+    "lastVerse": "33:35"
+  },
+  "423": {
+    "total_verses": 8,
+    "quarter": "33:38",
+    "half": "33:40",
+    "threeQuarter": "33:42",
+    "lastVerse": "33:43"
+  },
+  "424": {
+    "total_verses": 7,
+    "quarter": "33:45",
+    "half": "33:47",
+    "threeQuarter": "33:49",
+    "lastVerse": "33:50"
+  },
+  "425": {
+    "total_verses": 4,
+    "quarter": "33:52",
+    "half": "33:53",
+    "threeQuarter": "33:54",
+    "lastVerse": "33:54"
+  },
+  "426": {
+    "total_verses": 8,
+    "quarter": "33:57",
+    "half": "33:59",
+    "threeQuarter": "33:61",
+    "lastVerse": "33:62"
+  },
+  "427": {
+    "total_verses": 11,
+    "quarter": "33:65",
+    "half": "33:68",
+    "threeQuarter": "33:71",
+    "lastVerse": "33:73"
+  },
+  "428": {
+    "total_verses": 7,
+    "quarter": "34:2",
+    "half": "34:4",
+    "threeQuarter": "34:6",
+    "lastVerse": "34:7"
+  },
+  "429": {
+    "total_verses": 7,
+    "quarter": "34:9",
+    "half": "34:11",
+    "threeQuarter": "34:13",
+    "lastVerse": "34:14"
+  },
+  "430": {
+    "total_verses": 8,
+    "quarter": "34:17",
+    "half": "34:19",
+    "threeQuarter": "34:21",
+    "lastVerse": "34:22"
+  },
+  "431": {
+    "total_verses": 9,
+    "quarter": "34:25",
+    "half": "34:27",
+    "threeQuarter": "34:29",
+    "lastVerse": "34:31"
+  },
+  "432": {
+    "total_verses": 8,
+    "quarter": "34:34",
+    "half": "34:36",
+    "threeQuarter": "34:38",
+    "lastVerse": "34:39"
+  },
+  "433": {
+    "total_verses": 9,
+    "quarter": "34:42",
+    "half": "34:44",
+    "threeQuarter": "34:46",
+    "lastVerse": "34:48"
+  },
+  "434": {
+    "total_verses": 9,
+    "quarter": "34:51",
+    "half": "34:53",
+    "threeQuarter": "35:1",
+    "lastVerse": "35:3"
+  },
+  "435": {
+    "total_verses": 8,
+    "quarter": "35:6",
+    "half": "35:8",
+    "threeQuarter": "35:10",
+    "lastVerse": "35:11"
+  },
+  "436": {
+    "total_verses": 7,
+    "quarter": "35:13",
+    "half": "35:15",
+    "threeQuarter": "35:17",
+    "lastVerse": "35:18"
+  },
+  "437": {
+    "total_verses": 12,
+    "quarter": "35:22",
+    "half": "35:25",
+    "threeQuarter": "35:28",
+    "lastVerse": "35:30"
+  },
+  "438": {
+    "total_verses": 8,
+    "quarter": "35:33",
+    "half": "35:35",
+    "threeQuarter": "35:37",
+    "lastVerse": "35:38"
+  },
+  "439": {
+    "total_verses": 6,
+    "quarter": "35:40",
+    "half": "35:42",
+    "threeQuarter": "35:43",
+    "lastVerse": "35:44"
+  },
+  "440": {
+    "total_verses": 13,
+    "quarter": "36:3",
+    "half": "36:6",
+    "threeQuarter": "36:9",
+    "lastVerse": "36:12"
+  },
+  "441": {
+    "total_verses": 15,
+    "quarter": "36:16",
+    "half": "36:20",
+    "threeQuarter": "36:24",
+    "lastVerse": "36:27"
+  },
+  "442": {
+    "total_verses": 13,
+    "quarter": "36:31",
+    "half": "36:34",
+    "threeQuarter": "36:37",
+    "lastVerse": "36:40"
+  },
+  "443": {
+    "total_verses": 14,
+    "quarter": "36:44",
+    "half": "36:48",
+    "threeQuarter": "36:51",
+    "lastVerse": "36:54"
+  },
+  "444": {
+    "total_verses": 16,
+    "quarter": "36:59",
+    "half": "36:63",
+    "threeQuarter": "36:67",
+    "lastVerse": "36:70"
+  },
+  "445": {
+    "total_verses": 13,
+    "quarter": "36:74",
+    "half": "36:77",
+    "threeQuarter": "36:80",
+    "lastVerse": "36:83"
+  },
+  "446": {
+    "total_verses": 24,
+    "quarter": "37:7",
+    "half": "37:13",
+    "threeQuarter": "37:19",
+    "lastVerse": "37:24"
+  },
+  "447": {
+    "total_verses": 27,
+    "quarter": "37:31",
+    "half": "37:38",
+    "threeQuarter": "37:45",
+    "lastVerse": "37:51"
+  },
+  "448": {
+    "total_verses": 25,
+    "quarter": "37:58",
+    "half": "37:64",
+    "threeQuarter": "37:70",
+    "lastVerse": "37:76"
+  },
+  "449": {
+    "total_verses": 26,
+    "quarter": "37:83",
+    "half": "37:90",
+    "threeQuarter": "37:96",
+    "lastVerse": "37:102"
+  },
+  "450": {
+    "total_verses": 24,
+    "quarter": "37:109",
+    "half": "37:115",
+    "threeQuarter": "37:121",
+    "lastVerse": "37:126"
+  },
+  "451": {
+    "total_verses": 27,
+    "quarter": "37:133",
+    "half": "37:140",
+    "threeQuarter": "37:147",
+    "lastVerse": "37:153"
+  },
+  "452": {
+    "total_verses": 29,
+    "quarter": "37:161",
+    "half": "37:168",
+    "threeQuarter": "37:175",
+    "lastVerse": "37:182"
+  },
+  "453": {
+    "total_verses": 16,
+    "quarter": "38:5",
+    "half": "38:9",
+    "threeQuarter": "38:13",
+    "lastVerse": "38:16"
+  },
+  "454": {
+    "total_verses": 10,
+    "quarter": "38:19",
+    "half": "38:22",
+    "threeQuarter": "38:24",
+    "lastVerse": "38:26"
+  },
+  "455": {
+    "total_verses": 16,
+    "quarter": "38:31",
+    "half": "38:35",
+    "threeQuarter": "38:39",
+    "lastVerse": "38:42"
+  },
+  "456": {
+    "total_verses": 19,
+    "quarter": "38:47",
+    "half": "38:52",
+    "threeQuarter": "38:57",
+    "lastVerse": "38:61"
+  },
+  "457": {
+    "total_verses": 22,
+    "quarter": "38:67",
+    "half": "38:73",
+    "threeQuarter": "38:78",
+    "lastVerse": "38:83"
+  },
+  "458": {
+    "total_verses": 10,
+    "quarter": "38:86",
+    "half": "39:1",
+    "threeQuarter": "39:3",
+    "lastVerse": "39:5"
+  },
+  "459": {
+    "total_verses": 5,
+    "quarter": "39:7",
+    "half": "39:8",
+    "threeQuarter": "39:9",
+    "lastVerse": "39:10"
+  },
+  "460": {
+    "total_verses": 11,
+    "quarter": "39:13",
+    "half": "39:16",
+    "threeQuarter": "39:19",
+    "lastVerse": "39:21"
+  },
+  "461": {
+    "total_verses": 10,
+    "quarter": "39:24",
+    "half": "39:27",
+    "threeQuarter": "39:29",
+    "lastVerse": "39:31"
+  },
+  "462": {
+    "total_verses": 9,
+    "quarter": "39:34",
+    "half": "39:36",
+    "threeQuarter": "39:38",
+    "lastVerse": "39:40"
+  },
+  "463": {
+    "total_verses": 7,
+    "quarter": "39:42",
+    "half": "39:44",
+    "threeQuarter": "39:46",
+    "lastVerse": "39:47"
+  },
+  "464": {
+    "total_verses": 9,
+    "quarter": "39:50",
+    "half": "39:52",
+    "threeQuarter": "39:54",
+    "lastVerse": "39:56"
+  },
+  "465": {
+    "total_verses": 11,
+    "quarter": "39:59",
+    "half": "39:62",
+    "threeQuarter": "39:65",
+    "lastVerse": "39:67"
+  },
+  "466": {
+    "total_verses": 7,
+    "quarter": "39:69",
+    "half": "39:71",
+    "threeQuarter": "39:73",
+    "lastVerse": "39:74"
+  },
+  "467": {
+    "total_verses": 8,
+    "quarter": "40:2",
+    "half": "40:4",
+    "threeQuarter": "40:6",
+    "lastVerse": "40:7"
+  },
+  "468": {
+    "total_verses": 9,
+    "quarter": "40:10",
+    "half": "40:12",
+    "threeQuarter": "40:14",
+    "lastVerse": "40:16"
+  },
+  "469": {
+    "total_verses": 9,
+    "quarter": "40:19",
+    "half": "40:21",
+    "threeQuarter": "40:23",
+    "lastVerse": "40:25"
+  },
+  "470": {
+    "total_verses": 8,
+    "quarter": "40:28",
+    "half": "40:30",
+    "threeQuarter": "40:32",
+    "lastVerse": "40:33"
+  },
+  "471": {
+    "total_verses": 7,
+    "quarter": "40:35",
+    "half": "40:37",
+    "threeQuarter": "40:39",
+    "lastVerse": "40:40"
+  },
+  "472": {
+    "total_verses": 9,
+    "quarter": "40:43",
+    "half": "40:45",
+    "threeQuarter": "40:47",
+    "lastVerse": "40:49"
+  },
+  "473": {
+    "total_verses": 9,
+    "quarter": "40:52",
+    "half": "40:54",
+    "threeQuarter": "40:56",
+    "lastVerse": "40:58"
+  },
+  "474": {
+    "total_verses": 8,
+    "quarter": "40:61",
+    "half": "40:63",
+    "threeQuarter": "40:65",
+    "lastVerse": "40:66"
+  },
+  "475": {
+    "total_verses": 11,
+    "quarter": "40:69",
+    "half": "40:72",
+    "threeQuarter": "40:75",
+    "lastVerse": "40:77"
+  },
+  "476": {
+    "total_verses": 8,
+    "quarter": "40:80",
+    "half": "40:82",
+    "threeQuarter": "40:84",
+    "lastVerse": "40:85"
+  },
+  "477": {
+    "total_verses": 11,
+    "quarter": "41:3",
+    "half": "41:6",
+    "threeQuarter": "41:9",
+    "lastVerse": "41:11"
+  },
+  "478": {
+    "total_verses": 9,
+    "quarter": "41:14",
+    "half": "41:16",
+    "threeQuarter": "41:18",
+    "lastVerse": "41:20"
+  },
+  "479": {
+    "total_verses": 9,
+    "quarter": "41:23",
+    "half": "41:25",
+    "threeQuarter": "41:27",
+    "lastVerse": "41:29"
+  },
+  "480": {
+    "total_verses": 9,
+    "quarter": "41:32",
+    "half": "41:34",
+    "threeQuarter": "41:36",
+    "lastVerse": "41:38"
+  },
+  "481": {
+    "total_verses": 8,
+    "quarter": "41:41",
+    "half": "41:43",
+    "threeQuarter": "41:45",
+    "lastVerse": "41:46"
+  },
+  "482": {
+    "total_verses": 8,
+    "quarter": "41:49",
+    "half": "41:51",
+    "threeQuarter": "41:53",
+    "lastVerse": "41:54"
+  },
+  "483": {
+    "total_verses": 10,
+    "quarter": "42:3",
+    "half": "42:6",
+    "threeQuarter": "42:8",
+    "lastVerse": "42:10"
+  },
+  "484": {
+    "total_verses": 5,
+    "quarter": "42:12",
+    "half": "42:13",
+    "threeQuarter": "42:14",
+    "lastVerse": "42:15"
+  },
+  "485": {
+    "total_verses": 7,
+    "quarter": "42:17",
+    "half": "42:19",
+    "threeQuarter": "42:21",
+    "lastVerse": "42:22"
+  },
+  "486": {
+    "total_verses": 9,
+    "quarter": "42:25",
+    "half": "42:27",
+    "threeQuarter": "42:29",
+    "lastVerse": "42:31"
+  },
+  "487": {
+    "total_verses": 13,
+    "quarter": "42:35",
+    "half": "42:38",
+    "threeQuarter": "42:41",
+    "lastVerse": "42:44"
+  },
+  "488": {
+    "total_verses": 7,
+    "quarter": "42:46",
+    "half": "42:48",
+    "threeQuarter": "42:50",
+    "lastVerse": "42:51"
+  },
+  "489": {
+    "total_verses": 12,
+    "quarter": "43:2",
+    "half": "43:5",
+    "threeQuarter": "43:8",
+    "lastVerse": "43:10"
+  },
+  "490": {
+    "total_verses": 12,
+    "quarter": "43:14",
+    "half": "43:17",
+    "threeQuarter": "43:20",
+    "lastVerse": "43:22"
+  },
+  "491": {
+    "total_verses": 11,
+    "quarter": "43:25",
+    "half": "43:28",
+    "threeQuarter": "43:31",
+    "lastVerse": "43:33"
+  },
+  "492": {
+    "total_verses": 14,
+    "quarter": "43:37",
+    "half": "43:41",
+    "threeQuarter": "43:44",
+    "lastVerse": "43:47"
+  },
+  "493": {
+    "total_verses": 13,
+    "quarter": "43:51",
+    "half": "43:54",
+    "threeQuarter": "43:57",
+    "lastVerse": "43:60"
+  },
+  "494": {
+    "total_verses": 13,
+    "quarter": "43:64",
+    "half": "43:67",
+    "threeQuarter": "43:70",
+    "lastVerse": "43:73"
+  },
+  "495": {
+    "total_verses": 16,
+    "quarter": "43:78",
+    "half": "43:82",
+    "threeQuarter": "43:86",
+    "lastVerse": "43:89"
+  },
+  "496": {
+    "total_verses": 18,
+    "quarter": "44:5",
+    "half": "44:10",
+    "threeQuarter": "44:14",
+    "lastVerse": "44:18"
+  },
+  "497": {
+    "total_verses": 21,
+    "quarter": "44:24",
+    "half": "44:29",
+    "threeQuarter": "44:34",
+    "lastVerse": "44:39"
+  },
+  "498": {
+    "total_verses": 20,
+    "quarter": "44:45",
+    "half": "44:50",
+    "threeQuarter": "44:55",
+    "lastVerse": "44:59"
+  },
+  "499": {
+    "total_verses": 13,
+    "quarter": "45:4",
+    "half": "45:7",
+    "threeQuarter": "45:10",
+    "lastVerse": "45:13"
+  },
+  "500": {
+    "total_verses": 9,
+    "quarter": "45:16",
+    "half": "45:18",
+    "threeQuarter": "45:20",
+    "lastVerse": "45:22"
+  },
+  "501": {
+    "total_verses": 10,
+    "quarter": "45:25",
+    "half": "45:28",
+    "threeQuarter": "45:30",
+    "lastVerse": "45:32"
+  },
+  "502": {
+    "total_verses": 10,
+    "quarter": "45:35",
+    "half": "46:1",
+    "threeQuarter": "46:3",
+    "lastVerse": "46:5"
+  },
+  "503": {
+    "total_verses": 9,
+    "quarter": "46:8",
+    "half": "46:10",
+    "threeQuarter": "46:12",
+    "lastVerse": "46:14"
+  },
+  "504": {
+    "total_verses": 6,
+    "quarter": "46:16",
+    "half": "46:18",
+    "threeQuarter": "46:19",
+    "lastVerse": "46:20"
+  },
+  "505": {
+    "total_verses": 8,
+    "quarter": "46:23",
+    "half": "46:25",
+    "threeQuarter": "46:27",
+    "lastVerse": "46:28"
+  },
+  "506": {
+    "total_verses": 7,
+    "quarter": "46:30",
+    "half": "46:32",
+    "threeQuarter": "46:34",
+    "lastVerse": "46:35"
+  },
+  "507": {
+    "total_verses": 11,
+    "quarter": "47:3",
+    "half": "47:6",
+    "threeQuarter": "47:9",
+    "lastVerse": "47:11"
+  },
+  "508": {
+    "total_verses": 8,
+    "quarter": "47:14",
+    "half": "47:16",
+    "threeQuarter": "47:18",
+    "lastVerse": "47:19"
+  },
+  "509": {
+    "total_verses": 10,
+    "quarter": "47:22",
+    "half": "47:25",
+    "threeQuarter": "47:27",
+    "lastVerse": "47:29"
+  },
+  "510": {
+    "total_verses": 9,
+    "quarter": "47:32",
+    "half": "47:34",
+    "threeQuarter": "47:36",
+    "lastVerse": "47:38"
+  },
+  "511": {
+    "total_verses": 9,
+    "quarter": "48:3",
+    "half": "48:5",
+    "threeQuarter": "48:7",
+    "lastVerse": "48:9"
+  },
+  "512": {
+    "total_verses": 6,
+    "quarter": "48:11",
+    "half": "48:13",
+    "threeQuarter": "48:14",
+    "lastVerse": "48:15"
+  },
+  "513": {
+    "total_verses": 8,
+    "quarter": "48:18",
+    "half": "48:20",
+    "threeQuarter": "48:22",
+    "lastVerse": "48:23"
+  },
+  "514": {
+    "total_verses": 5,
+    "quarter": "48:25",
+    "half": "48:26",
+    "threeQuarter": "48:27",
+    "lastVerse": "48:28"
+  },
+  "515": {
+    "total_verses": 5,
+    "quarter": "49:1",
+    "half": "49:2",
+    "threeQuarter": "49:3",
+    "lastVerse": "49:4"
+  },
+  "516": {
+    "total_verses": 7,
+    "quarter": "49:6",
+    "half": "49:8",
+    "threeQuarter": "49:10",
+    "lastVerse": "49:11"
+  },
+  "517": {
+    "total_verses": 7,
+    "quarter": "49:13",
+    "half": "49:15",
+    "threeQuarter": "49:17",
+    "lastVerse": "49:18"
+  },
+  "518": {
+    "total_verses": 15,
+    "quarter": "50:4",
+    "half": "50:8",
+    "threeQuarter": "50:12",
+    "lastVerse": "50:15"
+  },
+  "519": {
+    "total_verses": 20,
+    "quarter": "50:21",
+    "half": "50:26",
+    "threeQuarter": "50:31",
+    "lastVerse": "50:35"
+  },
+  "520": {
+    "total_verses": 16,
+    "quarter": "50:40",
+    "half": "50:44",
+    "threeQuarter": "51:3",
+    "lastVerse": "51:6"
+  },
+  "521": {
+    "total_verses": 24,
+    "quarter": "51:13",
+    "half": "51:19",
+    "threeQuarter": "51:25",
+    "lastVerse": "51:30"
+  },
+  "522": {
+    "total_verses": 21,
+    "quarter": "51:36",
+    "half": "51:41",
+    "threeQuarter": "51:46",
+    "lastVerse": "51:51"
+  },
+  "523": {
+    "total_verses": 23,
+    "quarter": "51:57",
+    "half": "52:3",
+    "threeQuarter": "52:9",
+    "lastVerse": "52:14"
+  },
+  "524": {
+    "total_verses": 17,
+    "quarter": "52:19",
+    "half": "52:23",
+    "threeQuarter": "52:27",
+    "lastVerse": "52:31"
+  },
+  "525": {
+    "total_verses": 18,
+    "quarter": "52:36",
+    "half": "52:41",
+    "threeQuarter": "52:45",
+    "lastVerse": "52:49"
+  },
+  "526": {
+    "total_verses": 26,
+    "quarter": "53:7",
+    "half": "53:14",
+    "threeQuarter": "53:20",
+    "lastVerse": "53:26"
+  },
+  "527": {
+    "total_verses": 18,
+    "quarter": "53:31",
+    "half": "53:36",
+    "threeQuarter": "53:40",
+    "lastVerse": "53:44"
+  },
+  "528": {
+    "total_verses": 24,
+    "quarter": "53:51",
+    "half": "53:57",
+    "threeQuarter": "54:1",
+    "lastVerse": "54:6"
+  },
+  "529": {
+    "total_verses": 21,
+    "quarter": "54:12",
+    "half": "54:17",
+    "threeQuarter": "54:22",
+    "lastVerse": "54:27"
+  },
+  "530": {
+    "total_verses": 22,
+    "quarter": "54:33",
+    "half": "54:39",
+    "threeQuarter": "54:44",
+    "lastVerse": "54:49"
+  },
+  "531": {
+    "total_verses": 22,
+    "quarter": "54:55",
+    "half": "55:6",
+    "threeQuarter": "55:11",
+    "lastVerse": "55:16"
+  },
+  "532": {
+    "total_verses": 24,
+    "quarter": "55:23",
+    "half": "55:29",
+    "threeQuarter": "55:35",
+    "lastVerse": "55:40"
+  },
+  "533": {
+    "total_verses": 27,
+    "quarter": "55:47",
+    "half": "55:54",
+    "threeQuarter": "55:61",
+    "lastVerse": "55:67"
+  },
+  "534": {
+    "total_verses": 27,
+    "quarter": "55:74",
+    "half": "56:3",
+    "threeQuarter": "56:10",
+    "lastVerse": "56:16"
+  },
+  "535": {
+    "total_verses": 34,
+    "quarter": "56:25",
+    "half": "56:34",
+    "threeQuarter": "56:42",
+    "lastVerse": "56:50"
+  },
+  "536": {
+    "total_verses": 26,
+    "quarter": "56:57",
+    "half": "56:64",
+    "threeQuarter": "56:70",
+    "lastVerse": "56:76"
+  },
+  "537": {
+    "total_verses": 23,
+    "quarter": "56:82",
+    "half": "56:88",
+    "threeQuarter": "56:94",
+    "lastVerse": "57:3"
+  },
+  "538": {
+    "total_verses": 8,
+    "quarter": "57:6",
+    "half": "57:8",
+    "threeQuarter": "57:10",
+    "lastVerse": "57:11"
+  },
+  "539": {
+    "total_verses": 7,
+    "quarter": "57:13",
+    "half": "57:15",
+    "threeQuarter": "57:17",
+    "lastVerse": "57:18"
+  },
+  "540": {
+    "total_verses": 6,
+    "quarter": "57:20",
+    "half": "57:22",
+    "threeQuarter": "57:23",
+    "lastVerse": "57:24"
+  },
+  "541": {
+    "total_verses": 5,
+    "quarter": "57:26",
+    "half": "57:27",
+    "threeQuarter": "57:28",
+    "lastVerse": "57:29"
+  },
+  "542": {
+    "total_verses": 6,
+    "quarter": "58:2",
+    "half": "58:4",
+    "threeQuarter": "58:5",
+    "lastVerse": "58:6"
+  },
+  "543": {
+    "total_verses": 5,
+    "quarter": "58:8",
+    "half": "58:9",
+    "threeQuarter": "58:10",
+    "lastVerse": "58:11"
+  },
+  "544": {
+    "total_verses": 10,
+    "quarter": "58:14",
+    "half": "58:17",
+    "threeQuarter": "58:19",
+    "lastVerse": "58:21"
+  },
+  "545": {
+    "total_verses": 4,
+    "quarter": "59:1",
+    "half": "59:2",
+    "threeQuarter": "59:3",
+    "lastVerse": "59:3"
+  },
+  "546": {
+    "total_verses": 6,
+    "quarter": "59:5",
+    "half": "59:7",
+    "threeQuarter": "59:8",
+    "lastVerse": "59:9"
+  },
+  "547": {
+    "total_verses": 7,
+    "quarter": "59:11",
+    "half": "59:13",
+    "threeQuarter": "59:15",
+    "lastVerse": "59:16"
+  },
+  "548": {
+    "total_verses": 8,
+    "quarter": "59:19",
+    "half": "59:21",
+    "threeQuarter": "59:23",
+    "lastVerse": "59:24"
+  },
+  "549": {
+    "total_verses": 5,
+    "quarter": "60:2",
+    "half": "60:3",
+    "threeQuarter": "60:4",
+    "lastVerse": "60:5"
+  },
+  "550": {
+    "total_verses": 6,
+    "quarter": "60:7",
+    "half": "60:9",
+    "threeQuarter": "60:10",
+    "lastVerse": "60:11"
+  },
+  "551": {
+    "total_verses": 7,
+    "quarter": "60:13",
+    "half": "61:2",
+    "threeQuarter": "61:4",
+    "lastVerse": "61:5"
+  },
+  "552": {
+    "total_verses": 9,
+    "quarter": "61:8",
+    "half": "61:10",
+    "threeQuarter": "61:12",
+    "lastVerse": "61:14"
+  },
+  "553": {
+    "total_verses": 8,
+    "quarter": "62:3",
+    "half": "62:5",
+    "threeQuarter": "62:7",
+    "lastVerse": "62:8"
+  },
+  "554": {
+    "total_verses": 7,
+    "quarter": "62:10",
+    "half": "63:1",
+    "threeQuarter": "63:3",
+    "lastVerse": "63:4"
+  },
+  "555": {
+    "total_verses": 7,
+    "quarter": "63:6",
+    "half": "63:8",
+    "threeQuarter": "63:10",
+    "lastVerse": "63:11"
+  },
+  "556": {
+    "total_verses": 9,
+    "quarter": "64:3",
+    "half": "64:5",
+    "threeQuarter": "64:7",
+    "lastVerse": "64:9"
+  },
+  "557": {
+    "total_verses": 9,
+    "quarter": "64:12",
+    "half": "64:14",
+    "threeQuarter": "64:16",
+    "lastVerse": "64:18"
+  },
+  "558": {
+    "total_verses": 5,
+    "quarter": "65:2",
+    "half": "65:3",
+    "threeQuarter": "65:4",
+    "lastVerse": "65:5"
+  },
+  "559": {
+    "total_verses": 7,
+    "quarter": "65:7",
+    "half": "65:9",
+    "threeQuarter": "65:11",
+    "lastVerse": "65:12"
+  },
+  "560": {
+    "total_verses": 7,
+    "quarter": "66:2",
+    "half": "66:4",
+    "threeQuarter": "66:6",
+    "lastVerse": "66:7"
+  },
+  "561": {
+    "total_verses": 5,
+    "quarter": "66:9",
+    "half": "66:10",
+    "threeQuarter": "66:11",
+    "lastVerse": "66:12"
+  },
+  "562": {
+    "total_verses": 12,
+    "quarter": "67:4",
+    "half": "67:7",
+    "threeQuarter": "67:10",
+    "lastVerse": "67:12"
+  },
+  "563": {
+    "total_verses": 14,
+    "quarter": "67:16",
+    "half": "67:20",
+    "threeQuarter": "67:23",
+    "lastVerse": "67:26"
+  },
+  "564": {
+    "total_verses": 19,
+    "quarter": "68:1",
+    "half": "68:6",
+    "threeQuarter": "68:11",
+    "lastVerse": "68:15"
+  },
+  "565": {
+    "total_verses": 27,
+    "quarter": "68:22",
+    "half": "68:29",
+    "threeQuarter": "68:36",
+    "lastVerse": "68:42"
+  },
+  "566": {
+    "total_verses": 18,
+    "quarter": "68:47",
+    "half": "68:52",
+    "threeQuarter": "69:4",
+    "lastVerse": "69:8"
+  },
+  "567": {
+    "total_verses": 26,
+    "quarter": "69:15",
+    "half": "69:22",
+    "threeQuarter": "69:28",
+    "lastVerse": "69:34"
+  },
+  "568": {
+    "total_verses": 28,
+    "quarter": "69:42",
+    "half": "69:49",
+    "threeQuarter": "70:4",
+    "lastVerse": "70:10"
+  },
+  "569": {
+    "total_verses": 29,
+    "quarter": "70:18",
+    "half": "70:25",
+    "threeQuarter": "70:32",
+    "lastVerse": "70:39"
+  },
+  "570": {
+    "total_verses": 15,
+    "quarter": "70:43",
+    "half": "71:3",
+    "threeQuarter": "71:7",
+    "lastVerse": "71:10"
+  },
+  "571": {
+    "total_verses": 18,
+    "quarter": "71:15",
+    "half": "71:20",
+    "threeQuarter": "71:24",
+    "lastVerse": "71:28"
+  },
+  "572": {
+    "total_verses": 13,
+    "quarter": "72:4",
+    "half": "72:7",
+    "threeQuarter": "72:10",
+    "lastVerse": "72:13"
+  },
+  "573": {
+    "total_verses": 15,
+    "quarter": "72:17",
+    "half": "72:21",
+    "threeQuarter": "72:25",
+    "lastVerse": "72:28"
+  },
+  "574": {
+    "total_verses": 19,
+    "quarter": "73:5",
+    "half": "73:10",
+    "threeQuarter": "73:15",
+    "lastVerse": "73:19"
+  },
+  "575": {
+    "total_verses": 18,
+    "quarter": "74:4",
+    "half": "74:9",
+    "threeQuarter": "74:13",
+    "lastVerse": "74:17"
+  },
+  "576": {
+    "total_verses": 30,
+    "quarter": "74:25",
+    "half": "74:33",
+    "threeQuarter": "74:40",
+    "lastVerse": "74:47"
+  },
+  "577": {
+    "total_verses": 28,
+    "quarter": "74:55",
+    "half": "75:6",
+    "threeQuarter": "75:13",
+    "lastVerse": "75:19"
+  },
+  "578": {
+    "total_verses": 26,
+    "quarter": "75:26",
+    "half": "75:33",
+    "threeQuarter": "75:39",
+    "lastVerse": "76:5"
+  },
+  "579": {
+    "total_verses": 20,
+    "quarter": "76:11",
+    "half": "76:16",
+    "threeQuarter": "76:21",
+    "lastVerse": "76:25"
+  },
+  "580": {
+    "total_verses": 25,
+    "quarter": "77:1",
+    "half": "77:7",
+    "threeQuarter": "77:13",
+    "lastVerse": "77:19"
+  },
+  "581": {
+    "total_verses": 31,
+    "quarter": "77:27",
+    "half": "77:35",
+    "threeQuarter": "77:43",
+    "lastVerse": "77:50"
+  },
+  "582": {
+    "total_verses": 30,
+    "quarter": "78:8",
+    "half": "78:16",
+    "threeQuarter": "78:23",
+    "lastVerse": "78:30"
+  },
+  "583": {
+    "total_verses": 25,
+    "quarter": "78:37",
+    "half": "79:3",
+    "threeQuarter": "79:9",
+    "lastVerse": "79:15"
+  },
+  "584": {
+    "total_verses": 31,
+    "quarter": "79:23",
+    "half": "79:31",
+    "threeQuarter": "79:39",
+    "lastVerse": "79:46"
+  },
+  "585": {
+    "total_verses": 42,
+    "quarter": "80:11",
+    "half": "80:22",
+    "threeQuarter": "80:32",
+    "lastVerse": "80:42"
+  },
+  "586": {
+    "total_verses": 29,
+    "quarter": "81:8",
+    "half": "81:15",
+    "threeQuarter": "81:22",
+    "lastVerse": "81:29"
+  },
+  "587": {
+    "total_verses": 25,
+    "quarter": "82:7",
+    "half": "82:13",
+    "threeQuarter": "82:19",
+    "lastVerse": "83:6"
+  },
+  "588": {
+    "total_verses": 28,
+    "quarter": "83:14",
+    "half": "83:21",
+    "threeQuarter": "83:28",
+    "lastVerse": "83:34"
+  },
+  "589": {
+    "total_verses": 27,
+    "quarter": "84:5",
+    "half": "84:12",
+    "threeQuarter": "84:19",
+    "lastVerse": "84:25"
+  },
+  "590": {
+    "total_verses": 22,
+    "quarter": "85:6",
+    "half": "85:12",
+    "threeQuarter": "85:17",
+    "lastVerse": "85:22"
+  },
+  "591": {
+    "total_verses": 32,
+    "quarter": "86:9",
+    "half": "86:17",
+    "threeQuarter": "87:8",
+    "lastVerse": "87:15"
+  },
+  "592": {
+    "total_verses": 30,
+    "quarter": "88:4",
+    "half": "88:12",
+    "threeQuarter": "88:19",
+    "lastVerse": "88:26"
+  },
+  "593": {
+    "total_verses": 23,
+    "quarter": "89:6",
+    "half": "89:12",
+    "threeQuarter": "89:18",
+    "lastVerse": "89:23"
+  },
+  "594": {
+    "total_verses": 27,
+    "quarter": "89:30",
+    "half": "90:7",
+    "threeQuarter": "90:14",
+    "lastVerse": "90:20"
+  },
+  "595": {
+    "total_verses": 29,
+    "quarter": "91:8",
+    "half": "91:15",
+    "threeQuarter": "92:7",
+    "lastVerse": "92:14"
+  },
+  "596": {
+    "total_verses": 26,
+    "quarter": "92:21",
+    "half": "93:7",
+    "threeQuarter": "94:2",
+    "lastVerse": "94:8"
+  },
+  "597": {
+    "total_verses": 27,
+    "quarter": "95:7",
+    "half": "96:6",
+    "threeQuarter": "96:13",
+    "lastVerse": "96:19"
+  },
+  "598": {
+    "total_verses": 12,
+    "quarter": "97:4",
+    "half": "98:2",
+    "threeQuarter": "98:5",
+    "lastVerse": "98:7"
+  },
+  "599": {
+    "total_verses": 18,
+    "quarter": "99:4",
+    "half": "100:1",
+    "threeQuarter": "100:5",
+    "lastVerse": "100:9"
+  },
+  "600": {
+    "total_verses": 21,
+    "quarter": "101:4",
+    "half": "101:9",
+    "threeQuarter": "102:3",
+    "lastVerse": "102:8"
+  },
+  "601": {
+    "total_verses": 17,
+    "quarter": "104:2",
+    "half": "104:6",
+    "threeQuarter": "105:1",
+    "lastVerse": "105:5"
+  },
+  "602": {
+    "total_verses": 14,
+    "quarter": "106:4",
+    "half": "107:4",
+    "threeQuarter": "107:7",
+    "lastVerse": "108:3"
+  },
+  "603": {
+    "total_verses": 14,
+    "quarter": "109:4",
+    "half": "110:2",
+    "threeQuarter": "111:2",
+    "lastVerse": "111:5"
+  },
+  "604": {
+    "total_verses": 15,
+    "quarter": "112:4",
+    "half": "113:4",
+    "threeQuarter": "114:3",
+    "lastVerse": "114:6"
+  }
+}
