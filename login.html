@@ -46,6 +46,50 @@
             text-align: center;
             font-size: 14px;
         }
+        /* Maintenance Banner */
+.maintenance-banner {
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    color: white;
+    padding: 16px;
+    border-radius: 16px;
+    margin-bottom: 20px;
+    text-align: center;
+    box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
+    animation: pulse 2s infinite;
+}
+
+.maintenance-banner.hidden {
+    display: none !important;
+}
+
+.maintenance-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+.maintenance-icon {
+    font-size: 24px;
+}
+
+.maintenance-text {
+    font-size: 16px;
+}
+
+.maintenance-subtext {
+    font-size: 13px;
+    opacity: 0.9;
+    font-style: italic;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.85; }
+}
     </style>
 </head>
 <body class="flex items-center justify-center p-4">
@@ -63,6 +107,15 @@
      
 
         <div class="bg-white rounded-3xl shadow-2xl p-8">
+            <!-- Maintenance Banner - Change 'enabled' to true/false -->
+<div id="maintenanceBanner" class="maintenance-banner hidden">
+    <div class="maintenance-content">
+        <span class="maintenance-icon">⚠️</span>
+        <span class="maintenance-text">الموقع تحت التطوير - الرجاء عدم تسجيل الدخول حالياً</span>
+        <span class="maintenance-icon">⚠️</span>
+    </div>
+    <div class="maintenance-subtext">Website under maintenance - Please do not login</div>
+</div>
             <form id="loginForm" onsubmit="return handleLogin(event)">
                 
                 <div class="mb-6">
@@ -121,6 +174,17 @@
     </div>
 
     <script>
+        // ============================================
+// MAINTENANCE MODE - CHANGE THIS TO false TO HIDE BANNER
+// ============================================
+const MAINTENANCE_MODE = true;  // ← CHANGE TO false WHEN READY!
+
+// Show/hide maintenance banner
+if (MAINTENANCE_MODE) {
+    document.addEventListener('DOMContentLoaded', function() {
+        document.getElementById('maintenanceBanner').classList.remove('hidden');
+    });
+}
         const SUPABASE_URL = "https://dklyyzbnapkxlluximzk.supabase.co";
         const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRrbHl5emJuYXBreGxsdXhpbXprIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYyNjEwMDIsImV4cCI6MjA5MTgzNzAwMn0.qpCqvUTia4ywEMPSYJ_rIB4pSlk0zkvq5cQa-sFaFEs";
 
