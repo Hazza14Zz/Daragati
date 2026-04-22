@@ -151,45 +151,53 @@ async function loadFromCloud() {
 // SESSION & GLOBALS
 // ============================================================
 function checkAuth() {
+    console.log('🔐 checkAuth() running...');
+    
     const session = sessionStorage.getItem('quranTrackerSession');
+    console.log('Session:', session ? 'exists' : 'null');
+    
     if (!session) { 
+        console.log('❌ No session, redirecting to login');
         window.location.href = 'login.html'; 
         return false; 
     }
     try {
         const data = JSON.parse(session);
+        console.log('Session data:', data);
+        
         if (new Date(data.expiresAt) < new Date()) { 
+            console.log('❌ Session expired');
             sessionStorage.removeItem('quranTrackerSession'); 
             window.location.href = 'login.html'; 
             return false; 
         }
+        
+        console.log('✅ Session valid, user:', data.displayName);
         document.getElementById('loggedInUser').textContent = `مرحباً، ${data.displayName}`;
         
-        // ✅ ADD THIS LINE - Hide overlay if it exists
         const overlay = document.getElementById('authCheckOverlay');
         if (overlay) overlay.classList.add('hidden');
         
         currentSection = 'highschool';
-        document.querySelectorAll('.tab').forEach((t, i) => {
-            t.classList.remove('active');
-        });
-        document.getElementById('tab-highschool').classList.add('active');
-
-  // ✅ ADD THIS LINE - Update admin visibility
+        document.querySelectorAll('.section-tab').forEach(t => t.classList.remove('active'));
+        document.getElementById('section-highschool')?.classList.add('active');
+        
         updateAdminVisibility();
         
         return true;
     } catch (e) { 
+        console.log('❌ Error parsing session:', e);
         sessionStorage.removeItem('quranTrackerSession'); 
         window.location.href = 'login.html'; 
         return false; 
     }
 }
 function logout() { 
+    console.log('🚪 logout() called');
     if (confirm('تسجيل الخروج؟')) { 
         sessionStorage.removeItem('quranTrackerSession'); 
         window.location.href = 'login.html'; 
-    } 
+    }
 }
 
 // ✅ PASTE THE FUNCTION HERE
