@@ -560,6 +560,78 @@
         
     </div>
 </div>
+   <!-- Student Reports View -->
+<div id="studentReportsView" class="tracker-section hidden">
+    <div class="reports-container">
+        
+        <!-- Section Selector -->
+        <div class="report-category">
+            <h2 class="category-title">👤 تقارير الطلاب</h2>
+            
+            <!-- Section Tabs -->
+            <div class="student-report-tabs">
+                <button class="student-report-tab active" id="sr-highschool" onclick="switchStudentReportSection('highschool')">🏫 ثانوي</button>
+                <button class="student-report-tab" id="sr-middleschool" onclick="switchStudentReportSection('middleschool')">🏫 متوسط</button>
+                <button class="student-report-tab" id="sr-elementary" onclick="switchStudentReportSection('elementary')">🏫 ابتدائي</button>
+            </div>
+            
+            <!-- Student Selector -->
+            <div class="student-report-selector">
+                <label>👤 اختر الطالب:</label>
+                <select id="studentReportSelect" class="student-report-select" onchange="loadStudentReport()">
+                    <option value="">-- اختر طالب --</option>
+                </select>
+            </div>
+            
+            <!-- Month Selector -->
+            <div class="month-selector" style="margin-top: 16px;">
+                <button class="month-btn" onclick="changeStudentReportMonth(-1)">◀</button>
+                <span id="studentReportMonthDisplay" class="month-display"></span>
+                <button class="month-btn" onclick="changeStudentReportMonth(1)">▶</button>
+            </div>
+        </div>
+        
+        <!-- Report Content (shown when student is selected) -->
+        <div id="studentReportContent" class="report-category hidden">
+            <div id="studentReportTitle" class="category-title" style="font-size: 1.2rem;"></div>
+            
+            <!-- Daily Breakdown Table -->
+            <div class="table-wrapper">
+                <table class="summary-table" id="studentReportTable">
+                    <thead>
+                        <tr>
+                            <th>التاريخ</th>
+                            <th>الحضور</th>
+                            <th>النقاط</th>
+                            <th>حفظ</th>
+                            <th>ربط</th>
+                            <th>مراجعة</th>
+                        </tr>
+                    </thead>
+                    <tbody id="studentReportTableBody">
+                        <tr><td colspan="6" style="text-align:center;">اختر طالباً لعرض التقرير</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Monthly Summary -->
+            <div id="studentReportSummary" class="grand-total-box" style="margin-top: 20px; padding: 16px; background: #f0fdf4; border-radius: 12px;">
+                <h3 style="color: #065f46; margin-bottom: 12px;">📊 إحصائيات الشهر</h3>
+                <div id="studentReportStats" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;">
+                    <!-- Stats will be populated here -->
+                </div>
+            </div>
+            
+            <!-- PDF Export Button -->
+            <button class="export-btn full-width" onclick="exportStudentReportPDF()" style="margin-top: 16px;">
+                📄 تحميل PDF للتقرير
+            </button>
+        </div>
+        
+    </div>
+</div>
+<!-- History Section (Admin Only) -->
+<div id="section-history" class="tracker-section hidden">
 <!-- History Section (Admin Only) -->
 <div id="section-history" class="tracker-section hidden">
     <div class="report-section">
