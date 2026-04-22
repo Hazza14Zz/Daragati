@@ -256,6 +256,17 @@
     </div>
 </div>
 
+<!-- Top Bar with Menu Icon -->
+<div class="top-bar">
+    <div class="top-bar-left">
+        <h1 style="font-size: 20px; margin: 0; color: white;">📖 سجل متابعة القرآن</h1>
+    </div>
+    <div class="top-bar-right">
+        <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+    </div>
+</div>
+
+<!-- User & Date Bar -->
 <div class="user-bar">
     <div class="user-info">
         <span class="user-icon">👤</span>
@@ -263,6 +274,66 @@
     </div>
     <button class="logout-btn" onclick="logout()">🚪 خروج</button>
 </div>
+   <!-- Sidebar Overlay -->
+<div id="sidebarOverlay" class="sidebar-overlay" onclick="closeSidebar()"></div>
+
+<!-- Sidebar Menu -->
+<div id="sidebar" class="sidebar">
+    <div class="sidebar-header">
+        <h3>القائمة</h3>
+        <button class="sidebar-close" onclick="closeSidebar()">✕</button>
+    </div>
+    
+    <div class="sidebar-menu">
+        <!-- Reports -->
+        <div class="sidebar-item" onclick="navigateTo('reports')">
+            <span class="sidebar-icon">📊</span>
+            <div class="sidebar-text">
+                <div class="sidebar-title">التقارير</div>
+                <div class="sidebar-subtitle">التقارير اليومية والشهرية</div>
+            </div>
+        </div>
+        
+        <!-- Points -->
+        <div class="sidebar-item" onclick="navigateTo('points')">
+            <span class="sidebar-icon">⭐</span>
+            <div class="sidebar-text">
+                <div class="sidebar-title">النقاط</div>
+                <div class="sidebar-subtitle">أسبوعي | شهري | كل الوقت</div>
+            </div>
+        </div>
+        
+        <!-- Student Reports (NEW) -->
+        <div class="sidebar-item" onclick="navigateTo('studentReports')">
+            <span class="sidebar-icon">👤</span>
+            <div class="sidebar-text">
+                <div class="sidebar-title">تقارير الطلاب</div>
+                <div class="sidebar-subtitle">تقرير شهري لكل طالب</div>
+            </div>
+        </div>
+        
+        <!-- History (Admin Only) -->
+        <div class="sidebar-item admin-only hidden" id="sidebar-history" onclick="navigateTo('history')">
+            <span class="sidebar-icon">📜</span>
+            <div class="sidebar-text">
+                <div class="sidebar-title">سجل التغييرات</div>
+                <div class="sidebar-subtitle">سجل المعلمين</div>
+            </div>
+        </div>
+        
+        <!-- Divider -->
+        <div class="sidebar-divider"></div>
+        
+        <!-- Admin Panel -->
+        <div class="sidebar-item admin-only hidden" id="sidebar-admin" onclick="showAdminPanel()">
+            <span class="sidebar-icon">⚙️</span>
+            <div class="sidebar-text">
+                <div class="sidebar-title">لوحة التحكم</div>
+                <div class="sidebar-subtitle">إضافة وحذف الطلاب</div>
+            </div>
+        </div>
+    </div>
+</div> 
 
 <div class="date-bar">
     <div class="date-content">
@@ -282,13 +353,11 @@
     <span class="legend-item">⭐ نقاط</span>
 </div>
 
-<div class="tabs">
-    <button class="tab" id="tab-highschool" onclick="switchSection('highschool')">🏫 ثانوي</button>
-    <button class="tab" id="tab-middleschool" onclick="switchSection('middleschool')">🏫 متوسط</button>
-    <button class="tab" id="tab-elementary" onclick="switchSection('elementary')">🏫 ابتدائي</button>
-    <button class="tab" id="tab-reports" onclick="switchSection('reports')">📊 تقارير</button>
-    <button class="tab" id="tab-points" onclick="switchSection('points')">⭐ نقاط</button>
-    <button class="tab hidden" id="tab-history" onclick="switchSection('history')">📜 سجل</button>
+<!-- Section Tabs - Always Visible -->
+<div class="section-tabs">
+    <button class="section-tab active" id="section-highschool" onclick="switchSection('highschool')">🏫 ثانوي</button>
+    <button class="section-tab" id="section-middleschool" onclick="switchSection('middleschool')">🏫 متوسط</button>
+    <button class="section-tab" id="section-elementary" onclick="switchSection('elementary')">🏫 ابتدائي</button>
 </div>
 
 <div id="trackerView">
