@@ -2286,7 +2286,7 @@ function loadStudentReport() {
         tableHtml += `<tr>
             <td>${r.date}/${month+1}</td>
             <td>${attendanceIcon}</td>
-            <td>${r.points}</td>
+            <td>${Number(r.points).toFixed(1).replace(/\.0$/, '')}</td>
             <td>${r.hifz}</td>
             <td>${r.rabt}</td>
             <td>${r.murajaa}</td>
@@ -2305,7 +2305,7 @@ function loadStudentReport() {
     // Update stats
     const attendedDays = presentDays + lateDays;
     document.getElementById('studentReportStats').innerHTML = `
-        <div>⭐ إجمالي النقاط<br><strong>${totalPoints}</strong></div>
+        <div>⭐ إجمالي النقاط<br><strong>${Number(totalPoints).toFixed(1).replace(/\.0$/, '')}</strong></div>
         <div>📅 أيام الحضور<br><strong>${attendedDays}/${daysInMonth}</strong></div>
         <div>📖 صفحات الحفظ<br><strong>${totalHifzPages}</strong></div>
         <div>🔗 صفحات الربط<br><strong>${totalRabtPages}</strong></div>
