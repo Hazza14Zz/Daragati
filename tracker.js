@@ -857,13 +857,13 @@ function switchSection(section) {
         document.getElementById('studentReportsView')?.classList.add('hidden');
         document.getElementById('section-history')?.classList.add('hidden');
         initPointsTab();
-    } else if (section === 'studentReports') {
+      } else if (section === 'studentReports') {
         document.getElementById('studentReportsView')?.classList.remove('hidden');
         document.getElementById('trackerView').classList.add('hidden');
         document.getElementById('reportsView').classList.add('hidden');
         document.getElementById('pointsView').classList.add('hidden');
         document.getElementById('section-history')?.classList.add('hidden');
-        // We'll add initStudentReportsTab() later
+        initStudentReportsTab();
     } else if (section === 'history') {
         document.getElementById('section-history')?.classList.remove('hidden');
         document.getElementById('trackerView').classList.add('hidden');
@@ -2118,6 +2118,251 @@ function exportHistoryPDF() {
     html += `</table><div style="text-align:center;margin-top:20px"><button class="print-btn" onclick="window.print()">🖨️ طباعة / حفظ PDF</button></div></body></html>`;
     
     printWindow.document.write(html);
+    printWindow.document.close();
+}
+
+// ============================================================
+// STUDENT REPORTS FUNCTIONS
+// ============================================================
+
+let currentStudentReportSection = 'highschool';
+let currentStudentReportMonth = new Date();
+let currentSelectedStudent = null;
+
+function initStudentReportsTab() {
+    updateStudentReportMonthDisplay();
+    switchStudentReportSection('highschool');
+}
+
+function switchStudentReportSection(section) {
+    currentStudentReportSection = section;
+    
+    // Update active tab
+    document.querySelectorAll('.student-report-tab').forEach(t => t.classList.remove('active'));
+    document.getElementById(`sr-${section}`)?.classList.add('active');
+    
+    // Load students for this section
+    loadStudentReportDropdown();
+    
+    // Reset content
+    currentSelectedStudent = null;
+    document.getElementById('studentReportContent')?.classList.add('hidden');
+}
+
+function loadStudentReportDropdown() {
+    const select = document.getElementById('studentReportSelect');
+    if (!select) return;
+    
+    const count = parseInt(localStorage.getItem(`studentCount_${currentStudentReportSection}`) || '50');
+    
+    let html = '<option value="">-- اختر طالب --</option>';
+    
+    for (let i = 1; i <= count; i++) {
+        const saved = localStorage.getItem(`quran_${currentStudentReportSection}-${i}`);
+        let name = `طالب ${i}`;
+        if (saved) {
+            try {
+                const d = JSON.parse(saved);
+                if (d.name) name = d.name;
+            } catch(e) {}
+        }
+        html += `<option value="${i}">${i} - ${name}</option>`;
+    }
+    
+    select.innerHTML = html;
+}
+
+function changeStudentReportMonth(delta) {
+    currentStudentReportMonth.setMonth(currentStudentReportMonth.getMonth() + delta);
+    updateStudentReportMonthDisplay();
+    if (currentSelectedStudent) {
+        loadStudentReport();
+    }
+}
+
+function updateStudentReportMonthDisplay() {
+    const months = ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'];
+    const display = document.getElementById('studentReportMonthDisplay');
+    if (display) {
+        display.textContent = `${months[currentStudentReportMonth.getMonth()]} ${currentStudentReportMonth.getFullYear()}`;
+    }
+}
+
+function loadStudentReport() {
+    const select = document.getElementById('studentReportSelect');
+    if (!select || !select.value) {
+        document.getElementById('studentReportContent')?.classList.add('hidden');
+        return;
+    }
+    
+    currentSelectedStudent = select.value;
+    const studentNum = parseInt(select.value);
+    
+    // Get student name
+    const saved = localStorage.getItem(`quran_${currentStudentReportSection}-${studentNum}`);
+    let studentName = `طالب ${studentNum}`;
+    if (saved) {
+        try {
+            const d = JSON.parse(saved);
+            if (d.name) studentName = d.name;
+        } catch(e) {}
+    }
+    
+    // Update title
+    const sectionNames = { highschool: 'ثانوي', middleschool: 'متوسط', elementary: 'ابتدائي' };
+    document.getElementById('studentReportTitle').textContent = 
+        `📄 تقرير: ${studentName} - ${sectionNames[currentStudentReportSection]} | ${document.getElementById('studentReportMonthDisplay').textContent}`;
+    
+    // Get all records for this student in the selected month
+    const year = currentStudentReportMonth.getFullYear();
+    const month = currentStudentReportMonth.getMonth();
+    
+    const records = [];
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    
+    // Get all data for this student
+    const studentData = [];
+    for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key === `quran_${currentStudentReportSection}-${studentNum}`) {
+            try {
+                const d = JSON.parse(localStorage.getItem(key));
+                if (d.savedAt) {
+                    const savedDate = new Date(d.savedAt);
+                    if (savedDate.getFullYear() === year && savedDate.getMonth() === month) {
+                        studentData.push({
+                            day: savedDate.getDate(),
+                            data: d
+                        });
+                    }
+                }
+            } catch(e) {}
+        }
+    }
+    
+    for (let day = 1; day <= daysInMonth; day++) {
+        const found = studentData.find(d => d.day === day);
+        
+        if (found) {
+            const d = found.data;
+            records.push({
+                date: day,
+                attendance: d.attendance || '-',
+                points: d.points || 0,
+                hifz: d.hifz ? `${d.hifz.startSurahName || ''} ${d.hifz.startVerse}-${d.hifz.endVerse}` : '-',
+                rabt: d.rabt?.length ? d.rabt.map(r => `${r.startSurahName || ''} ${r.startVerse}-${r.endVerse}`).join('، ') : '-',
+                murajaa: d.murajaa ? `${d.murajaa.startSurahName || ''} ${d.murajaa.startVerse}-${d.murajaa.endVerse}` : '-',
+                hifzPages: d.hifz?.pages || 0,
+                rabtPages: d.rabt?.reduce((sum, r) => sum + (r.pages || 0), 0) || 0,
+                murajaaPages: d.murajaa?.pages || 0
+            });
+        } else {
+            records.push({
+                date: day,
+                attendance: '-',
+                points: 0,
+                hifz: '-',
+                rabt: '-',
+                murajaa: '-',
+                hifzPages: 0,
+                rabtPages: 0,
+                murajaaPages: 0
+            });
+        }
+    }
+    
+    // Render table
+    let tableHtml = '';
+    let totalPoints = 0;
+    let presentDays = 0;
+    let lateDays = 0;
+    let totalHifzPages = 0;
+    let totalRabtPages = 0;
+    let totalMurajaaPages = 0;
+    
+    records.forEach(r => {
+        const attendanceIcon = {'حاضر':'✅', 'متأخر':'🕐', 'غائب':'❌', 'معذور':'⚠️'}[r.attendance] || '➖';
+        
+        tableHtml += `<tr>
+            <td>${r.date}/${month+1}</td>
+            <td>${attendanceIcon}</td>
+            <td>${r.points}</td>
+            <td>${r.hifz}</td>
+            <td>${r.rabt}</td>
+            <td>${r.murajaa}</td>
+        </tr>`;
+        
+        totalPoints += r.points;
+        if (r.attendance === 'حاضر') presentDays++;
+        if (r.attendance === 'متأخر') lateDays++;
+        totalHifzPages += r.hifzPages;
+        totalRabtPages += r.rabtPages;
+        totalMurajaaPages += r.murajaaPages;
+    });
+    
+    document.getElementById('studentReportTableBody').innerHTML = tableHtml;
+    
+    // Update stats
+    const attendedDays = presentDays + lateDays;
+    document.getElementById('studentReportStats').innerHTML = `
+        <div>⭐ إجمالي النقاط<br><strong>${totalPoints}</strong></div>
+        <div>📅 أيام الحضور<br><strong>${attendedDays}/${daysInMonth}</strong></div>
+        <div>📖 صفحات الحفظ<br><strong>${totalHifzPages}</strong></div>
+        <div>🔗 صفحات الربط<br><strong>${totalRabtPages}</strong></div>
+        <div>📚 صفحات المراجعة<br><strong>${totalMurajaaPages}</strong></div>
+        <div>📄 إجمالي الصفحات<br><strong>${totalHifzPages + totalRabtPages + totalMurajaaPages}</strong></div>
+    `;
+    
+    // Show content
+    document.getElementById('studentReportContent')?.classList.remove('hidden');
+}
+
+function exportStudentReportPDF() {
+    if (!currentSelectedStudent) {
+        alert('الرجاء اختيار طالب أولاً');
+        return;
+    }
+    
+    const title = document.getElementById('studentReportTitle').textContent;
+    const table = document.getElementById('studentReportTable').cloneNode(true);
+    const stats = document.getElementById('studentReportStats').cloneNode(true);
+    
+    const gDate = getGregorianDate();
+    const hDate = document.getElementById('hijriDate').textContent;
+    
+    const printWindow = window.open('', '_blank');
+    printWindow.document.write(`
+        <!DOCTYPE html>
+        <html dir="rtl">
+        <head>
+            <meta charset="UTF-8">
+            <title>${title}</title>
+            <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+            <style>
+                body { font-family: 'Cairo', sans-serif; direction: rtl; padding: 20px; }
+                h1 { color: #065f46; text-align: center; }
+                .date-info { text-align: center; color: #047857; margin-bottom: 20px; }
+                table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+                th { background: #047857; color: white; padding: 10px; }
+                td { padding: 8px; border-bottom: 1px solid #ddd; text-align: center; }
+                .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 20px 0; }
+                .stats div { background: #f0fdf4; padding: 12px; border-radius: 8px; text-align: center; }
+                @media print { button { display: none; } }
+                .print-btn { background: #059669; color: white; padding: 10px 30px; border: none; border-radius: 8px; font-size: 16px; cursor: pointer; margin-top: 20px; }
+            </style>
+        </head>
+        <body>
+            <h1>${title}</h1>
+            <div class="date-info">📅 ${hDate} | 📆 ${gDate}</div>
+            ${table.outerHTML}
+            <h3 style="color: #065f46; margin-top: 20px;">📊 إحصائيات الشهر</h3>
+            <div class="stats">${stats.innerHTML}</div>
+            <div style="text-align: center; margin-top: 20px;">
+                <button class="print-btn" onclick="window.print()">🖨️ طباعة / حفظ PDF</button>
+            </div>
+        </body>
+        </html>
+    `);
     printWindow.document.close();
 }
 
