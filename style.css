@@ -798,3 +798,69 @@ label, option, optgroup {
 h1 {
     display: none !important;
 }
+
+/* ============================================ */
+/* STUDENT REPORTS STYLES */
+/* ============================================ */
+
+.student-report-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+    padding: 4px;
+    background: white;
+    border-radius: 50px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.student-report-tab {
+    flex: 1;
+    padding: 12px 8px;
+    border-radius: 40px;
+    border: none;
+    background: #f3f4f6;
+    color: #4b5563;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.student-report-tab.active {
+    background: #059669;
+    color: white;
+}
+
+.student-report-selector {
+    margin: 16px 0;
+}
+
+.student-report-selector label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 700;
+    color: #065f46;
+}
+
+.student-report-select {
+    width: 100%;
+    padding: 14px 16px;
+    border: 2px solid #e5e7eb;
+    border-radius: 40px;
+    font-size: 16px;
+    font-family: 'Cairo', sans-serif;
+    background-color: white;
+    direction: rtl;
+}
+
+#studentReportStats {
+    color: #065f46;
+}
+
+#studentReportStats div {
+    background: white;
+    padding: 10px;
+    border-radius: 8px;
+    text-align: center;
+    font-weight: 600;
+}
