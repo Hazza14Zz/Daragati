@@ -174,6 +174,9 @@ function checkAuth() {
             t.classList.remove('active');
         });
         document.getElementById('tab-highschool').classList.add('active');
+
+  // ✅ ADD THIS LINE - Update admin visibility
+        updateAdminVisibility();
         
         return true;
     } catch (e) { 
@@ -219,6 +222,55 @@ const SECTION_NAMES = {
 };
 const ADMIN_PASSWORD = "224312";
 
+// ============================================================
+// SIDEBAR FUNCTIONS
+// ============================================================
+
+function toggleSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('sidebarOverlay');
+    
+    sidebar.classList.add('show');
+    overlay.classList.add('show');
+    
+    updateAdminVisibility();
+}
+
+function closeSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('sidebarOverlay');
+    
+    sidebar.classList.remove('show');
+    overlay.classList.remove('show');
+}
+
+function updateAdminVisibility() {
+    const adminElements = document.querySelectorAll('.admin-only');
+    if (isAdmin()) {
+        adminElements.forEach(el => el.classList.remove('hidden'));
+    } else {
+        adminElements.forEach(el => el.classList.add('hidden'));
+    }
+}
+
+function navigateTo(page) {
+    closeSidebar();
+    
+    switch(page) {
+        case 'reports':
+            switchSection('reports');
+            break;
+        case 'points':
+            switchSection('points');
+            break;
+        case 'studentReports':
+            switchSection('studentReports');
+            break;
+        case 'history':
+            switchSection('history');
+            break;
+    }
+}
 // ============================================================
 // SURAH NAMES (114 Surahs)
 // ============================================================
@@ -788,36 +840,56 @@ function switchSection(section) {
         document.getElementById('reportsView').classList.remove('hidden');
         document.getElementById('trackerView').classList.add('hidden');
         document.getElementById('pointsView').classList.add('hidden');
+        document.getElementById('studentReportsView')?.classList.add('hidden');
         document.getElementById('section-history')?.classList.add('hidden');
     } else if (section === 'points') {
         document.getElementById('pointsView').classList.remove('hidden');
         document.getElementById('trackerView').classList.add('hidden');
         document.getElementById('reportsView').classList.add('hidden');
+        document.getElementById('studentReportsView')?.classList.add('hidden');
         document.getElementById('section-history')?.classList.add('hidden');
         initPointsTab();
+    } else if (section === 'studentReports') {
+        document.getElementById('studentReportsView')?.classList.remove('hidden');
+        document.getElementById('trackerView').classList.add('hidden');
+        document.getElementById('reportsView').classList.add('hidden');
+        document.getElementById('pointsView').classList.add('hidden');
+        document.getElementById('section-history')?.classList.add('hidden');
+        // We'll add initStudentReportsTab() later
     } else if (section === 'history') {
         document.getElementById('section-history')?.classList.remove('hidden');
         document.getElementById('trackerView').classList.add('hidden');
         document.getElementById('reportsView').classList.add('hidden');
         document.getElementById('pointsView').classList.add('hidden');
+        document.getElementById('studentReportsView')?.classList.add('hidden');
     } else {
         document.getElementById('trackerView').classList.remove('hidden');
         document.getElementById('reportsView').classList.add('hidden');
         document.getElementById('pointsView').classList.add('hidden');
+        document.getElementById('studentReportsView')?.classList.add('hidden');
         document.getElementById('section-history')?.classList.add('hidden');
     }
     
-    // Update tabs
-    const sections = ['highschool', 'middleschool', 'elementary', 'reports', 'points', 'history'];
-    document.querySelectorAll('.tab').forEach((t, i) => {
-        t.classList.toggle('active', sections[i] === section);
-    });
+    // Update section tabs active state
+    document.querySelectorAll('.section-tab').forEach(t => t.classList.remove('active'));
+    if (section === 'highschool') {
+        document.getElementById('section-highschool')?.classList.add('active');
+    } else if (section === 'middleschool') {
+        document.getElementById('section-middleschool')?.classList.add('active');
+    } else if (section === 'elementary') {
+        document.getElementById('section-elementary')?.classList.add('active');
+    }
     
-    // Show/hide history tab based on admin
+    // Update admin visibility
+    updateAdminVisibility();
+    
+    // Show/hide history sidebar item based on admin
     if (isAdmin()) {
-        document.getElementById('tab-history')?.classList.remove('hidden');
+        document.getElementById('sidebar-history')?.classList.remove('hidden');
+        document.getElementById('sidebar-admin')?.classList.remove('hidden');
     } else {
-        document.getElementById('tab-history')?.classList.add('hidden');
+        document.getElementById('sidebar-history')?.classList.add('hidden');
+        document.getElementById('sidebar-admin')?.classList.add('hidden');
     }
     
     if (section === 'history') {
@@ -828,12 +900,16 @@ function switchSection(section) {
         loadPointsReport();
     } else if (section === 'points') {
         // Already handled by initPointsTab()
-        } else if (section !== 'history') {
+    } else if (section === 'studentReports') {
+        // We'll build this next
+        console.log('Student Reports tab clicked');
+    } else if (section !== 'history') {
         loadStudentCounts();
         currentStudentIndex = 0;
         updateStudentDropdown();
         loadStudent(1);
-    }}
+    }
+}
 // ============================================================
 // SIMPLE STUDENT DROPDOWN
 // ============================================================
