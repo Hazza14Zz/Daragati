@@ -864,3 +864,13 @@ h1 {
     text-align: center;
     font-weight: 600;
 }
+
+/* Hide section tabs by default */
+.section-tabs {
+    display: none;
+}
+
+/* Only show section tabs when trackerView is visible */
+#trackerView .section-tabs {
+    display: flex !important;
+}
