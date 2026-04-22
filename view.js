@@ -35,9 +35,7 @@ function checkAuth() {
         sectionName = SECTION_NAMES[currentSection] || currentSection;
         document.getElementById('sectionDisplay').textContent = `مرحباً، المرحلة ${sectionName}`;
         
-        // ✅ ADD THIS LINE - Hide overlay if it exists
-        const overlay = document.getElementById('authCheckOverlay');
-        if (overlay) overlay.classList.add('hidden');
+      
         
         return true;
     } catch (e) { 
