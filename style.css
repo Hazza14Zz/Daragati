@@ -886,3 +886,10 @@ label, option, optgroup {
     visibility: visible !important;
     opacity: 1 !important;
 }
+
+#pointsView, #studentReportsView, #section-history {
+    min-height: 400px !important;
+    height: auto !important;
+    overflow: visible !important;
+    background: #f8fafc !important;
+}
