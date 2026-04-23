@@ -874,3 +874,10 @@ h1 {
 #trackerView .section-tabs {
     display: flex !important;
 }
+
+/* ============================================ */
+/* FIX: Show tracker sections when not hidden   */
+/* ============================================ */
+.tracker-section:not(.hidden) {
+    display: block !important;
+}
