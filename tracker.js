@@ -1759,12 +1759,10 @@ function exportGrandTotal() {
     const gDate = getGregorianDate();
     const hDate = document.getElementById('hijriDate').textContent;
     
-    // Get all sections' summaries
     const highHTML = document.getElementById('highschool-summary').innerHTML;
     const middleHTML = document.getElementById('middleschool-summary').innerHTML;
     const elemHTML = document.getElementById('elementary-summary').innerHTML;
     
-    // Get grand totals
     const totalPages = document.getElementById('grand-total-pages').textContent;
     const grandKhatmah = document.getElementById('grand-total-khatmah').textContent;
     
@@ -1782,6 +1780,8 @@ function exportGrandTotal() {
                     margin: 0;
                     padding: 0;
                     box-sizing: border-box;
+                    -webkit-print-color-adjust: exact !important;
+                    print-color-adjust: exact !important;
                 }
                 body {
                     direction: rtl;
@@ -1827,11 +1827,13 @@ function exportGrandTotal() {
                     box-shadow: 0 2px 8px rgba(0,0,0,0.05);
                 }
                 th {
-                    background: #047857;
-                    color: white;
+                    background: #047857 !important;
+                    color: white !important;
                     padding: 12px 8px;
                     text-align: center;
                     font-weight: 700;
+                    -webkit-print-color-adjust: exact !important;
+                    print-color-adjust: exact !important;
                 }
                 td {
                     padding: 10px 8px;
@@ -1839,20 +1841,24 @@ function exportGrandTotal() {
                     text-align: center;
                 }
                 .total-row {
-                    background: #f0fdf4;
+                    background: #f0fdf4 !important;
                     font-weight: 700;
+                    -webkit-print-color-adjust: exact !important;
+                    print-color-adjust: exact !important;
                 }
                 .grand-total-section {
-                    background: linear-gradient(135deg, #059669 0%, #047857 100%);
+                    background: #059669 !important;
                     color: white;
                     padding: 25px;
                     border-radius: 16px;
                     margin-top: 30px;
                     text-align: center;
                     box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+                    -webkit-print-color-adjust: exact !important;
+                    print-color-adjust: exact !important;
                 }
                 .grand-total-section h2 {
-                    color: white;
+                    color: white !important;
                     margin-bottom: 20px;
                     font-size: 24px;
                 }
@@ -1871,19 +1877,40 @@ function exportGrandTotal() {
                 }
                 .grand-total-label {
                     opacity: 0.95;
+                    color: white;
                 }
                 .grand-total-value {
                     font-size: 32px;
                     font-weight: bold;
-                    color: white;
+                    color: white !important;
                 }
                 .pages-value {
                     font-size: 28px;
                 }
                 @media print {
-                    body { background: white; padding: 10px; }
-                    button { display: none; }
-                    .print-btn { display: none; }
+                    body { 
+                        background: white; 
+                        padding: 10px;
+                    }
+                    button { 
+                        display: none; 
+                    }
+                    .print-btn { 
+                        display: none; 
+                    }
+                    th {
+                        background: #047857 !important;
+                        color: white !important;
+                    }
+                    .total-row {
+                        background: #f0fdf4 !important;
+                    }
+                    .grand-total-section {
+                        background: #059669 !important;
+                    }
+                    .section-title {
+                        background: #f0fdf4 !important;
+                    }
                 }
                 .print-btn {
                     background: #059669;
@@ -1940,7 +1967,6 @@ function exportGrandTotal() {
     `);
     printWindow.document.close();
 }
-
 function exportPointsReport(level, period = 'alltime') {
     const sectionName = SECTION_NAMES[level];
     let container;
