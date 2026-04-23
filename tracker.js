@@ -50,10 +50,7 @@ function getMilestoneType(verseKey, page) {
     return null;
 }
 
-// Find which page contains a specific verse (even between milestones!)
-// Find which page contains a specific verse (works for ANY verse!)
 function findPageForVerse(verseKey) {
-    // Parse the verse key like "2:5" into surah and verse numbers
     const [surahNum, verseNum] = verseKey.split(':').map(Number);
     
     let foundPage = null;
@@ -62,11 +59,10 @@ function findPageForVerse(verseKey) {
         const m = quranMilestones[page];
         if (!m) continue;
         
-        // Get the last verse of this page
         const lastVerseKey = m.lastVerse;
         const [lastSurah, lastVerse] = lastVerseKey.split(':').map(Number);
         
-        // If we've passed our surah, return the page where it was
+        // If we've passed our surah, return the last page we saw with this surah
         if (lastSurah > surahNum) {
             return foundPage || page;
         }
@@ -82,7 +78,6 @@ function findPageForVerse(verseKey) {
     
     return foundPage || 604;
 }
-
 // Calculate page fraction from start of page to a verse
 function getFractionFromStart(verseKey, page) {
     const m = quranMilestones[page];
