@@ -1756,12 +1756,188 @@ function exportMonthlyReport(l) {
 
 function exportGrandTotal() {
     const monthStr = currentReportMonth.toLocaleDateString('ar-SA', { month: 'long', year: 'numeric' });
+    const gDate = getGregorianDate();
+    const hDate = document.getElementById('hijriDate').textContent;
+    
+    // Get all sections' summaries
     const highHTML = document.getElementById('highschool-summary').innerHTML;
     const middleHTML = document.getElementById('middleschool-summary').innerHTML;
     const elemHTML = document.getElementById('elementary-summary').innerHTML;
-    const total = document.getElementById('grand-total-khatmah').textContent;
+    
+    // Get grand totals
+    const totalPages = document.getElementById('grand-total-pages').textContent;
+    const grandKhatmah = document.getElementById('grand-total-khatmah').textContent;
+    
     const printWindow = window.open('', '_blank');
-    printWindow.document.write(`<!DOCTYPE html><html dir="rtl"><head><meta charset="UTF-8"><title>التقرير الشامل</title><link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet"><style>body{font-family:'Cairo',sans-serif;direction:rtl;padding:20px}h1{color:#065f46;text-align:center}h2{color:#047857;margin-top:20px}table{width:100%;border-collapse:collapse;margin:10px 0}th{background:#047857;color:white;padding:10px}td{padding:8px;border-bottom:1px solid #ddd;text-align:center}.grand-total{background:#059669;color:white;padding:20px;border-radius:12px;text-align:center;margin-top:20px}@media print{button{display:none}}.print-btn{background:#059669;color:white;padding:10px 30px;border:none;border-radius:8px;font-size:16px;cursor:pointer;margin-top:20px}</style></head><body><h1>📊 التقرير الشامل لجميع المراحل</h1><p style="text-align:center">${monthStr}</p><h2>🏫 المرحلة الثانوية</h2>${highHTML}<h2>🏫 المرحلة المتوسطة</h2>${middleHTML}<h2>🏫 المرحلة الابتدائية</h2>${elemHTML}<div class="grand-total"><h2 style="color:white">🎯 إجمالي الختمات</h2><div style="font-size:40px">${total} ختمة</div></div><div style="text-align:center;margin-top:20px"><button class="print-btn" onclick="window.print()">🖨️ طباعة / حفظ PDF</button></div></body></html>`);
+    printWindow.document.write(`
+        <!DOCTYPE html>
+        <html dir="rtl">
+        <head>
+            <meta charset="UTF-8">
+            <title>التقرير الشامل لجميع المراحل</title>
+            <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+            <style>
+                * {
+                    font-family: 'Cairo', sans-serif;
+                    margin: 0;
+                    padding: 0;
+                    box-sizing: border-box;
+                }
+                body {
+                    direction: rtl;
+                    padding: 20px;
+                    background: #f8fafc;
+                }
+                h1 {
+                    color: #065f46;
+                    text-align: center;
+                    margin-bottom: 10px;
+                    font-size: 28px;
+                }
+                .date-info {
+                    text-align: center;
+                    color: #047857;
+                    margin-bottom: 30px;
+                    font-size: 16px;
+                    background: white;
+                    padding: 12px;
+                    border-radius: 40px;
+                    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+                }
+                .section-title {
+                    color: #047857;
+                    margin: 20px 0 15px;
+                    font-size: 20px;
+                    font-weight: 700;
+                    text-align: center;
+                    background: #f0fdf4;
+                    padding: 10px;
+                    border-radius: 40px;
+                }
+                table {
+                    width: 100%;
+                    border-collapse: collapse;
+                    margin: 16px 0;
+                    font-size: 14px;
+                    direction: rtl;
+                    text-align: right;
+                    background: white;
+                    border-radius: 16px;
+                    overflow: hidden;
+                    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+                }
+                th {
+                    background: #047857;
+                    color: white;
+                    padding: 12px 8px;
+                    text-align: center;
+                    font-weight: 700;
+                }
+                td {
+                    padding: 10px 8px;
+                    border-bottom: 1px solid #e5e7eb;
+                    text-align: center;
+                }
+                .total-row {
+                    background: #f0fdf4;
+                    font-weight: 700;
+                }
+                .grand-total-section {
+                    background: linear-gradient(135deg, #059669 0%, #047857 100%);
+                    color: white;
+                    padding: 25px;
+                    border-radius: 16px;
+                    margin-top: 30px;
+                    text-align: center;
+                    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+                }
+                .grand-total-section h2 {
+                    color: white;
+                    margin-bottom: 20px;
+                    font-size: 24px;
+                }
+                .grand-total-box {
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    gap: 15px;
+                }
+                .grand-total-item {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    gap: 15px;
+                    font-size: 18px;
+                }
+                .grand-total-label {
+                    opacity: 0.95;
+                }
+                .grand-total-value {
+                    font-size: 32px;
+                    font-weight: bold;
+                    color: white;
+                }
+                .pages-value {
+                    font-size: 28px;
+                }
+                @media print {
+                    body { background: white; padding: 10px; }
+                    button { display: none; }
+                    .print-btn { display: none; }
+                }
+                .print-btn {
+                    background: #059669;
+                    color: white;
+                    padding: 14px 30px;
+                    border: none;
+                    border-radius: 40px;
+                    font-size: 18px;
+                    font-weight: 700;
+                    cursor: pointer;
+                    margin: 30px auto 0;
+                    display: block;
+                    width: fit-content;
+                    font-family: 'Cairo', sans-serif;
+                    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+                }
+                .print-btn:hover {
+                    background: #047857;
+                }
+            </style>
+        </head>
+        <body>
+            <h1>📊 التقرير الشامل لجميع المراحل</h1>
+            <div class="date-info">
+                📅 ${hDate} | 📆 ${gDate} | 🗓️ ${monthStr}
+            </div>
+            
+            <div class="section-title">🏫 المرحلة الثانوية</div>
+            ${highHTML}
+            
+            <div class="section-title">🏫 المرحلة المتوسطة</div>
+            ${middleHTML}
+            
+            <div class="section-title">🏫 المرحلة الابتدائية</div>
+            ${elemHTML}
+            
+            <div class="grand-total-section">
+                <h2>🎯 المجموع الكلي لجميع المراحل</h2>
+                <div class="grand-total-box">
+                    <div class="grand-total-item">
+                        <span class="grand-total-label">📄 إجمالي الصفحات:</span>
+                        <span class="grand-total-value pages-value">${totalPages}</span>
+                    </div>
+                    <div class="grand-total-item">
+                        <span class="grand-total-label">📚 إجمالي الختمات:</span>
+                        <span class="grand-total-value">${grandKhatmah} ختمة</span>
+                    </div>
+                </div>
+            </div>
+            
+            <button class="print-btn" onclick="window.print()">🖨️ طباعة / حفظ PDF</button>
+        </body>
+        </html>
+    `);
     printWindow.document.close();
 }
 
