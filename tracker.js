@@ -88,12 +88,24 @@ function getFractionFromStart(verseKey, page) {
     const m = quranMilestones[page];
     if (!m) return 0;
     
+    // Exact milestone matches
     if (verseKey === m.quarter) return 0.25;
     if (verseKey === m.half) return 0.50;
     if (verseKey === m.threeQuarter) return 0.75;
     if (verseKey === m.lastVerse) return 1.0;
     
-    return 0; // Default
+    // For non-milestone verses, find the closest milestone BEFORE this verse
+    const [surah, verse] = verseKey.split(':').map(Number);
+    const quarter = m.quarter.split(':').map(Number)[1];
+    const half = m.half.split(':').map(Number)[1];
+    const threeQuarter = m.threeQuarter.split(':').map(Number)[1];
+    const last = m.lastVerse.split(':').map(Number)[1];
+    
+    if (verse < quarter) return 0;
+    if (verse < half) return 0.25;
+    if (verse < threeQuarter) return 0.50;
+    if (verse < last) return 0.75;
+    return 1.0;
 }
 
 // Calculate page fraction from a verse to end of page
@@ -101,14 +113,25 @@ function getFractionToEnd(verseKey, page) {
     const m = quranMilestones[page];
     if (!m) return 0;
     
+    // Exact milestone matches
     if (verseKey === m.quarter) return 0.75;
     if (verseKey === m.half) return 0.50;
     if (verseKey === m.threeQuarter) return 0.25;
     if (verseKey === m.lastVerse) return 0;
     
-    return 1.0; // Default
+    // For non-milestone verses, find the closest milestone AFTER this verse
+    const [surah, verse] = verseKey.split(':').map(Number);
+    const quarter = m.quarter.split(':').map(Number)[1];
+    const half = m.half.split(':').map(Number)[1];
+    const threeQuarter = m.threeQuarter.split(':').map(Number)[1];
+    const last = m.lastVerse.split(':').map(Number)[1];
+    
+    if (verse <= quarter) return 0.75;
+    if (verse <= half) return 0.50;
+    if (verse <= threeQuarter) return 0.25;
+    if (verse <= last) return 0;
+    return 0;
 }
-
 
 // ============================================================
 // SMART SYNC - Only runs when tab is active
