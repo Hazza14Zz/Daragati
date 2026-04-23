@@ -794,11 +794,7 @@ label, option, optgroup {
     display: none !important;
 }
 
-/* Hide old h1 since we have it in top bar */
-/* ✅ Only hide the old h1, not all h1 elements */
-body > h1:first-of-type {
-    display: none !important;
-}
+
 /* ============================================ */
 /* STUDENT REPORTS STYLES */
 /* ============================================ */
@@ -880,4 +876,13 @@ body > h1:first-of-type {
 /* ============================================ */
 .tracker-section:not(.hidden) {
     display: block !important;
+}
+
+/* Force display for tracker sections */
+#pointsView.tracker-section:not(.hidden),
+#studentReportsView.tracker-section:not(.hidden),
+#section-history.tracker-section:not(.hidden) {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
 }
