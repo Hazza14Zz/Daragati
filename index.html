@@ -285,8 +285,8 @@
     </div>
     
     <div class="sidebar-menu">
-         <!-- ✅ ADD THIS RIGHT HERE - Return to Tracker -->
-<div class="sidebar-item" id="sidebar-tracker" onclick="switchSection('highschool'); closeSidebar();" style="display: none;">
+    <!-- Return to Tracker -->
+    <div class="sidebar-item" id="sidebar-tracker" onclick="switchSection('highschool'); closeSidebar();" style="display: none;">
         <span class="sidebar-icon">📖</span>
         <div class="sidebar-text">
             <div class="sidebar-title">سجل المتابعة</div>
@@ -295,56 +295,53 @@
     </div>
     <div class="sidebar-divider" id="sidebar-tracker-divider" style="display: none;"></div>
 
-        <!-- Reports -->
-        <div class="sidebar-item" onclick="navigateTo('reports')">
-            <span class="sidebar-icon">📊</span>
-            <div class="sidebar-text">
-                <div class="sidebar-title">التقارير</div>
-                <div class="sidebar-subtitle">التقارير اليومية والشهرية</div>
-            </div>
-        </div>
-        
-        <!-- Points -->
-        <div class="sidebar-item" onclick="navigateTo('points')">
-            <span class="sidebar-icon">⭐</span>
-            <div class="sidebar-text">
-                <div class="sidebar-title">النقاط</div>
-                <div class="sidebar-subtitle">أسبوعي | شهري | كل الوقت</div>
-            </div>
-        </div>
-        
-        <!-- Student Reports (NEW) -->
-        <div class="sidebar-item" onclick="navigateTo('studentReports')">
-            <span class="sidebar-icon">👤</span>
-            <div class="sidebar-text">
-                <div class="sidebar-title">تقارير الطلاب</div>
-                <div class="sidebar-subtitle">تقرير شهري لكل طالب</div>
-            </div>
-        </div>
-        
-        <!-- History (Admin Only) -->
-        <div class="sidebar-item admin-only hidden" id="sidebar-history" onclick="navigateTo('history')">
-            <span class="sidebar-icon">📜</span>
-            <div class="sidebar-text">
-                <div class="sidebar-title">سجل التغييرات</div>
-                <div class="sidebar-subtitle">سجل المعلمين</div>
-            </div>
-        </div>
-        
-        <!-- Divider -->
-        <div class="sidebar-divider"></div>
-        
-        <!-- Admin Panel -->
-        <div class="sidebar-item admin-only hidden" id="sidebar-admin" onclick="showAdminPanel()">
-            <span class="sidebar-icon">⚙️</span>
-            <div class="sidebar-text">
-                <div class="sidebar-title">لوحة التحكم</div>
-                <div class="sidebar-subtitle">إضافة وحذف الطلاب</div>
-            </div>
+    <!-- Reports -->
+    <div class="sidebar-item" id="sidebar-reports" onclick="navigateTo('reports')">
+        <span class="sidebar-icon">📊</span>
+        <div class="sidebar-text">
+            <div class="sidebar-title">التقارير</div>
+            <div class="sidebar-subtitle">التقارير اليومية والشهرية</div>
         </div>
     </div>
-</div> 
-
+    
+    <!-- Points -->
+    <div class="sidebar-item" id="sidebar-points" onclick="navigateTo('points')">
+        <span class="sidebar-icon">⭐</span>
+        <div class="sidebar-text">
+            <div class="sidebar-title">النقاط</div>
+            <div class="sidebar-subtitle">أسبوعي | شهري | كل الوقت</div>
+        </div>
+    </div>
+    
+    <!-- Student Reports -->
+    <div class="sidebar-item" id="sidebar-studentreports" onclick="navigateTo('studentReports')">
+        <span class="sidebar-icon">👤</span>
+        <div class="sidebar-text">
+            <div class="sidebar-title">تقارير الطلاب</div>
+            <div class="sidebar-subtitle">تقرير شهري لكل طالب</div>
+        </div>
+    </div>
+    
+    <!-- History (Admin Only) -->
+    <div class="sidebar-item admin-only hidden" id="sidebar-history" onclick="navigateTo('history')">
+        <span class="sidebar-icon">📜</span>
+        <div class="sidebar-text">
+            <div class="sidebar-title">سجل التغييرات</div>
+            <div class="sidebar-subtitle">سجل المعلمين</div>
+        </div>
+    </div>
+    
+    <div class="sidebar-divider"></div>
+    
+    <!-- Admin Panel -->
+    <div class="sidebar-item admin-only hidden" id="sidebar-admin" onclick="showAdminPanel()">
+        <span class="sidebar-icon">⚙️</span>
+        <div class="sidebar-text">
+            <div class="sidebar-title">لوحة التحكم</div>
+            <div class="sidebar-subtitle">إضافة وحذف الطلاب</div>
+        </div>
+    </div>
+</div>
 <div class="date-bar">
     <div class="date-content">
         <span class="date-item">📅 <span id="hijriDate">جاري التحميل...</span></span>
