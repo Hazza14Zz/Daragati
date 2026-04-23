@@ -1052,19 +1052,24 @@ function switchSection(section) {
     // Show selected section
     if (section === 'reports') {
         document.getElementById('reportsView').classList.remove('hidden');
+        document.getElementById('reportsView').style.display = 'block';
         document.getElementById('trackerView').classList.add('hidden');
         document.getElementById('pointsView').classList.add('hidden');
         document.getElementById('studentReportsView')?.classList.add('hidden');
         document.getElementById('section-history')?.classList.add('hidden');
     } else if (section === 'points') {
         document.getElementById('pointsView').classList.remove('hidden');
+        document.getElementById('pointsView').style.display = 'block';
         document.getElementById('trackerView').classList.add('hidden');
         document.getElementById('reportsView').classList.add('hidden');
         document.getElementById('studentReportsView')?.classList.add('hidden');
         document.getElementById('section-history')?.classList.add('hidden');
         initPointsTab();
-      } else if (section === 'studentReports') {
+    } else if (section === 'studentReports') {
         document.getElementById('studentReportsView')?.classList.remove('hidden');
+        if (document.getElementById('studentReportsView')) {
+            document.getElementById('studentReportsView').style.display = 'block';
+        }
         document.getElementById('trackerView').classList.add('hidden');
         document.getElementById('reportsView').classList.add('hidden');
         document.getElementById('pointsView').classList.add('hidden');
@@ -1072,12 +1077,16 @@ function switchSection(section) {
         initStudentReportsTab();
     } else if (section === 'history') {
         document.getElementById('section-history')?.classList.remove('hidden');
+        if (document.getElementById('section-history')) {
+            document.getElementById('section-history').style.display = 'block';
+        }
         document.getElementById('trackerView').classList.add('hidden');
         document.getElementById('reportsView').classList.add('hidden');
         document.getElementById('pointsView').classList.add('hidden');
         document.getElementById('studentReportsView')?.classList.add('hidden');
     } else {
         document.getElementById('trackerView').classList.remove('hidden');
+        document.getElementById('trackerView').style.display = 'block';
         document.getElementById('reportsView').classList.add('hidden');
         document.getElementById('pointsView').classList.add('hidden');
         document.getElementById('studentReportsView')?.classList.add('hidden');
@@ -1115,7 +1124,6 @@ function switchSection(section) {
     } else if (section === 'points') {
         // Already handled by initPointsTab()
     } else if (section === 'studentReports') {
-        // We'll build this next
         console.log('Student Reports tab clicked');
     } else if (section !== 'history') {
         loadStudentCounts();
@@ -1123,7 +1131,7 @@ function switchSection(section) {
         updateStudentDropdown();
         loadStudent(1);
     }
-     // ✅ ADD THIS LINE
+    
     updateSidebarTrackerVisibility();
 }
 // ============================================================
