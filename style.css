@@ -795,10 +795,10 @@ label, option, optgroup {
 }
 
 /* Hide old h1 since we have it in top bar */
-h1 {
+/* ✅ Only hide the old h1, not all h1 elements */
+body > h1:first-of-type {
     display: none !important;
 }
-
 /* ============================================ */
 /* STUDENT REPORTS STYLES */
 /* ============================================ */
