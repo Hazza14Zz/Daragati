@@ -908,3 +908,17 @@ label, option, optgroup {
     min-height: 300px !important;
     display: block !important;
 }
+
+.points-main-tabs {
+    display: flex !important;
+    min-height: 50px !important;
+    height: auto !important;
+    overflow: visible !important;
+}
+
+.points-main-tab {
+    flex: 1 !important;
+    min-height: 44px !important;
+    height: auto !important;
+    display: block !important;
+}
