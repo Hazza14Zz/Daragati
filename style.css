@@ -893,3 +893,18 @@ label, option, optgroup {
     overflow: visible !important;
     background: #f8fafc !important;
 }
+
+/* FIX: Make tracker sections take full width and height */
+#pointsView, #studentReportsView, #section-history {
+    min-height: 300px !important;
+    width: 100% !important;
+    display: block !important;
+    background: #f8fafc !important;
+}
+
+#pointsView:not(.hidden), 
+#studentReportsView:not(.hidden), 
+#section-history:not(.hidden) {
+    min-height: 300px !important;
+    display: block !important;
+}
