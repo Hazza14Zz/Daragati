@@ -435,48 +435,58 @@ const AYAH_COUNTS = [
 
 
 function calculatePages(startSurah, startVerse, endSurah, endVerse) {
+    console.log('📊 calculatePages called with:', { startSurah, startVerse, endSurah, endVerse });
+    
     // Convert names to numbers if needed
     const startNum = isNaN(startSurah) ? getSurahNumberFromName(startSurah) : parseInt(startSurah);
     const endNum = isNaN(endSurah) ? getSurahNumberFromName(endSurah) : parseInt(endSurah);
     
+    console.log('📊 Converted numbers:', { startNum, endNum });
+    
     if (!startNum || !endNum) {
-        console.warn('Could not find surah numbers');
+        console.warn('❌ Could not find surah numbers');
         return 0;
     }
     
     const startKey = `${startNum}:${startVerse}`;
     const endKey = `${endNum}:${endVerse}`;
     
+    console.log('📊 Verse keys:', { startKey, endKey });
+    
     const startPage = findPageForVerse(startKey);
     const endPage = findPageForVerse(endKey);
     
+    console.log('📊 Found pages:', { startPage, endPage });
+    
     if (startPage === null || endPage === null) {
-        console.warn('Could not find pages for verses');
+        console.warn('❌ Could not find pages for verses');
         return 0;
     }
     
     let totalPages = 0;
     
     if (startPage === endPage) {
-        // Same page - calculate the difference
         const startFrac = getFractionFromStart(startKey, startPage);
         const endFrac = getFractionFromStart(endKey, endPage);
         totalPages = endFrac - startFrac;
+        console.log('📊 Same page calculation:', { startFrac, endFrac, totalPages });
     } else {
-        // Multiple pages
-        // Fraction from start verse to end of its page
         totalPages += getFractionToEnd(startKey, startPage);
+        console.log('📊 First page fraction:', getFractionToEnd(startKey, startPage));
         
-        // Full pages in between
         for (let p = startPage + 1; p < endPage; p++) {
             totalPages += 1;
         }
+        console.log('📊 Full pages in between:', endPage - startPage - 1);
         
-        // Fraction from start of last page to end verse
         totalPages += getFractionFromStart(endKey, endPage);
+        console.log('📊 Last page fraction:', getFractionFromStart(endKey, endPage));
     }
     
-    return Math.round(totalPages * 100) / 100; // Round to 2 decimals
+    const result = Math.round(totalPages * 100) / 100;
+    console.log('✅ Final page count:', result);
+    
+    return result;
 }
 
 function getSurahNumberFromName(name) {
