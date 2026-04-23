@@ -394,24 +394,38 @@ function updateAdminVisibility() {
 }
 
 function updateSidebarTrackerVisibility() {
-    const trackerItem = document.getElementById('sidebar-tracker');
-    const trackerDivider = document.getElementById('sidebar-tracker-divider');
+    // Get all sidebar items by ID
+    const items = {
+        tracker: document.getElementById('sidebar-tracker'),
+        trackerDivider: document.getElementById('sidebar-tracker-divider'),
+        reports: document.getElementById('sidebar-reports'),
+        points: document.getElementById('sidebar-points'),
+        studentReports: document.getElementById('sidebar-studentreports'),
+        history: document.getElementById('sidebar-history')
+    };
     
-    if (!trackerItem || !trackerDivider) return;
+    // Current page check
+    const currentPage = currentSection; // 'highschool', 'middleschool', 'elementary', 'reports', 'points', 'studentReports', 'history'
+    const isOnTracker = ['highschool', 'middleschool', 'elementary'].includes(currentPage);
     
-    // Check if we're on the main tracker page
-    const isOnMainTracker = document.getElementById('trackerView') && 
-                           !document.getElementById('trackerView').classList.contains('hidden');
+    // Hide Return to Tracker when on tracker
+    if (items.tracker) items.tracker.style.display = isOnTracker ? 'none' : 'flex';
+    if (items.trackerDivider) items.trackerDivider.style.display = isOnTracker ? 'none' : 'block';
     
-    if (isOnMainTracker) {
-        trackerItem.style.display = 'none';
-        trackerDivider.style.display = 'none';
-    } else {
-        trackerItem.style.display = 'flex';
-        trackerDivider.style.display = 'block';
+    // Hide Reports when on reports
+    if (items.reports) items.reports.style.display = currentPage === 'reports' ? 'none' : 'flex';
+    
+    // Hide Points when on points
+    if (items.points) items.points.style.display = currentPage === 'points' ? 'none' : 'flex';
+    
+    // Hide Student Reports when on student reports
+    if (items.studentReports) items.studentReports.style.display = currentPage === 'studentReports' ? 'none' : 'flex';
+    
+    // Hide History when on history
+    if (items.history && !items.history.classList.contains('hidden')) {
+        items.history.style.display = currentPage === 'history' ? 'none' : 'flex';
     }
 }
-
 function navigateTo(page) {
     closeSidebar();
     
