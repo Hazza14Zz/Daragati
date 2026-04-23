@@ -83,14 +83,23 @@ function getFractionFromStart(verseKey, page) {
     const m = quranMilestones[page];
     if (!m) return 0;
     
+    // Special case: First verse of page is 0 progress from start
+    if (verseKey === "1:1") return 0;
+    
+    // Check if it's the first verse of any page
+    const [surah, verse] = verseKey.split(':').map(Number);
+    if (verse === 1) {
+        // Could be first verse of a surah
+        return 0;
+    }
+    
     // Exact milestone matches
     if (verseKey === m.quarter) return 0.25;
     if (verseKey === m.half) return 0.50;
     if (verseKey === m.threeQuarter) return 0.75;
     if (verseKey === m.lastVerse) return 1.0;
     
-    // For non-milestone verses, find the closest milestone BEFORE this verse
-    const [surah, verse] = verseKey.split(':').map(Number);
+    // For other verses...
     const quarter = m.quarter.split(':').map(Number)[1];
     const half = m.half.split(':').map(Number)[1];
     const threeQuarter = m.threeQuarter.split(':').map(Number)[1];
@@ -108,14 +117,23 @@ function getFractionToEnd(verseKey, page) {
     const m = quranMilestones[page];
     if (!m) return 0;
     
+    // Special case: First verse of page should return 1.0 (the whole page)
+    const [surah, verse] = verseKey.split(':').map(Number);
+    
+    // Check if this is the FIRST verse of the page
+    if (verseKey === "1:1") return 1.0;
+    if (verse === 1) {
+        // First verse of a surah on this page
+        return 1.0;
+    }
+    
     // Exact milestone matches
     if (verseKey === m.quarter) return 0.75;
     if (verseKey === m.half) return 0.50;
     if (verseKey === m.threeQuarter) return 0.25;
     if (verseKey === m.lastVerse) return 0;
     
-    // For non-milestone verses, find the closest milestone AFTER this verse
-    const [surah, verse] = verseKey.split(':').map(Number);
+    // For non-milestone verses
     const quarter = m.quarter.split(':').map(Number)[1];
     const half = m.half.split(':').map(Number)[1];
     const threeQuarter = m.threeQuarter.split(':').map(Number)[1];
