@@ -922,3 +922,14 @@ label, option, optgroup {
     height: auto !important;
     display: block !important;
 }
+
+.tracker-section {
+    width: 100% !important;
+    min-height: 100px !important;
+}
+
+.tracker-section:not(.hidden) {
+    display: block !important;
+    width: 100% !important;
+    min-height: 300px !important;
+}
