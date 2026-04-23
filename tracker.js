@@ -1725,10 +1725,22 @@ function exportAllPointsReport(period) {
     }
     
     const printWindow = window.open('', '_blank');
-    printWindow.document.write(`<!DOCTYPE html><html dir="rtl"><head><meta charset="UTF-8"><title>تقرير النقاط ${periodName}</title><link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet"><style>body{font-family:'Cairo',sans-serif;direction:rtl;padding:20px}h1{color:#065f46;text-align:center}.date-info{text-align:center;color:#047857;margin-bottom:20px}.columns{display:flex;gap:15px}.col{flex:1;background:#f9fafb;border-radius:12px;padding:12px}.col h3{color:#047857;text-align:center;margin-bottom:10px}table{width:100%;border-collapse:collapse}th{background:#047857;color:white;padding:8px}td{padding:6px;border-bottom:1px solid #e5e7eb;text-align:center}@media print{button{display:none}}.print-btn{background:#059669;color:white;padding:10px 30px;border:none;border-radius:8px;font-size:16px;cursor:pointer;margin-top:20px}</style></head><body><h1>⭐ تقرير النقاط ${periodName}</h1><div class="date-info">📅 ${hDate} | 📆 ${gDate}${dateInfo ? ' | ' + dateInfo : ''}</div><div class="columns"><div class="col"><h3>🏫 ثانوي</h3>${highHTML}</div><div class="col"><h3>🏫 متوسط</h3>${middleHTML}</div><div class="col"><h3>🏫 ابتدائي</h3>${elemHTML}</div></div><div style="text-align:center;margin-top:20px"><button class="print-btn" onclick="window.print()">🖨️ طباعة / حفظ PDF</button></div></body></html>`);
+    printWindow.document.write(`<!DOCTYPE html><html dir="rtl"><head><meta charset="UTF-8"><title>تقرير النقاط ${periodName}</title><link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet"><style>
+        * { font-family: 'Cairo', sans-serif; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+        body { direction: rtl; padding: 20px; background: #f8fafc; }
+        h1 { color: #065f46; text-align: center; font-size: 26px; }
+        .date-info { text-align: center; color: #047857; margin-bottom: 20px; background: white; padding: 12px; border-radius: 40px; }
+        .columns { display: flex; gap: 15px; }
+        .col { flex: 1; background: white; border-radius: 16px; padding: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .col h3 { color: #047857; text-align: center; margin-bottom: 10px; background: #f0fdf4; padding: 10px; border-radius: 40px; }
+        table { width: 100%; border-collapse: collapse; }
+        th { background: #047857 !important; color: white !important; padding: 10px 8px; text-align: center; }
+        td { padding: 8px 6px; border-bottom: 1px solid #e5e7eb; text-align: center; }
+        @media print { body { background: white; padding: 10px; } button { display: none; } th { background: #047857 !important; } .col h3 { background: #f0fdf4 !important; } }
+        .print-btn { background: #059669; color: white; padding: 14px 30px; border: none; border-radius: 40px; font-size: 18px; cursor: pointer; margin: 30px auto 0; display: block; width: fit-content; }
+    </style></head><body><h1>⭐ تقرير النقاط ${periodName}</h1><div class="date-info">📅 ${hDate} | 📆 ${gDate}${dateInfo ? ' | ' + dateInfo : ''}</div><div class="columns"><div class="col"><h3>🏫 ثانوي</h3>${highHTML}</div><div class="col"><h3>🏫 متوسط</h3>${middleHTML}</div><div class="col"><h3>🏫 ابتدائي</h3>${elemHTML}</div></div><button class="print-btn" onclick="window.print()">🖨️ طباعة / حفظ PDF</button></body></html>`);
     printWindow.document.close();
-}
-// ============================================================
+}// ============================================================
 // PDF EXPORT
 // ============================================================
 function exportDailyReport(l) { 
@@ -1739,10 +1751,19 @@ function exportDailyReport(l) {
     const gDate = getGregorianDate();
     const hDate = document.getElementById('hijriDate').textContent;
     const printWindow = window.open('', '_blank');
-    printWindow.document.write(`<!DOCTYPE html><html dir="rtl"><head><meta charset="UTF-8"><title>تقرير ${sectionName} اليومي</title><link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet"><style>body{font-family:'Cairo',sans-serif;direction:rtl;padding:20px}h1{color:#065f46;text-align:center}.date-info{text-align:center;color:#047857;margin-bottom:20px}table{width:100%;border-collapse:collapse;margin-top:20px}th{background:#047857;color:white;padding:10px}td{padding:8px;border-bottom:1px solid #ddd;text-align:center}@media print{button{display:none}}.print-btn{background:#059669;color:white;padding:10px 30px;border:none;border-radius:8px;font-size:16px;cursor:pointer;margin-top:20px}</style></head><body><h1>📋 تقرير المرحلة ${sectionName} اليومي</h1><div class="date-info">📅 ${hDate} | 📆 ${gDate}</div>${el.innerHTML}<div style="text-align:center;margin-top:20px"><button class="print-btn" onclick="window.print()">🖨️ طباعة / حفظ PDF</button></div></body></html>`);
+    printWindow.document.write(`<!DOCTYPE html><html dir="rtl"><head><meta charset="UTF-8"><title>تقرير ${sectionName} اليومي</title><link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet"><style>
+        * { font-family: 'Cairo', sans-serif; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+        body { direction: rtl; padding: 20px; background: #f8fafc; }
+        h1 { color: #065f46; text-align: center; font-size: 26px; }
+        .date-info { text-align: center; color: #047857; margin-bottom: 20px; background: white; padding: 12px; border-radius: 40px; font-size: 15px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; background: white; border-radius: 16px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        th { background: #047857 !important; color: white !important; padding: 12px 8px; text-align: center; font-size: 13px; }
+        td { padding: 10px 6px; border-bottom: 1px solid #e5e7eb; text-align: center; font-size: 12px; }
+        @media print { body { background: white; padding: 10px; } button { display: none; } th { background: #047857 !important; } }
+        .print-btn { background: #059669; color: white; padding: 14px 30px; border: none; border-radius: 40px; font-size: 18px; cursor: pointer; margin: 30px auto 0; display: block; font-family: 'Cairo', sans-serif; }
+    </style></head><body><h1>📋 تقرير المرحلة ${sectionName} اليومي</h1><div class="date-info">📅 ${hDate} | 📆 ${gDate} | ${dateStr}</div>${el.innerHTML}<button class="print-btn" onclick="window.print()">🖨️ طباعة / حفظ PDF</button></body></html>`);
     printWindow.document.close();
 }
-
 function exportMonthlyReport(l) { 
     const sectionName = SECTION_NAMES[l];
     const monthStr = currentReportMonth.toLocaleDateString('ar-SA', { month: 'long', year: 'numeric' });
@@ -1750,7 +1771,18 @@ function exportMonthlyReport(l) {
     const hDate = document.getElementById('hijriDate').textContent;
     const summaryHTML = document.getElementById(`${l}-summary`).innerHTML;
     const printWindow = window.open('', '_blank');
-    printWindow.document.write(`<!DOCTYPE html><html dir="rtl"><head><meta charset="UTF-8"><title>تقرير ${sectionName} الشهري</title><link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet"><style>body{font-family:'Cairo',sans-serif;direction:rtl;padding:20px}h1{color:#065f46;text-align:center}.date-info{text-align:center;color:#047857;margin-bottom:20px}table{width:100%;border-collapse:collapse;margin-top:20px}th{background:#047857;color:white;padding:10px}td{padding:8px;border-bottom:1px solid #ddd;text-align:center}@media print{button{display:none}}.print-btn{background:#059669;color:white;padding:10px 30px;border:none;border-radius:8px;font-size:16px;cursor:pointer;margin-top:20px}</style></head><body><h1>📊 تقرير المرحلة ${sectionName} الشهري</h1><div class="date-info">${monthStr}</div>${summaryHTML}<div style="text-align:center;margin-top:20px"><button class="print-btn" onclick="window.print()">🖨️ طباعة / حفظ PDF</button></div></body></html>`);
+    printWindow.document.write(`<!DOCTYPE html><html dir="rtl"><head><meta charset="UTF-8"><title>تقرير ${sectionName} الشهري</title><link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet"><style>
+        * { font-family: 'Cairo', sans-serif; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+        body { direction: rtl; padding: 20px; background: #f8fafc; }
+        h1 { color: #065f46; text-align: center; font-size: 26px; }
+        .date-info { text-align: center; color: #047857; margin-bottom: 20px; background: white; padding: 12px; border-radius: 40px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; background: white; border-radius: 16px; overflow: hidden; }
+        th { background: #047857 !important; color: white !important; padding: 12px 8px; text-align: center; }
+        td { padding: 10px 8px; border-bottom: 1px solid #e5e7eb; text-align: center; }
+        .total-row { background: #f0fdf4 !important; font-weight: 700; }
+        @media print { body { background: white; padding: 10px; } button { display: none; } th { background: #047857 !important; } .total-row { background: #f0fdf4 !important; } }
+        .print-btn { background: #059669; color: white; padding: 14px 30px; border: none; border-radius: 40px; font-size: 18px; cursor: pointer; margin: 30px auto 0; display: block; }
+    </style></head><body><h1>📊 تقرير المرحلة ${sectionName} الشهري</h1><div class="date-info">📅 ${hDate} | 📆 ${gDate} | 🗓️ ${monthStr}</div>${summaryHTML}<button class="print-btn" onclick="window.print()">🖨️ طباعة / حفظ PDF</button></body></html>`);
     printWindow.document.close();
 }
 
@@ -1987,10 +2019,19 @@ function exportPointsReport(level, period = 'alltime') {
     const hDate = document.getElementById('hijriDate').textContent;
     
     const printWindow = window.open('', '_blank');
-    printWindow.document.write(`<!DOCTYPE html><html dir="rtl"><head><meta charset="UTF-8"><title>تقرير نقاط ${sectionName} ${periodName}</title><link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet"><style>body{font-family:'Cairo',sans-serif;direction:rtl;padding:20px}h1{color:#065f46;text-align:center}.date-info{text-align:center;color:#047857;margin-bottom:20px}table{width:100%;border-collapse:collapse;margin-top:20px}th{background:#047857;color:white;padding:10px}td{padding:8px;border-bottom:1px solid #ddd;text-align:center}@media print{button{display:none}}.print-btn{background:#059669;color:white;padding:10px 30px;border:none;border-radius:8px;font-size:16px;cursor:pointer;margin-top:20px}</style></head><body><h1>⭐ تقرير نقاط المرحلة ${sectionName} (${periodName})</h1><div class="date-info">📅 ${hDate} | 📆 ${gDate}</div>${container.innerHTML}<div style="text-align:center;margin-top:20px"><button class="print-btn" onclick="window.print()">🖨️ طباعة / حفظ PDF</button></div></body></html>`);
+    printWindow.document.write(`<!DOCTYPE html><html dir="rtl"><head><meta charset="UTF-8"><title>تقرير نقاط ${sectionName} ${periodName}</title><link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet"><style>
+        * { font-family: 'Cairo', sans-serif; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+        body { direction: rtl; padding: 20px; background: #f8fafc; }
+        h1 { color: #065f46; text-align: center; font-size: 26px; }
+        .date-info { text-align: center; color: #047857; margin-bottom: 20px; background: white; padding: 12px; border-radius: 40px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; background: white; border-radius: 16px; overflow: hidden; }
+        th { background: #047857 !important; color: white !important; padding: 12px 8px; text-align: center; }
+        td { padding: 10px 8px; border-bottom: 1px solid #e5e7eb; text-align: center; }
+        @media print { body { background: white; padding: 10px; } button { display: none; } th { background: #047857 !important; } }
+        .print-btn { background: #059669; color: white; padding: 14px 30px; border: none; border-radius: 40px; font-size: 18px; cursor: pointer; margin: 30px auto 0; display: block; }
+    </style></head><body><h1>⭐ تقرير نقاط المرحلة ${sectionName} (${periodName})</h1><div class="date-info">📅 ${hDate} | 📆 ${gDate}</div>${container.innerHTML}<button class="print-btn" onclick="window.print()">🖨️ طباعة / حفظ PDF</button></body></html>`);
     printWindow.document.close();
-}
-// ============================================================
+}// ============================================================
 // ADMIN PANEL
 // ============================================================
 function showAdminPanel() { 
@@ -2483,14 +2524,16 @@ function exportHistoryPDF() {
         <title>سجل التغييرات</title>
         <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
         <style>
-            body{font-family:'Cairo',sans-serif;direction:rtl;padding:20px}
-            h1{color:#065f46;text-align:center}
-            .filters{text-align:center;margin-bottom:20px;color:#666}
-            table{width:100%;border-collapse:collapse;margin-top:20px}
-            th{background:#047857;color:white;padding:10px}
-            td{padding:8px;border-bottom:1px solid #ddd;text-align:center}
-            @media print{button{display:none}}
-            .print-btn{background:#059669;color:white;padding:10px 30px;border:none;border-radius:8px;font-size:16px;cursor:pointer;margin-top:20px}
+            * { font-family: 'Cairo', sans-serif; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+            body { direction: rtl; padding: 20px; background: #f8fafc; }
+            h1 { color: #065f46; text-align: center; font-size: 26px; }
+            .filters { text-align: center; margin-bottom: 20px; color: #666; background: white; padding: 12px; border-radius: 40px; }
+            .date-info { text-align: center; color: #047857; margin-bottom: 20px; }
+            table { width: 100%; border-collapse: collapse; margin-top: 20px; background: white; border-radius: 16px; overflow: hidden; }
+            th { background: #047857 !important; color: white !important; padding: 12px 8px; text-align: center; }
+            td { padding: 10px 8px; border-bottom: 1px solid #e5e7eb; text-align: center; }
+            @media print { body { background: white; padding: 10px; } button { display: none; } th { background: #047857 !important; } }
+            .print-btn { background: #059669; color: white; padding: 14px 30px; border: none; border-radius: 40px; font-size: 18px; cursor: pointer; margin: 30px auto 0; display: block; }
         </style>
         </head><body>
         <h1>📜 سجل التغييرات</h1>
@@ -2499,7 +2542,7 @@ function exportHistoryPDF() {
             ${sectionFilter !== 'all' ? ' | 🏫 المرحلة: ' + sectionFilter : ''}
             ${dateFilter ? ' | 📅 التاريخ: ' + dateFilter : ''}
         </div>
-        <div style="text-align:center">📅 ${hDate} | 📆 ${gDate}</div>
+        <div class="date-info">📅 ${hDate} | 📆 ${gDate}</div>
         <table><tr><th>التاريخ</th><th>المعلم</th><th>الطالب</th><th>المرحلة</th><th>الإجراء</th></tr>`;
     
     filtered.forEach(log => {
@@ -2511,12 +2554,11 @@ function exportHistoryPDF() {
         html += `<tr><td>${date}</td><td>${teacher}</td><td>${student}</td><td>${section}</td><td>${details}</td></tr>`;
     });
     
-    html += `</table><div style="text-align:center;margin-top:20px"><button class="print-btn" onclick="window.print()">🖨️ طباعة / حفظ PDF</button></div></body></html>`;
+    html += `</table><button class="print-btn" onclick="window.print()">🖨️ طباعة / حفظ PDF</button></body></html>`;
     
     printWindow.document.write(html);
     printWindow.document.close();
 }
-
 // ============================================================
 // STUDENT REPORTS FUNCTIONS
 // ============================================================
@@ -2744,33 +2786,31 @@ function exportStudentReportPDF() {
             <title>${title}</title>
             <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
             <style>
-                body { font-family: 'Cairo', sans-serif; direction: rtl; padding: 20px; }
-                h1 { color: #065f46; text-align: center; }
-                .date-info { text-align: center; color: #047857; margin-bottom: 20px; }
-                table { width: 100%; border-collapse: collapse; margin: 20px 0; }
-                th { background: #047857; color: white; padding: 10px; }
-                td { padding: 8px; border-bottom: 1px solid #ddd; text-align: center; }
+                * { font-family: 'Cairo', sans-serif; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+                body { direction: rtl; padding: 20px; background: #f8fafc; }
+                h1 { color: #065f46; text-align: center; font-size: 22px; }
+                .date-info { text-align: center; color: #047857; margin-bottom: 20px; background: white; padding: 12px; border-radius: 40px; }
+                table { width: 100%; border-collapse: collapse; margin: 20px 0; background: white; border-radius: 16px; overflow: hidden; }
+                th { background: #047857 !important; color: white !important; padding: 10px 6px; text-align: center; font-size: 13px; }
+                td { padding: 8px 6px; border-bottom: 1px solid #e5e7eb; text-align: center; font-size: 12px; }
                 .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 20px 0; }
-                .stats div { background: #f0fdf4; padding: 12px; border-radius: 8px; text-align: center; }
-                @media print { button { display: none; } }
-                .print-btn { background: #059669; color: white; padding: 10px 30px; border: none; border-radius: 8px; font-size: 16px; cursor: pointer; margin-top: 20px; }
+                .stats div { background: #f0fdf4 !important; padding: 12px; border-radius: 8px; text-align: center; }
+                @media print { body { background: white; padding: 10px; } button { display: none; } th { background: #047857 !important; } .stats div { background: #f0fdf4 !important; } }
+                .print-btn { background: #059669; color: white; padding: 14px 30px; border: none; border-radius: 40px; font-size: 18px; cursor: pointer; margin: 20px auto 0; display: block; }
             </style>
         </head>
         <body>
             <h1>${title}</h1>
             <div class="date-info">📅 ${hDate} | 📆 ${gDate}</div>
             ${table.outerHTML}
-            <h3 style="color: #065f46; margin-top: 20px;">📊 إحصائيات الشهر</h3>
+            <h3 style="color: #065f46; margin-top: 20px; text-align: center;">📊 إحصائيات الشهر</h3>
             <div class="stats">${stats.innerHTML}</div>
-            <div style="text-align: center; margin-top: 20px;">
-                <button class="print-btn" onclick="window.print()">🖨️ طباعة / حفظ PDF</button>
-            </div>
+            <button class="print-btn" onclick="window.print()">🖨️ طباعة / حفظ PDF</button>
         </body>
         </html>
     `);
     printWindow.document.close();
 }
-
 window.onload = () => {
     subscribeToRealtimeChanges();
     loadQuranData();
