@@ -16,137 +16,6 @@ let isOwnChange = false;
 
 
 // ============================================================
-// QURAN MILESTONES - Partial Page Tracking
-// ============================================================
-let quranMilestones = {};
-
-async function loadQuranMilestones() {
-    try {
-        const response = await fetch('quran_milestones.json');
-        quranMilestones = await response.json();
-        console.log('✅ Quran milestones loaded');
-        return true;
-    } catch (e) {
-        console.error('❌ Failed to load milestones:', e);
-        return false;
-    }
-}
-
-// Helper: Get surah number from name
-function getSurahNumberFromName(name) {
-    const surah = surahsData.find(s => s.name === name);
-    return surah ? surah.number : null;
-}
-
-// Check if a verse is exactly at a milestone on a specific page
-function getMilestoneType(verseKey, page) {
-    const m = quranMilestones[page];
-    if (!m) return null;
-    
-    if (verseKey === m.quarter) return 'quarter';
-    if (verseKey === m.half) return 'half';
-    if (verseKey === m.threeQuarter) return 'threeQuarter';
-    if (verseKey === m.lastVerse) return 'last';
-    return null;
-}
-
-function findPageForVerse(verseKey) {
-    const [surahNum, verseNum] = verseKey.split(':').map(Number);
-    
-    let foundPage = null;
-    
-    for (let page = 1; page <= 604; page++) {
-        const m = quranMilestones[page];
-        if (!m) continue;
-        
-        const lastVerseKey = m.lastVerse;
-        const [lastSurah, lastVerse] = lastVerseKey.split(':').map(Number);
-        
-        // If we've passed our surah, return the last page we saw with this surah
-        if (lastSurah > surahNum) {
-            return foundPage || page;
-        }
-        
-        // If this page is in our surah
-        if (lastSurah === surahNum) {
-            foundPage = page;
-            if (verseNum <= lastVerse) {
-                return page;
-            }
-        }
-    }
-    
-    return foundPage || 604;
-}
-// Calculate page fraction from start of page to a verse
-function getFractionFromStart(verseKey, page) {
-    const m = quranMilestones[page];
-    if (!m) return 0;
-    
-    // Special case: First verse of page is 0 progress from start
-    if (verseKey === "1:1") return 0;
-    
-    // Check if it's the first verse of any page
-    const [surah, verse] = verseKey.split(':').map(Number);
-    if (verse === 1) {
-        // Could be first verse of a surah
-        return 0;
-    }
-    
-    // Exact milestone matches
-    if (verseKey === m.quarter) return 0.25;
-    if (verseKey === m.half) return 0.50;
-    if (verseKey === m.threeQuarter) return 0.75;
-    if (verseKey === m.lastVerse) return 1.0;
-    
-    // For other verses...
-    const quarter = m.quarter.split(':').map(Number)[1];
-    const half = m.half.split(':').map(Number)[1];
-    const threeQuarter = m.threeQuarter.split(':').map(Number)[1];
-    const last = m.lastVerse.split(':').map(Number)[1];
-    
-    if (verse < quarter) return 0;
-    if (verse < half) return 0.25;
-    if (verse < threeQuarter) return 0.50;
-    if (verse < last) return 0.75;
-    return 1.0;
-}
-
-// Calculate page fraction from a verse to end of page
-function getFractionToEnd(verseKey, page) {
-    const m = quranMilestones[page];
-    if (!m) return 0;
-    
-    // Special case: First verse of page should return 1.0 (the whole page)
-    const [surah, verse] = verseKey.split(':').map(Number);
-    
-    // Check if this is the FIRST verse of the page
-    if (verseKey === "1:1") return 1.0;
-    if (verse === 1) {
-        // First verse of a surah on this page
-        return 1.0;
-    }
-    
-    // Exact milestone matches
-    if (verseKey === m.quarter) return 0.75;
-    if (verseKey === m.half) return 0.50;
-    if (verseKey === m.threeQuarter) return 0.25;
-    if (verseKey === m.lastVerse) return 0;
-    
-    // For non-milestone verses
-    const quarter = m.quarter.split(':').map(Number)[1];
-    const half = m.half.split(':').map(Number)[1];
-    const threeQuarter = m.threeQuarter.split(':').map(Number)[1];
-    const last = m.lastVerse.split(':').map(Number)[1];
-    
-    if (verse <= quarter) return 0.75;
-    if (verse <= half) return 0.50;
-    if (verse <= threeQuarter) return 0.25;
-    if (verse <= last) return 0;
-    return 0;
-}
-
-// ============================================================
 // SMART SYNC - Only runs when tab is active
 // ============================================================
 let isTabActive = true;
@@ -373,7 +242,6 @@ function toggleSidebar() {
     overlay.classList.add('show');
     
     updateAdminVisibility();
-    updateSidebarTrackerVisibility();  // ✅ ADD THIS
 }
 
 function closeSidebar() {
@@ -393,47 +261,10 @@ function updateAdminVisibility() {
     }
 }
 
-function updateSidebarTrackerVisibility() {
-    // Get all sidebar items by ID
-    const items = {
-        tracker: document.getElementById('sidebar-tracker'),
-        trackerDivider: document.getElementById('sidebar-tracker-divider'),
-        reports: document.getElementById('sidebar-reports'),
-        points: document.getElementById('sidebar-points'),
-        studentReports: document.getElementById('sidebar-studentreports'),
-        history: document.getElementById('sidebar-history')
-    };
-    
-    // Current page check
-    const currentPage = currentSection; // 'highschool', 'middleschool', 'elementary', 'reports', 'points', 'studentReports', 'history'
-    const isOnTracker = ['highschool', 'middleschool', 'elementary'].includes(currentPage);
-    
-    // Hide Return to Tracker when on tracker
-    if (items.tracker) items.tracker.style.display = isOnTracker ? 'none' : 'flex';
-    if (items.trackerDivider) items.trackerDivider.style.display = isOnTracker ? 'none' : 'block';
-    
-    // Hide Reports when on reports
-    if (items.reports) items.reports.style.display = currentPage === 'reports' ? 'none' : 'flex';
-    
-    // Hide Points when on points
-    if (items.points) items.points.style.display = currentPage === 'points' ? 'none' : 'flex';
-    
-    // Hide Student Reports when on student reports
-    if (items.studentReports) items.studentReports.style.display = currentPage === 'studentReports' ? 'none' : 'flex';
-    
-    // Hide History when on history
-    if (items.history && !items.history.classList.contains('hidden')) {
-        items.history.style.display = currentPage === 'history' ? 'none' : 'flex';
-    }
-}
 function navigateTo(page) {
     closeSidebar();
     
     switch(page) {
-        case 'tracker':
-            // Return to main tracker
-            switchSection(currentSection);
-            break;
         case 'reports':
             switchSection('reports');
             break;
@@ -482,61 +313,27 @@ const AYAH_COUNTS = [
 ];
 
 
-
+// ============================================================
+// NEW PAGE CALCULATION USING VERSE MAPPING
+// ============================================================
+function getPage(surah, verse) {
+    const key = `${surah}:${verse}`;
+    return VERSE_PAGE_MAPPING[key] || null;
+}
 
 function calculatePages(startSurah, startVerse, endSurah, endVerse) {
-    console.log('📊 calculatePages called with:', { startSurah, startVerse, endSurah, endVerse });
-    
-    // Convert names to numbers if needed
+    // Convert name to number if needed
     const startNum = isNaN(startSurah) ? getSurahNumberFromName(startSurah) : parseInt(startSurah);
     const endNum = isNaN(endSurah) ? getSurahNumberFromName(endSurah) : parseInt(endSurah);
     
-    console.log('📊 Converted numbers:', { startNum, endNum });
-    
-    if (!startNum || !endNum) {
-        console.warn('❌ Could not find surah numbers');
-        return 0;
-    }
-    
-    const startKey = `${startNum}:${startVerse}`;
-    const endKey = `${endNum}:${endVerse}`;
-    
-    console.log('📊 Verse keys:', { startKey, endKey });
-    
-    const startPage = findPageForVerse(startKey);
-    const endPage = findPageForVerse(endKey);
-    
-    console.log('📊 Found pages:', { startPage, endPage });
+    const startPage = getPage(startNum, parseInt(startVerse));
+    const endPage = getPage(endNum, parseInt(endVerse));
     
     if (startPage === null || endPage === null) {
-        console.warn('❌ Could not find pages for verses');
         return 0;
     }
     
-    let totalPages = 0;
-    
-    if (startPage === endPage) {
-        const startFrac = getFractionFromStart(startKey, startPage);
-        const endFrac = getFractionFromStart(endKey, endPage);
-        totalPages = endFrac - startFrac;
-        console.log('📊 Same page calculation:', { startFrac, endFrac, totalPages });
-    } else {
-        totalPages += getFractionToEnd(startKey, startPage);
-        console.log('📊 First page fraction:', getFractionToEnd(startKey, startPage));
-        
-        for (let p = startPage + 1; p < endPage; p++) {
-            totalPages += 1;
-        }
-        console.log('📊 Full pages in between:', endPage - startPage - 1);
-        
-        totalPages += getFractionFromStart(endKey, endPage);
-        console.log('📊 Last page fraction:', getFractionFromStart(endKey, endPage));
-    }
-    
-    const result = Math.round(totalPages * 100) / 100;
-    console.log('✅ Final page count:', result);
-    
-    return result;
+    return endPage - startPage + 1;
 }
 
 function getSurahNumberFromName(name) {
@@ -667,9 +464,6 @@ async function loadQuranData() {
     await updateDateDisplay();
     await loadFromCloud();
     
-    // ✅ ADD THIS LINE
-    await loadQuranMilestones();
-    
     try { 
         const r = await fetch('https://api.alquran.cloud/v1/surah'); 
         const data = await r.json(); 
@@ -681,7 +475,7 @@ async function loadQuranData() {
             numberOfAyahs: surah.numberOfAyahs
         }));
         
-        switchSection('highschool');
+              switchSection('highschool');
     } catch (e) {
         surahsData = SURAH_NAMES_AR.map((name, index) => ({
             number: index + 1,
@@ -1052,24 +846,19 @@ function switchSection(section) {
     // Show selected section
     if (section === 'reports') {
         document.getElementById('reportsView').classList.remove('hidden');
-        document.getElementById('reportsView').style.display = 'block';
         document.getElementById('trackerView').classList.add('hidden');
         document.getElementById('pointsView').classList.add('hidden');
         document.getElementById('studentReportsView')?.classList.add('hidden');
         document.getElementById('section-history')?.classList.add('hidden');
     } else if (section === 'points') {
         document.getElementById('pointsView').classList.remove('hidden');
-        document.getElementById('pointsView').style.display = 'block';
         document.getElementById('trackerView').classList.add('hidden');
         document.getElementById('reportsView').classList.add('hidden');
         document.getElementById('studentReportsView')?.classList.add('hidden');
         document.getElementById('section-history')?.classList.add('hidden');
         initPointsTab();
-    } else if (section === 'studentReports') {
+      } else if (section === 'studentReports') {
         document.getElementById('studentReportsView')?.classList.remove('hidden');
-        if (document.getElementById('studentReportsView')) {
-            document.getElementById('studentReportsView').style.display = 'block';
-        }
         document.getElementById('trackerView').classList.add('hidden');
         document.getElementById('reportsView').classList.add('hidden');
         document.getElementById('pointsView').classList.add('hidden');
@@ -1077,16 +866,12 @@ function switchSection(section) {
         initStudentReportsTab();
     } else if (section === 'history') {
         document.getElementById('section-history')?.classList.remove('hidden');
-        if (document.getElementById('section-history')) {
-            document.getElementById('section-history').style.display = 'block';
-        }
         document.getElementById('trackerView').classList.add('hidden');
         document.getElementById('reportsView').classList.add('hidden');
         document.getElementById('pointsView').classList.add('hidden');
         document.getElementById('studentReportsView')?.classList.add('hidden');
     } else {
         document.getElementById('trackerView').classList.remove('hidden');
-        document.getElementById('trackerView').style.display = 'block';
         document.getElementById('reportsView').classList.add('hidden');
         document.getElementById('pointsView').classList.add('hidden');
         document.getElementById('studentReportsView')?.classList.add('hidden');
@@ -1124,6 +909,7 @@ function switchSection(section) {
     } else if (section === 'points') {
         // Already handled by initPointsTab()
     } else if (section === 'studentReports') {
+        // We'll build this next
         console.log('Student Reports tab clicked');
     } else if (section !== 'history') {
         loadStudentCounts();
@@ -1131,8 +917,6 @@ function switchSection(section) {
         updateStudentDropdown();
         loadStudent(1);
     }
-    
-    updateSidebarTrackerVisibility();
 }
 // ============================================================
 // SIMPLE STUDENT DROPDOWN
@@ -1747,22 +1531,10 @@ function exportAllPointsReport(period) {
     }
     
     const printWindow = window.open('', '_blank');
-    printWindow.document.write(`<!DOCTYPE html><html dir="rtl"><head><meta charset="UTF-8"><title>تقرير النقاط ${periodName}</title><link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet"><style>
-        * { font-family: 'Cairo', sans-serif; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-        body { direction: rtl; padding: 20px; background: #f8fafc; }
-        h1 { color: #065f46; text-align: center; font-size: 26px; }
-        .date-info { text-align: center; color: #047857; margin-bottom: 20px; background: white; padding: 12px; border-radius: 40px; }
-        .columns { display: flex; gap: 15px; }
-        .col { flex: 1; background: white; border-radius: 16px; padding: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
-        .col h3 { color: #047857; text-align: center; margin-bottom: 10px; background: #f0fdf4; padding: 10px; border-radius: 40px; }
-        table { width: 100%; border-collapse: collapse; }
-        th { background: #047857 !important; color: white !important; padding: 10px 8px; text-align: center; }
-        td { padding: 8px 6px; border-bottom: 1px solid #e5e7eb; text-align: center; }
-        @media print { body { background: white; padding: 10px; } button { display: none; } th { background: #047857 !important; } .col h3 { background: #f0fdf4 !important; } }
-        .print-btn { background: #059669; color: white; padding: 14px 30px; border: none; border-radius: 40px; font-size: 18px; cursor: pointer; margin: 30px auto 0; display: block; width: fit-content; }
-    </style></head><body><h1>⭐ تقرير النقاط ${periodName}</h1><div class="date-info">📅 ${hDate} | 📆 ${gDate}${dateInfo ? ' | ' + dateInfo : ''}</div><div class="columns"><div class="col"><h3>🏫 ثانوي</h3>${highHTML}</div><div class="col"><h3>🏫 متوسط</h3>${middleHTML}</div><div class="col"><h3>🏫 ابتدائي</h3>${elemHTML}</div></div><button class="print-btn" onclick="window.print()">🖨️ طباعة / حفظ PDF</button></body></html>`);
+    printWindow.document.write(`<!DOCTYPE html><html dir="rtl"><head><meta charset="UTF-8"><title>تقرير النقاط ${periodName}</title><link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet"><style>body{font-family:'Cairo',sans-serif;direction:rtl;padding:20px}h1{color:#065f46;text-align:center}.date-info{text-align:center;color:#047857;margin-bottom:20px}.columns{display:flex;gap:15px}.col{flex:1;background:#f9fafb;border-radius:12px;padding:12px}.col h3{color:#047857;text-align:center;margin-bottom:10px}table{width:100%;border-collapse:collapse}th{background:#047857;color:white;padding:8px}td{padding:6px;border-bottom:1px solid #e5e7eb;text-align:center}@media print{button{display:none}}.print-btn{background:#059669;color:white;padding:10px 30px;border:none;border-radius:8px;font-size:16px;cursor:pointer;margin-top:20px}</style></head><body><h1>⭐ تقرير النقاط ${periodName}</h1><div class="date-info">📅 ${hDate} | 📆 ${gDate}${dateInfo ? ' | ' + dateInfo : ''}</div><div class="columns"><div class="col"><h3>🏫 ثانوي</h3>${highHTML}</div><div class="col"><h3>🏫 متوسط</h3>${middleHTML}</div><div class="col"><h3>🏫 ابتدائي</h3>${elemHTML}</div></div><div style="text-align:center;margin-top:20px"><button class="print-btn" onclick="window.print()">🖨️ طباعة / حفظ PDF</button></div></body></html>`);
     printWindow.document.close();
-}// ============================================================
+}
+// ============================================================
 // PDF EXPORT
 // ============================================================
 function exportDailyReport(l) { 
@@ -1773,19 +1545,10 @@ function exportDailyReport(l) {
     const gDate = getGregorianDate();
     const hDate = document.getElementById('hijriDate').textContent;
     const printWindow = window.open('', '_blank');
-    printWindow.document.write(`<!DOCTYPE html><html dir="rtl"><head><meta charset="UTF-8"><title>تقرير ${sectionName} اليومي</title><link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet"><style>
-        * { font-family: 'Cairo', sans-serif; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-        body { direction: rtl; padding: 20px; background: #f8fafc; }
-        h1 { color: #065f46; text-align: center; font-size: 26px; }
-        .date-info { text-align: center; color: #047857; margin-bottom: 20px; background: white; padding: 12px; border-radius: 40px; font-size: 15px; }
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; background: white; border-radius: 16px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
-        th { background: #047857 !important; color: white !important; padding: 12px 8px; text-align: center; font-size: 13px; }
-        td { padding: 10px 6px; border-bottom: 1px solid #e5e7eb; text-align: center; font-size: 12px; }
-        @media print { body { background: white; padding: 10px; } button { display: none; } th { background: #047857 !important; } }
-        .print-btn { background: #059669; color: white; padding: 14px 30px; border: none; border-radius: 40px; font-size: 18px; cursor: pointer; margin: 30px auto 0; display: block; font-family: 'Cairo', sans-serif; }
-    </style></head><body><h1>📋 تقرير المرحلة ${sectionName} اليومي</h1><div class="date-info">📅 ${hDate} | 📆 ${gDate} | ${dateStr}</div>${el.innerHTML}<button class="print-btn" onclick="window.print()">🖨️ طباعة / حفظ PDF</button></body></html>`);
+    printWindow.document.write(`<!DOCTYPE html><html dir="rtl"><head><meta charset="UTF-8"><title>تقرير ${sectionName} اليومي</title><link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet"><style>body{font-family:'Cairo',sans-serif;direction:rtl;padding:20px}h1{color:#065f46;text-align:center}.date-info{text-align:center;color:#047857;margin-bottom:20px}table{width:100%;border-collapse:collapse;margin-top:20px}th{background:#047857;color:white;padding:10px}td{padding:8px;border-bottom:1px solid #ddd;text-align:center}@media print{button{display:none}}.print-btn{background:#059669;color:white;padding:10px 30px;border:none;border-radius:8px;font-size:16px;cursor:pointer;margin-top:20px}</style></head><body><h1>📋 تقرير المرحلة ${sectionName} اليومي</h1><div class="date-info">📅 ${hDate} | 📆 ${gDate}</div>${el.innerHTML}<div style="text-align:center;margin-top:20px"><button class="print-btn" onclick="window.print()">🖨️ طباعة / حفظ PDF</button></div></body></html>`);
     printWindow.document.close();
 }
+
 function exportMonthlyReport(l) { 
     const sectionName = SECTION_NAMES[l];
     const monthStr = currentReportMonth.toLocaleDateString('ar-SA', { month: 'long', year: 'numeric' });
@@ -1793,234 +1556,21 @@ function exportMonthlyReport(l) {
     const hDate = document.getElementById('hijriDate').textContent;
     const summaryHTML = document.getElementById(`${l}-summary`).innerHTML;
     const printWindow = window.open('', '_blank');
-    printWindow.document.write(`<!DOCTYPE html><html dir="rtl"><head><meta charset="UTF-8"><title>تقرير ${sectionName} الشهري</title><link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet"><style>
-        * { font-family: 'Cairo', sans-serif; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-        body { direction: rtl; padding: 20px; background: #f8fafc; }
-        h1 { color: #065f46; text-align: center; font-size: 26px; }
-        .date-info { text-align: center; color: #047857; margin-bottom: 20px; background: white; padding: 12px; border-radius: 40px; }
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; background: white; border-radius: 16px; overflow: hidden; }
-        th { background: #047857 !important; color: white !important; padding: 12px 8px; text-align: center; }
-        td { padding: 10px 8px; border-bottom: 1px solid #e5e7eb; text-align: center; }
-        .total-row { background: #f0fdf4 !important; font-weight: 700; }
-        @media print { body { background: white; padding: 10px; } button { display: none; } th { background: #047857 !important; } .total-row { background: #f0fdf4 !important; } }
-        .print-btn { background: #059669; color: white; padding: 14px 30px; border: none; border-radius: 40px; font-size: 18px; cursor: pointer; margin: 30px auto 0; display: block; }
-    </style></head><body><h1>📊 تقرير المرحلة ${sectionName} الشهري</h1><div class="date-info">📅 ${hDate} | 📆 ${gDate} | 🗓️ ${monthStr}</div>${summaryHTML}<button class="print-btn" onclick="window.print()">🖨️ طباعة / حفظ PDF</button></body></html>`);
+    printWindow.document.write(`<!DOCTYPE html><html dir="rtl"><head><meta charset="UTF-8"><title>تقرير ${sectionName} الشهري</title><link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet"><style>body{font-family:'Cairo',sans-serif;direction:rtl;padding:20px}h1{color:#065f46;text-align:center}.date-info{text-align:center;color:#047857;margin-bottom:20px}table{width:100%;border-collapse:collapse;margin-top:20px}th{background:#047857;color:white;padding:10px}td{padding:8px;border-bottom:1px solid #ddd;text-align:center}@media print{button{display:none}}.print-btn{background:#059669;color:white;padding:10px 30px;border:none;border-radius:8px;font-size:16px;cursor:pointer;margin-top:20px}</style></head><body><h1>📊 تقرير المرحلة ${sectionName} الشهري</h1><div class="date-info">${monthStr}</div>${summaryHTML}<div style="text-align:center;margin-top:20px"><button class="print-btn" onclick="window.print()">🖨️ طباعة / حفظ PDF</button></div></body></html>`);
     printWindow.document.close();
 }
 
 function exportGrandTotal() {
     const monthStr = currentReportMonth.toLocaleDateString('ar-SA', { month: 'long', year: 'numeric' });
-    const gDate = getGregorianDate();
-    const hDate = document.getElementById('hijriDate').textContent;
-    
     const highHTML = document.getElementById('highschool-summary').innerHTML;
     const middleHTML = document.getElementById('middleschool-summary').innerHTML;
     const elemHTML = document.getElementById('elementary-summary').innerHTML;
-    
-    const totalPages = document.getElementById('grand-total-pages').textContent;
-    const grandKhatmah = document.getElementById('grand-total-khatmah').textContent;
-    
+    const total = document.getElementById('grand-total-khatmah').textContent;
     const printWindow = window.open('', '_blank');
-    printWindow.document.write(`
-        <!DOCTYPE html>
-        <html dir="rtl">
-        <head>
-            <meta charset="UTF-8">
-            <title>التقرير الشامل لجميع المراحل</title>
-            <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
-            <style>
-                * {
-                    font-family: 'Cairo', sans-serif;
-                    margin: 0;
-                    padding: 0;
-                    box-sizing: border-box;
-                    -webkit-print-color-adjust: exact !important;
-                    print-color-adjust: exact !important;
-                }
-                body {
-                    direction: rtl;
-                    padding: 20px;
-                    background: #f8fafc;
-                }
-                h1 {
-                    color: #065f46;
-                    text-align: center;
-                    margin-bottom: 10px;
-                    font-size: 28px;
-                }
-                .date-info {
-                    text-align: center;
-                    color: #047857;
-                    margin-bottom: 30px;
-                    font-size: 16px;
-                    background: white;
-                    padding: 12px;
-                    border-radius: 40px;
-                    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-                }
-                .section-title {
-                    color: #047857;
-                    margin: 20px 0 15px;
-                    font-size: 20px;
-                    font-weight: 700;
-                    text-align: center;
-                    background: #f0fdf4;
-                    padding: 10px;
-                    border-radius: 40px;
-                }
-                table {
-                    width: 100%;
-                    border-collapse: collapse;
-                    margin: 16px 0;
-                    font-size: 14px;
-                    direction: rtl;
-                    text-align: right;
-                    background: white;
-                    border-radius: 16px;
-                    overflow: hidden;
-                    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-                }
-                th {
-                    background: #047857 !important;
-                    color: white !important;
-                    padding: 12px 8px;
-                    text-align: center;
-                    font-weight: 700;
-                    -webkit-print-color-adjust: exact !important;
-                    print-color-adjust: exact !important;
-                }
-                td {
-                    padding: 10px 8px;
-                    border-bottom: 1px solid #e5e7eb;
-                    text-align: center;
-                }
-                .total-row {
-                    background: #f0fdf4 !important;
-                    font-weight: 700;
-                    -webkit-print-color-adjust: exact !important;
-                    print-color-adjust: exact !important;
-                }
-                .grand-total-section {
-                    background: #059669 !important;
-                    color: white;
-                    padding: 25px;
-                    border-radius: 16px;
-                    margin-top: 30px;
-                    text-align: center;
-                    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-                    -webkit-print-color-adjust: exact !important;
-                    print-color-adjust: exact !important;
-                }
-                .grand-total-section h2 {
-                    color: white !important;
-                    margin-bottom: 20px;
-                    font-size: 24px;
-                }
-                .grand-total-box {
-                    display: flex;
-                    flex-direction: column;
-                    align-items: center;
-                    gap: 15px;
-                }
-                .grand-total-item {
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    gap: 15px;
-                    font-size: 18px;
-                }
-                .grand-total-label {
-                    opacity: 0.95;
-                    color: white;
-                }
-                .grand-total-value {
-                    font-size: 32px;
-                    font-weight: bold;
-                    color: white !important;
-                }
-                .pages-value {
-                    font-size: 28px;
-                }
-                @media print {
-                    body { 
-                        background: white; 
-                        padding: 10px;
-                    }
-                    button { 
-                        display: none; 
-                    }
-                    .print-btn { 
-                        display: none; 
-                    }
-                    th {
-                        background: #047857 !important;
-                        color: white !important;
-                    }
-                    .total-row {
-                        background: #f0fdf4 !important;
-                    }
-                    .grand-total-section {
-                        background: #059669 !important;
-                    }
-                    .section-title {
-                        background: #f0fdf4 !important;
-                    }
-                }
-                .print-btn {
-                    background: #059669;
-                    color: white;
-                    padding: 14px 30px;
-                    border: none;
-                    border-radius: 40px;
-                    font-size: 18px;
-                    font-weight: 700;
-                    cursor: pointer;
-                    margin: 30px auto 0;
-                    display: block;
-                    width: fit-content;
-                    font-family: 'Cairo', sans-serif;
-                    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-                }
-                .print-btn:hover {
-                    background: #047857;
-                }
-            </style>
-        </head>
-        <body>
-            <h1>📊 التقرير الشامل لجميع المراحل</h1>
-            <div class="date-info">
-                📅 ${hDate} | 📆 ${gDate} | 🗓️ ${monthStr}
-            </div>
-            
-            <div class="section-title">🏫 المرحلة الثانوية</div>
-            ${highHTML}
-            
-            <div class="section-title">🏫 المرحلة المتوسطة</div>
-            ${middleHTML}
-            
-            <div class="section-title">🏫 المرحلة الابتدائية</div>
-            ${elemHTML}
-            
-            <div class="grand-total-section">
-                <h2>🎯 المجموع الكلي لجميع المراحل</h2>
-                <div class="grand-total-box">
-                    <div class="grand-total-item">
-                        <span class="grand-total-label">📄 إجمالي الصفحات:</span>
-                        <span class="grand-total-value pages-value">${totalPages}</span>
-                    </div>
-                    <div class="grand-total-item">
-                        <span class="grand-total-label">📚 إجمالي الختمات:</span>
-                        <span class="grand-total-value">${grandKhatmah} ختمة</span>
-                    </div>
-                </div>
-            </div>
-            
-            <button class="print-btn" onclick="window.print()">🖨️ طباعة / حفظ PDF</button>
-        </body>
-        </html>
-    `);
+    printWindow.document.write(`<!DOCTYPE html><html dir="rtl"><head><meta charset="UTF-8"><title>التقرير الشامل</title><link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet"><style>body{font-family:'Cairo',sans-serif;direction:rtl;padding:20px}h1{color:#065f46;text-align:center}h2{color:#047857;margin-top:20px}table{width:100%;border-collapse:collapse;margin:10px 0}th{background:#047857;color:white;padding:10px}td{padding:8px;border-bottom:1px solid #ddd;text-align:center}.grand-total{background:#059669;color:white;padding:20px;border-radius:12px;text-align:center;margin-top:20px}@media print{button{display:none}}.print-btn{background:#059669;color:white;padding:10px 30px;border:none;border-radius:8px;font-size:16px;cursor:pointer;margin-top:20px}</style></head><body><h1>📊 التقرير الشامل لجميع المراحل</h1><p style="text-align:center">${monthStr}</p><h2>🏫 المرحلة الثانوية</h2>${highHTML}<h2>🏫 المرحلة المتوسطة</h2>${middleHTML}<h2>🏫 المرحلة الابتدائية</h2>${elemHTML}<div class="grand-total"><h2 style="color:white">🎯 إجمالي الختمات</h2><div style="font-size:40px">${total} ختمة</div></div><div style="text-align:center;margin-top:20px"><button class="print-btn" onclick="window.print()">🖨️ طباعة / حفظ PDF</button></div></body></html>`);
     printWindow.document.close();
 }
+
 function exportPointsReport(level, period = 'alltime') {
     const sectionName = SECTION_NAMES[level];
     let container;
@@ -2041,19 +1591,10 @@ function exportPointsReport(level, period = 'alltime') {
     const hDate = document.getElementById('hijriDate').textContent;
     
     const printWindow = window.open('', '_blank');
-    printWindow.document.write(`<!DOCTYPE html><html dir="rtl"><head><meta charset="UTF-8"><title>تقرير نقاط ${sectionName} ${periodName}</title><link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet"><style>
-        * { font-family: 'Cairo', sans-serif; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-        body { direction: rtl; padding: 20px; background: #f8fafc; }
-        h1 { color: #065f46; text-align: center; font-size: 26px; }
-        .date-info { text-align: center; color: #047857; margin-bottom: 20px; background: white; padding: 12px; border-radius: 40px; }
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; background: white; border-radius: 16px; overflow: hidden; }
-        th { background: #047857 !important; color: white !important; padding: 12px 8px; text-align: center; }
-        td { padding: 10px 8px; border-bottom: 1px solid #e5e7eb; text-align: center; }
-        @media print { body { background: white; padding: 10px; } button { display: none; } th { background: #047857 !important; } }
-        .print-btn { background: #059669; color: white; padding: 14px 30px; border: none; border-radius: 40px; font-size: 18px; cursor: pointer; margin: 30px auto 0; display: block; }
-    </style></head><body><h1>⭐ تقرير نقاط المرحلة ${sectionName} (${periodName})</h1><div class="date-info">📅 ${hDate} | 📆 ${gDate}</div>${container.innerHTML}<button class="print-btn" onclick="window.print()">🖨️ طباعة / حفظ PDF</button></body></html>`);
+    printWindow.document.write(`<!DOCTYPE html><html dir="rtl"><head><meta charset="UTF-8"><title>تقرير نقاط ${sectionName} ${periodName}</title><link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet"><style>body{font-family:'Cairo',sans-serif;direction:rtl;padding:20px}h1{color:#065f46;text-align:center}.date-info{text-align:center;color:#047857;margin-bottom:20px}table{width:100%;border-collapse:collapse;margin-top:20px}th{background:#047857;color:white;padding:10px}td{padding:8px;border-bottom:1px solid #ddd;text-align:center}@media print{button{display:none}}.print-btn{background:#059669;color:white;padding:10px 30px;border:none;border-radius:8px;font-size:16px;cursor:pointer;margin-top:20px}</style></head><body><h1>⭐ تقرير نقاط المرحلة ${sectionName} (${periodName})</h1><div class="date-info">📅 ${hDate} | 📆 ${gDate}</div>${container.innerHTML}<div style="text-align:center;margin-top:20px"><button class="print-btn" onclick="window.print()">🖨️ طباعة / حفظ PDF</button></div></body></html>`);
     printWindow.document.close();
-}// ============================================================
+}
+// ============================================================
 // ADMIN PANEL
 // ============================================================
 function showAdminPanel() { 
@@ -2546,16 +2087,14 @@ function exportHistoryPDF() {
         <title>سجل التغييرات</title>
         <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
         <style>
-            * { font-family: 'Cairo', sans-serif; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-            body { direction: rtl; padding: 20px; background: #f8fafc; }
-            h1 { color: #065f46; text-align: center; font-size: 26px; }
-            .filters { text-align: center; margin-bottom: 20px; color: #666; background: white; padding: 12px; border-radius: 40px; }
-            .date-info { text-align: center; color: #047857; margin-bottom: 20px; }
-            table { width: 100%; border-collapse: collapse; margin-top: 20px; background: white; border-radius: 16px; overflow: hidden; }
-            th { background: #047857 !important; color: white !important; padding: 12px 8px; text-align: center; }
-            td { padding: 10px 8px; border-bottom: 1px solid #e5e7eb; text-align: center; }
-            @media print { body { background: white; padding: 10px; } button { display: none; } th { background: #047857 !important; } }
-            .print-btn { background: #059669; color: white; padding: 14px 30px; border: none; border-radius: 40px; font-size: 18px; cursor: pointer; margin: 30px auto 0; display: block; }
+            body{font-family:'Cairo',sans-serif;direction:rtl;padding:20px}
+            h1{color:#065f46;text-align:center}
+            .filters{text-align:center;margin-bottom:20px;color:#666}
+            table{width:100%;border-collapse:collapse;margin-top:20px}
+            th{background:#047857;color:white;padding:10px}
+            td{padding:8px;border-bottom:1px solid #ddd;text-align:center}
+            @media print{button{display:none}}
+            .print-btn{background:#059669;color:white;padding:10px 30px;border:none;border-radius:8px;font-size:16px;cursor:pointer;margin-top:20px}
         </style>
         </head><body>
         <h1>📜 سجل التغييرات</h1>
@@ -2564,7 +2103,7 @@ function exportHistoryPDF() {
             ${sectionFilter !== 'all' ? ' | 🏫 المرحلة: ' + sectionFilter : ''}
             ${dateFilter ? ' | 📅 التاريخ: ' + dateFilter : ''}
         </div>
-        <div class="date-info">📅 ${hDate} | 📆 ${gDate}</div>
+        <div style="text-align:center">📅 ${hDate} | 📆 ${gDate}</div>
         <table><tr><th>التاريخ</th><th>المعلم</th><th>الطالب</th><th>المرحلة</th><th>الإجراء</th></tr>`;
     
     filtered.forEach(log => {
@@ -2576,11 +2115,12 @@ function exportHistoryPDF() {
         html += `<tr><td>${date}</td><td>${teacher}</td><td>${student}</td><td>${section}</td><td>${details}</td></tr>`;
     });
     
-    html += `</table><button class="print-btn" onclick="window.print()">🖨️ طباعة / حفظ PDF</button></body></html>`;
+    html += `</table><div style="text-align:center;margin-top:20px"><button class="print-btn" onclick="window.print()">🖨️ طباعة / حفظ PDF</button></div></body></html>`;
     
     printWindow.document.write(html);
     printWindow.document.close();
 }
+
 // ============================================================
 // STUDENT REPORTS FUNCTIONS
 // ============================================================
@@ -2808,31 +2348,33 @@ function exportStudentReportPDF() {
             <title>${title}</title>
             <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
             <style>
-                * { font-family: 'Cairo', sans-serif; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-                body { direction: rtl; padding: 20px; background: #f8fafc; }
-                h1 { color: #065f46; text-align: center; font-size: 22px; }
-                .date-info { text-align: center; color: #047857; margin-bottom: 20px; background: white; padding: 12px; border-radius: 40px; }
-                table { width: 100%; border-collapse: collapse; margin: 20px 0; background: white; border-radius: 16px; overflow: hidden; }
-                th { background: #047857 !important; color: white !important; padding: 10px 6px; text-align: center; font-size: 13px; }
-                td { padding: 8px 6px; border-bottom: 1px solid #e5e7eb; text-align: center; font-size: 12px; }
+                body { font-family: 'Cairo', sans-serif; direction: rtl; padding: 20px; }
+                h1 { color: #065f46; text-align: center; }
+                .date-info { text-align: center; color: #047857; margin-bottom: 20px; }
+                table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+                th { background: #047857; color: white; padding: 10px; }
+                td { padding: 8px; border-bottom: 1px solid #ddd; text-align: center; }
                 .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 20px 0; }
-                .stats div { background: #f0fdf4 !important; padding: 12px; border-radius: 8px; text-align: center; }
-                @media print { body { background: white; padding: 10px; } button { display: none; } th { background: #047857 !important; } .stats div { background: #f0fdf4 !important; } }
-                .print-btn { background: #059669; color: white; padding: 14px 30px; border: none; border-radius: 40px; font-size: 18px; cursor: pointer; margin: 20px auto 0; display: block; }
+                .stats div { background: #f0fdf4; padding: 12px; border-radius: 8px; text-align: center; }
+                @media print { button { display: none; } }
+                .print-btn { background: #059669; color: white; padding: 10px 30px; border: none; border-radius: 8px; font-size: 16px; cursor: pointer; margin-top: 20px; }
             </style>
         </head>
         <body>
             <h1>${title}</h1>
             <div class="date-info">📅 ${hDate} | 📆 ${gDate}</div>
             ${table.outerHTML}
-            <h3 style="color: #065f46; margin-top: 20px; text-align: center;">📊 إحصائيات الشهر</h3>
+            <h3 style="color: #065f46; margin-top: 20px;">📊 إحصائيات الشهر</h3>
             <div class="stats">${stats.innerHTML}</div>
-            <button class="print-btn" onclick="window.print()">🖨️ طباعة / حفظ PDF</button>
+            <div style="text-align: center; margin-top: 20px;">
+                <button class="print-btn" onclick="window.print()">🖨️ طباعة / حفظ PDF</button>
+            </div>
         </body>
         </html>
     `);
     printWindow.document.close();
 }
+
 window.onload = () => {
     subscribeToRealtimeChanges();
     loadQuranData();
