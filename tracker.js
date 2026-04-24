@@ -15,6 +15,82 @@ let isOwnChange = false;
 // Real-time sync variables
 
 
+
+// ============================================================
+// QURAN MILESTONES - Partial Page Tracking
+// ============================================================
+let quranMilestones = {};
+
+async function loadQuranMilestones() {
+    try {
+        const response = await fetch('quran_milestones.json');
+        quranMilestones = await response.json();
+        console.log('✅ Quran milestones loaded');
+        return true;
+    } catch (e) {
+        console.error('❌ Failed to load milestones:', e);
+        return false;
+    }
+}
+
+function findPageForVerse(verseKey) {
+    const [surahNum, verseNum] = verseKey.split(':').map(Number);
+    let foundPage = null;
+    for (let page = 1; page <= 604; page++) {
+        const m = quranMilestones[page];
+        if (!m) continue;
+        const lastVerseKey = m.lastVerse;
+        const [lastSurah, lastVerse] = lastVerseKey.split(':').map(Number);
+        if (lastSurah > surahNum) return foundPage || page;
+        if (lastSurah === surahNum) {
+            foundPage = page;
+            if (verseNum <= lastVerse) return page;
+        }
+    }
+    return foundPage || 604;
+}
+
+function getFractionFromStart(verseKey, page) {
+    const m = quranMilestones[page];
+    if (!m) return 0;
+    if (verseKey === "1:1") return 0;
+    const [surah, verse] = verseKey.split(':').map(Number);
+    if (verse === 1) return 0;
+    if (verseKey === m.quarter) return 0.25;
+    if (verseKey === m.half) return 0.50;
+    if (verseKey === m.threeQuarter) return 0.75;
+    if (verseKey === m.lastVerse) return 1.0;
+    const quarter = m.quarter.split(':').map(Number)[1];
+    const half = m.half.split(':').map(Number)[1];
+    const threeQuarter = m.threeQuarter.split(':').map(Number)[1];
+    const last = m.lastVerse.split(':').map(Number)[1];
+    if (verse < quarter) return 0;
+    if (verse < half) return 0.25;
+    if (verse < threeQuarter) return 0.50;
+    if (verse < last) return 0.75;
+    return 1.0;
+}
+
+function getFractionToEnd(verseKey, page) {
+    const m = quranMilestones[page];
+    if (!m) return 0;
+    const [surah, verse] = verseKey.split(':').map(Number);
+    if (verseKey === "1:1") return 1.0;
+    if (verse === 1) return 1.0;
+    if (verseKey === m.quarter) return 0.75;
+    if (verseKey === m.half) return 0.50;
+    if (verseKey === m.threeQuarter) return 0.25;
+    if (verseKey === m.lastVerse) return 0;
+    const quarter = m.quarter.split(':').map(Number)[1];
+    const half = m.half.split(':').map(Number)[1];
+    const threeQuarter = m.threeQuarter.split(':').map(Number)[1];
+    const last = m.lastVerse.split(':').map(Number)[1];
+    if (verse <= quarter) return 0.75;
+    if (verse <= half) return 0.50;
+    if (verse <= threeQuarter) return 0.25;
+    if (verse <= last) return 0;
+    return 0;
+}
 // ============================================================
 // SMART SYNC - Only runs when tab is active
 // ============================================================
@@ -316,24 +392,35 @@ const AYAH_COUNTS = [
 // ============================================================
 // NEW PAGE CALCULATION USING VERSE MAPPING
 // ============================================================
-function getPage(surah, verse) {
-    const key = `${surah}:${verse}`;
-    return VERSE_PAGE_MAPPING[key] || null;
-}
-
 function calculatePages(startSurah, startVerse, endSurah, endVerse) {
-    // Convert name to number if needed
     const startNum = isNaN(startSurah) ? getSurahNumberFromName(startSurah) : parseInt(startSurah);
     const endNum = isNaN(endSurah) ? getSurahNumberFromName(endSurah) : parseInt(endSurah);
     
-    const startPage = getPage(startNum, parseInt(startVerse));
-    const endPage = getPage(endNum, parseInt(endVerse));
+    if (!startNum || !endNum) return 0;
     
-    if (startPage === null || endPage === null) {
-        return 0;
+    const startKey = `${startNum}:${startVerse}`;
+    const endKey = `${endNum}:${endVerse}`;
+    
+    const startPage = findPageForVerse(startKey);
+    const endPage = findPageForVerse(endKey);
+    
+    if (startPage === null || endPage === null) return 0;
+    
+    let totalPages = 0;
+    
+    if (startPage === endPage) {
+        const startFrac = getFractionFromStart(startKey, startPage);
+        const endFrac = getFractionFromStart(endKey, endPage);
+        totalPages = endFrac - startFrac;
+    } else {
+        totalPages += getFractionToEnd(startKey, startPage);
+        for (let p = startPage + 1; p < endPage; p++) {
+            totalPages += 1;
+        }
+        totalPages += getFractionFromStart(endKey, endPage);
     }
     
-    return endPage - startPage + 1;
+    return Math.round(totalPages * 100) / 100;
 }
 
 function getSurahNumberFromName(name) {
@@ -463,6 +550,7 @@ async function loadQuranData() {
     if (!checkAuth()) return;
     await updateDateDisplay();
     await loadFromCloud();
+    await loadQuranMilestones();  // ✅ ADD THIS
     
     try { 
         const r = await fetch('https://api.alquran.cloud/v1/surah'); 
