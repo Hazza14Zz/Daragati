@@ -1036,10 +1036,10 @@ function switchSection(section) {
     // Show/hide history sidebar item based on admin
     if (isAdmin()) {
         document.getElementById('sidebar-history')?.classList.remove('hidden');
-        document.getElementById('sidebar-admin')?.classList.remove('hidden');
+        
     } else {
         document.getElementById('sidebar-history')?.classList.add('hidden');
-        document.getElementById('sidebar-admin')?.classList.add('hidden');
+         
     }
     
     if (section === 'history') {
