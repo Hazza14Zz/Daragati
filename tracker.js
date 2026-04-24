@@ -1642,41 +1642,7 @@ function loadAllTimePointsColumns() {
     });
 }
 
-// Export All Points Report
-function exportAllPointsReport(period) {
-    const periodNames = { 'weekly': 'الأسبوعي', 'monthly': 'الشهري', 'alltime': 'الكلي' };
-    const periodName = periodNames[period];
-    
-    let highHTML, middleHTML, elemHTML;
-    
-    if (period === 'weekly') {
-        highHTML = document.getElementById('points-weekly-highschool').innerHTML;
-        middleHTML = document.getElementById('points-weekly-middleschool').innerHTML;
-        elemHTML = document.getElementById('points-weekly-elementary').innerHTML;
-    } else if (period === 'monthly') {
-        highHTML = document.getElementById('points-monthly-highschool').innerHTML;
-        middleHTML = document.getElementById('points-monthly-middleschool').innerHTML;
-        elemHTML = document.getElementById('points-monthly-elementary').innerHTML;
-    } else {
-        highHTML = document.getElementById('points-alltime-highschool').innerHTML;
-        middleHTML = document.getElementById('points-alltime-middleschool').innerHTML;
-        elemHTML = document.getElementById('points-alltime-elementary').innerHTML;
-    }
-    
-    const gDate = getGregorianDate();
-    const hDate = document.getElementById('hijriDate').textContent;
-    
-    let dateInfo = '';
-    if (period === 'weekly') {
-        dateInfo = document.getElementById('currentWeekDisplay').textContent;
-    } else if (period === 'monthly') {
-        dateInfo = document.getElementById('currentPointsMonthDisplay').textContent;
-    }
-    
-    const printWindow = window.open('', '_blank');
-    printWindow.document.write(`<!DOCTYPE html><html dir="rtl"><head><meta charset="UTF-8"><title>تقرير النقاط ${periodName}</title><link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet"><style>body{font-family:'Cairo',sans-serif;direction:rtl;padding:20px}h1{color:#065f46;text-align:center}.date-info{text-align:center;color:#047857;margin-bottom:20px}.columns{display:flex;gap:15px}.col{flex:1;background:#f9fafb;border-radius:12px;padding:12px}.col h3{color:#047857;text-align:center;margin-bottom:10px}table{width:100%;border-collapse:collapse}th{background:#047857;color:white;padding:8px}td{padding:6px;border-bottom:1px solid #e5e7eb;text-align:center}@media print{button{display:none}}.print-btn{background:#059669;color:white;padding:10px 30px;border:none;border-radius:8px;font-size:16px;cursor:pointer;margin-top:20px}</style></head><body><h1>⭐ تقرير النقاط ${periodName}</h1><div class="date-info">📅 ${hDate} | 📆 ${gDate}${dateInfo ? ' | ' + dateInfo : ''}</div><div class="columns"><div class="col"><h3>🏫 ثانوي</h3>${highHTML}</div><div class="col"><h3>🏫 متوسط</h3>${middleHTML}</div><div class="col"><h3>🏫 ابتدائي</h3>${elemHTML}</div></div><div style="text-align:center;margin-top:20px"><button class="print-btn" onclick="window.print()">🖨️ طباعة / حفظ PDF</button></div></body></html>`);
-    printWindow.document.close();
-}
+
 // ============================================================
 // SHARED PDF STYLES - Beautiful Islamic Green Theme
 // ============================================================
@@ -1685,6 +1651,8 @@ function getPDFStyles() {
         <style>
             * {
                 font-family: 'Cairo', sans-serif;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
             }
             body {
                 direction: rtl;
@@ -1885,8 +1853,12 @@ function getPDFStyles() {
                 border-bottom: 2px solid #059669;
             }
             
-            /* Print Optimization */
+                       /* Print Optimization */
             @media print {
+                * {
+                    -webkit-print-color-adjust: exact !important;
+                    print-color-adjust: exact !important;
+                }
                 body { 
                     background: white;
                     padding: 20px;
@@ -3129,68 +3101,7 @@ async function loadHistoryFromCloud() {
     }
 }
 
-function exportHistoryPDF() {
-    const teacherFilter = document.getElementById('historyTeacherFilter')?.value || 'all';
-    const sectionFilter = document.getElementById('historySectionFilter')?.value || 'all';
-    const dateFilter = document.getElementById('historyDateFilter')?.value;
-    
-    let filtered = allHistoryLogs;
-    
-    if (teacherFilter !== 'all') {
-        filtered = filtered.filter(log => log.teacherName === teacherFilter || log.teacher_name === teacherFilter);
-    }
-    if (sectionFilter !== 'all') {
-        filtered = filtered.filter(log => log.section === sectionFilter);
-    }
-    if (dateFilter) {
-        filtered = filtered.filter(log => {
-            const logDate = (log.timestamp || log.created_at).split('T')[0];
-            return logDate === dateFilter;
-        });
-    }
-    
-    const printWindow = window.open('', '_blank');
-    const gDate = getGregorianDate();
-    const hDate = document.getElementById('hijriDate').textContent;
-    
-    let html = `
-        <!DOCTYPE html><html dir="rtl"><head><meta charset="UTF-8">
-        <title>سجل التغييرات</title>
-        <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
-        <style>
-            body{font-family:'Cairo',sans-serif;direction:rtl;padding:20px}
-            h1{color:#065f46;text-align:center}
-            .filters{text-align:center;margin-bottom:20px;color:#666}
-            table{width:100%;border-collapse:collapse;margin-top:20px}
-            th{background:#047857;color:white;padding:10px}
-            td{padding:8px;border-bottom:1px solid #ddd;text-align:center}
-            @media print{button{display:none}}
-            .print-btn{background:#059669;color:white;padding:10px 30px;border:none;border-radius:8px;font-size:16px;cursor:pointer;margin-top:20px}
-        </style>
-        </head><body>
-        <h1>📜 سجل التغييرات</h1>
-        <div class="filters">
-            ${teacherFilter !== 'all' ? '👤 المعلم: ' + teacherFilter : ''}
-            ${sectionFilter !== 'all' ? ' | 🏫 المرحلة: ' + sectionFilter : ''}
-            ${dateFilter ? ' | 📅 التاريخ: ' + dateFilter : ''}
-        </div>
-        <div style="text-align:center">📅 ${hDate} | 📆 ${gDate}</div>
-        <table><tr><th>التاريخ</th><th>المعلم</th><th>الطالب</th><th>المرحلة</th><th>الإجراء</th></tr>`;
-    
-    filtered.forEach(log => {
-        const date = new Date(log.timestamp || log.created_at).toLocaleString('ar-SA');
-        const teacher = log.teacherName || log.teacher_name || '-';
-        const student = log.studentName || log.student_name || '-';
-        const section = log.section || '-';
-        const details = log.details || '-';
-        html += `<tr><td>${date}</td><td>${teacher}</td><td>${student}</td><td>${section}</td><td>${details}</td></tr>`;
-    });
-    
-    html += `</table><div style="text-align:center;margin-top:20px"><button class="print-btn" onclick="window.print()">🖨️ طباعة / حفظ PDF</button></div></body></html>`;
-    
-    printWindow.document.write(html);
-    printWindow.document.close();
-}
+
 
 // ============================================================
 // STUDENT REPORTS FUNCTIONS
@@ -3397,54 +3308,7 @@ function loadStudentReport() {
     document.getElementById('studentReportContent')?.classList.remove('hidden');
 }
 
-function exportStudentReportPDF() {
-    if (!currentSelectedStudent) {
-        alert('الرجاء اختيار طالب أولاً');
-        return;
-    }
-    
-    const title = document.getElementById('studentReportTitle').textContent;
-    const table = document.getElementById('studentReportTable').cloneNode(true);
-    const stats = document.getElementById('studentReportStats').cloneNode(true);
-    
-    const gDate = getGregorianDate();
-    const hDate = document.getElementById('hijriDate').textContent;
-    
-    const printWindow = window.open('', '_blank');
-    printWindow.document.write(`
-        <!DOCTYPE html>
-        <html dir="rtl">
-        <head>
-            <meta charset="UTF-8">
-            <title>${title}</title>
-            <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
-            <style>
-                body { font-family: 'Cairo', sans-serif; direction: rtl; padding: 20px; }
-                h1 { color: #065f46; text-align: center; }
-                .date-info { text-align: center; color: #047857; margin-bottom: 20px; }
-                table { width: 100%; border-collapse: collapse; margin: 20px 0; }
-                th { background: #047857; color: white; padding: 10px; }
-                td { padding: 8px; border-bottom: 1px solid #ddd; text-align: center; }
-                .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 20px 0; }
-                .stats div { background: #f0fdf4; padding: 12px; border-radius: 8px; text-align: center; }
-                @media print { button { display: none; } }
-                .print-btn { background: #059669; color: white; padding: 10px 30px; border: none; border-radius: 8px; font-size: 16px; cursor: pointer; margin-top: 20px; }
-            </style>
-        </head>
-        <body>
-            <h1>${title}</h1>
-            <div class="date-info">📅 ${hDate} | 📆 ${gDate}</div>
-            ${table.outerHTML}
-            <h3 style="color: #065f46; margin-top: 20px;">📊 إحصائيات الشهر</h3>
-            <div class="stats">${stats.innerHTML}</div>
-            <div style="text-align: center; margin-top: 20px;">
-                <button class="print-btn" onclick="window.print()">🖨️ طباعة / حفظ PDF</button>
-            </div>
-        </body>
-        </html>
-    `);
-    printWindow.document.close();
-}
+
 
 window.onload = () => {
     subscribeToRealtimeChanges();
