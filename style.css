@@ -779,25 +779,15 @@ label, option, optgroup {
     to { opacity: 1; }
 }
 
-/* Hide old tabs */
-.tabs {
-    display: none !important;
-}
+
 
 /* Admin only items */
 .admin-only.hidden {
     display: none !important;
 }
 
-/* Hide old admin button */
-.admin-btn {
-    display: none !important;
-}
 
-/* Hide old h1 since we have it in top bar */
-h1 {
-    display: none !important;
-}
+
 
 /* ============================================ */
 /* STUDENT REPORTS STYLES */
