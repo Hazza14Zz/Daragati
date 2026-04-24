@@ -1727,8 +1727,9 @@ function exportPointsReport(level, period = 'alltime') {
 function showAdminPanel() { 
     const p = prompt("🔐 كلمة المرور:"); 
     if (p !== ADMIN_PASSWORD) { alert("❌ كلمة مرور غير صحيحة"); return; } 
-    const s = prompt("اختر:\n1- ثانوي\n2- متوسط\n3- ابتدائي\n4- حذف كل البيانات"); 
-    if (s === '4') { resetAllData(); return; } 
+    const s = prompt("اختر:\n1- ثانوي\n2- متوسط\n3- ابتدائي\n4- حذف كل البيانات\n5- حذف سجل التغييرات"); 
+    if (s === '4') { resetAllData(); return; }
+    if (s === '5') { deleteHistoryData(); return; }
     let sec; 
     if (s === '1') sec = 'highschool'; 
     else if (s === '2') sec = 'middleschool'; 
@@ -1844,6 +1845,29 @@ function deleteMultipleStudents(sec) {
     markDataChanged();
     syncToCloud();
     alert(`✅ تم حذف ${uniqueNumbers.length} طالب بنجاح!\nالعدد الآن: ${newCount}`); 
+}
+
+function deleteHistoryData() {
+    if (!confirm("⚠️ هل أنت متأكد من حذف جميع سجلات التغييرات؟\n\nلا يمكن التراجع عن هذا الإجراء!")) return;
+    if (prompt("اكتب: حذف السجل") !== "حذف السجل") {
+        alert("تم الإلغاء");
+        return;
+    }
+    
+    // Clear local history
+    localStorage.removeItem('pendingHistoryLogs');
+    allHistoryLogs = [];
+    
+    // Delete from cloud
+    deleteAllHistoryFromCloud();
+    
+    // Refresh history tab if open
+    if (currentSection === 'history') {
+        document.getElementById('historyTableBody').innerHTML = 
+            '<tr><td colspan="5" style="text-align:center;">✅ تم حذف جميع السجلات</td></tr>';
+    }
+    
+    alert("✅ تم حذف جميع سجلات التغييرات بنجاح!");
 }
 async function deleteAllHistoryFromCloud() {
     try {
