@@ -794,6 +794,10 @@ label, option, optgroup {
     display: none !important;
 }
 
+/* Hide old h1 since we have it in top bar */
+h1 {
+    display: none !important;
+}
 
 /* ============================================ */
 /* STUDENT REPORTS STYLES */
@@ -869,15 +873,4 @@ label, option, optgroup {
 /* Only show section tabs when trackerView is visible */
 #trackerView .section-tabs {
     display: flex !important;
-}
-
-#mainContent {
-    width: 100%;
-    min-height: 100vh;
-}
-
-#mainContent > div.tracker-section:not(.hidden) {
-    display: block !important;
-}
-    min-height: 300px;
 }
