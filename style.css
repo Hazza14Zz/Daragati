@@ -933,3 +933,14 @@ label, option, optgroup {
     width: 100% !important;
     min-height: 300px !important;
 }
+
+#mainContent {
+    width: 100%;
+    min-height: 100vh;
+    display: block;
+}
+
+#mainContent > div {
+    width: 100%;
+    min-height: 300px;
+}
