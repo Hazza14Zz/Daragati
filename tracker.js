@@ -339,15 +339,39 @@ function updateAdminVisibility() {
 }
 
 function updateSidebarTrackerVisibility() {
-    const trackerItem = document.getElementById('sidebar-tracker');
-    if (!trackerItem) return;
+    const items = {
+        tracker: document.getElementById('sidebar-tracker'),
+        reports: document.querySelector('.sidebar-item[onclick*="reports"]'),
+        points: document.querySelector('.sidebar-item[onclick*="points"]'),
+        studentReports: document.querySelector('.sidebar-item[onclick*="studentReports"]'),
+        history: document.getElementById('sidebar-history')
+    };
     
     const isOnTracker = ['highschool', 'middleschool', 'elementary'].includes(currentSection);
     
-    if (isOnTracker) {
-        trackerItem.style.display = 'none';
-    } else {
-        trackerItem.style.display = 'flex';
+    // Return to Tracker - show only when NOT on tracker
+    if (items.tracker) {
+        items.tracker.style.display = isOnTracker ? 'none' : 'flex';
+    }
+    
+    // Reports - hide when on reports page
+    if (items.reports) {
+        items.reports.style.display = currentSection === 'reports' ? 'none' : 'flex';
+    }
+    
+    // Points - hide when on points page
+    if (items.points) {
+        items.points.style.display = currentSection === 'points' ? 'none' : 'flex';
+    }
+    
+    // Student Reports - hide when on student reports page
+    if (items.studentReports) {
+        items.studentReports.style.display = currentSection === 'studentReports' ? 'none' : 'flex';
+    }
+    
+    // History - hide when on history page
+    if (items.history && !items.history.classList.contains('hidden')) {
+        items.history.style.display = currentSection === 'history' ? 'none' : 'flex';
     }
 }
 
