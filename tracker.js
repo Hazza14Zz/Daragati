@@ -373,6 +373,11 @@ function updateSidebarTrackerVisibility() {
     if (items.history && !items.history.classList.contains('hidden')) {
         items.history.style.display = currentSection === 'history' ? 'none' : 'flex';
     }
+    // Settings - hide when on settings page
+const settingsItem = document.getElementById('sidebar-settings');
+if (settingsItem && !settingsItem.classList.contains('hidden')) {
+    settingsItem.style.display = currentSection === 'settings' ? 'none' : 'flex';
+   }
 }
 
 function navigateTo(page) {
@@ -390,6 +395,9 @@ function navigateTo(page) {
             break;
         case 'history':
             switchSection('history');
+            break;
+        case 'settings':
+            switchSection('settings');
             break;
     }
 }
@@ -990,6 +998,14 @@ function switchSection(section) {
         document.getElementById('pointsView').classList.add('hidden');
         document.getElementById('section-history')?.classList.add('hidden');
         initStudentReportsTab();
+    } else if (section === 'settings') {
+    document.getElementById('settingsView')?.classList.remove('hidden');
+    document.getElementById('trackerView').classList.add('hidden');
+    document.getElementById('reportsView').classList.add('hidden');
+    document.getElementById('pointsView').classList.add('hidden');
+    document.getElementById('studentReportsView')?.classList.add('hidden');
+    document.getElementById('section-history')?.classList.add('hidden');
+    initSettingsTab();
     } else if (section === 'history') {
         document.getElementById('section-history')?.classList.remove('hidden');
         document.getElementById('trackerView').classList.add('hidden');
@@ -1721,6 +1737,197 @@ function exportPointsReport(level, period = 'alltime') {
     printWindow.document.write(`<!DOCTYPE html><html dir="rtl"><head><meta charset="UTF-8"><title>تقرير نقاط ${sectionName} ${periodName}</title><link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet"><style>body{font-family:'Cairo',sans-serif;direction:rtl;padding:20px}h1{color:#065f46;text-align:center}.date-info{text-align:center;color:#047857;margin-bottom:20px}table{width:100%;border-collapse:collapse;margin-top:20px}th{background:#047857;color:white;padding:10px}td{padding:8px;border-bottom:1px solid #ddd;text-align:center}@media print{button{display:none}}.print-btn{background:#059669;color:white;padding:10px 30px;border:none;border-radius:8px;font-size:16px;cursor:pointer;margin-top:20px}</style></head><body><h1>⭐ تقرير نقاط المرحلة ${sectionName} (${periodName})</h1><div class="date-info">📅 ${hDate} | 📆 ${gDate}</div>${container.innerHTML}<div style="text-align:center;margin-top:20px"><button class="print-btn" onclick="window.print()">🖨️ طباعة / حفظ PDF</button></div></body></html>`);
     printWindow.document.close();
 }
+
+// ============================================================
+// SETTINGS FUNCTIONS
+// ============================================================
+let settingsSection = 'highschool';
+
+function initSettingsTab() {
+    switchSettingsSection('highschool');
+}
+
+function switchSettingsSection(section) {
+    settingsSection = section;
+    
+    // Update tabs
+    document.querySelectorAll('#settingsView .section-tab').forEach(t => t.classList.remove('active'));
+    document.getElementById(`settings-${section}`)?.classList.add('active');
+    
+    // Update student count
+    const count = localStorage.getItem(`studentCount_${section}`) || '50';
+    document.getElementById('settingsStudentCount').textContent = `العدد الحالي: ${count}`;
+    
+    // Load student name list
+    loadStudentNameList();
+}
+
+function loadStudentNameList() {
+    const container = document.getElementById('studentNameList');
+    const count = parseInt(localStorage.getItem(`studentCount_${settingsSection}`) || '50');
+    
+    let html = '';
+    for (let i = 1; i <= count; i++) {
+        const saved = localStorage.getItem(`quran_${settingsSection}-${i}`);
+        let name = `طالب ${i}`;
+        if (saved) {
+            try {
+                const d = JSON.parse(saved);
+                if (d.name) name = d.name;
+            } catch(e) {}
+        }
+        html += `
+            <div style="display: flex; gap: 8px; align-items: center; margin-bottom: 8px;">
+                <span style="min-width: 30px; font-weight: bold;">${i}.</span>
+                <input type="text" id="studentName-${i}" value="${name.replace(/"/g, '&quot;')}" style="flex: 1; padding: 10px; border: 2px solid #e5e7eb; border-radius: 12px; font-size: 14px; direction: rtl;">
+                <button onclick="saveStudentName(${i})" style="background: #059669; color: white; padding: 10px 16px; border: none; border-radius: 12px; font-size: 14px; cursor: pointer;">💾</button>
+            </div>
+        `;
+    }
+    container.innerHTML = html;
+}
+
+function saveStudentName(num) {
+    const input = document.getElementById(`studentName-${num}`);
+    const newName = input.value.trim() || `طالب ${num}`;
+    
+    const saved = localStorage.getItem(`quran_${settingsSection}-${num}`);
+    let data = {};
+    if (saved) {
+        try { data = JSON.parse(saved); } catch(e) {}
+    }
+    data.name = newName;
+    
+    localStorage.setItem(`quran_${settingsSection}-${num}`, JSON.stringify(data));
+    markDataChanged();
+    syncToCloud();
+    alert(`✅ تم حفظ اسم الطالب ${num}: ${newName}`);
+}
+
+function addStudentsFromSettings() {
+    const count = parseInt(document.getElementById('addStudentCount').value) || 1;
+    const currentCount = parseInt(localStorage.getItem(`studentCount_${settingsSection}`) || '50');
+    const newCount = currentCount + count;
+    
+    localStorage.setItem(`studentCount_${settingsSection}`, newCount);
+    markDataChanged();
+    syncToCloud();
+    
+    alert(`✅ تمت إضافة ${count} طلاب!\nالعدد الآن: ${newCount}`);
+    switchSettingsSection(settingsSection);
+}
+
+function deleteStudentsFromSettings() {
+    const input = document.getElementById('deleteStudentNumbers').value.trim();
+    if (!input) {
+        alert('❌ الرجاء إدخال أرقام الطلاب');
+        return;
+    }
+    
+    const currentCount = parseInt(localStorage.getItem(`studentCount_${settingsSection}`) || '50');
+    const numbers = [];
+    const parts = input.split(/[,\s]+/);
+    
+    parts.forEach(part => {
+        if (part.includes('-')) {
+            const [start, end] = part.split('-').map(n => parseInt(n));
+            if (!isNaN(start) && !isNaN(end)) {
+                for (let i = Math.min(start, end); i <= Math.max(start, end); i++) {
+                    if (i >= 1 && i <= currentCount) numbers.push(i);
+                }
+            }
+        } else {
+            const num = parseInt(part);
+            if (!isNaN(num) && num >= 1 && num <= currentCount) numbers.push(num);
+        }
+    });
+    
+    if (numbers.length === 0) {
+        alert('❌ لم يتم إدخال أرقام صحيحة');
+        return;
+    }
+    
+    const uniqueNumbers = [...new Set(numbers)].sort((a, b) => a - b);
+    
+    if (!confirm(`حذف ${uniqueNumbers.length} طالب؟`)) return;
+    
+    // Re-number remaining students
+    const allData = [];
+    for (let i = 1; i <= currentCount; i++) {
+        const saved = localStorage.getItem(`quran_${settingsSection}-${i}`);
+        if (saved) {
+            allData.push({ index: i, data: saved });
+        } else {
+            allData.push({ 
+                index: i, 
+                data: JSON.stringify({ name: `طالب ${i}`, attendance: 'حاضر', hasQuran: false, hasUniform: false, points: 0 }) 
+            });
+        }
+    }
+    
+    const remaining = allData.filter(item => !uniqueNumbers.includes(item.index));
+    
+    for (let i = 1; i <= currentCount; i++) {
+        localStorage.removeItem(`quran_${settingsSection}-${i}`);
+    }
+    
+    remaining.forEach((item, idx) => {
+        const parsed = JSON.parse(item.data);
+        parsed.name = parsed.name || `طالب ${idx + 1}`;
+        localStorage.setItem(`quran_${settingsSection}-${idx + 1}`, JSON.stringify(parsed));
+    });
+    
+    localStorage.setItem(`studentCount_${settingsSection}`, remaining.length);
+    markDataChanged();
+    syncToCloud();
+    
+    alert(`✅ تم حذف ${uniqueNumbers.length} طالب`);
+    switchSettingsSection(settingsSection);
+}
+
+function deleteHistoryWithPassword() {
+    const p = prompt("🔐 أدخل كلمة المرور لحذف سجل التغييرات:");
+    if (p !== ADMIN_PASSWORD) {
+        alert("❌ كلمة مرور غير صحيحة");
+        return;
+    }
+    if (!confirm("⚠️ هل أنت متأكد من حذف جميع سجلات التغييرات؟")) return;
+    if (prompt("اكتب: حذف السجل") !== "حذف السجل") {
+        alert("تم الإلغاء");
+        return;
+    }
+    
+    localStorage.removeItem('pendingHistoryLogs');
+    allHistoryLogs = [];
+    deleteAllHistoryFromCloud();
+    alert("✅ تم حذف جميع سجلات التغييرات");
+}
+
+function resetDataWithPassword() {
+    const p = prompt("🔐 أدخل كلمة المرور لحذف جميع البيانات:");
+    if (p !== ADMIN_PASSWORD) {
+        alert("❌ كلمة مرور غير صحيحة");
+        return;
+    }
+    resetAllData();
+}
+
+// Update admin visibility to show settings
+const origUpdateAdminVisibility = updateAdminVisibility;
+updateAdminVisibility = function() {
+    origUpdateAdminVisibility();
+    const settingsItem = document.getElementById('sidebar-settings');
+    const settingsDivider = settingsItem?.nextElementSibling;
+    if (settingsItem) {
+        if (isAdmin()) {
+            settingsItem.classList.remove('hidden');
+            if (settingsDivider?.classList.contains('admin-only')) settingsDivider.classList.remove('hidden');
+        } else {
+            settingsItem.classList.add('hidden');
+            if (settingsDivider?.classList.contains('admin-only')) settingsDivider.classList.add('hidden');
+        }
+    }
+};
 // ============================================================
 // ADMIN PANEL
 // ============================================================
