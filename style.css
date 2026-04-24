@@ -871,76 +871,13 @@ label, option, optgroup {
     display: flex !important;
 }
 
-/* ============================================ */
-/* FIX: Show tracker sections when not hidden   */
-/* ============================================ */
-.tracker-section:not(.hidden) {
-    display: block !important;
-}
-
-/* Force display for tracker sections */
-#pointsView.tracker-section:not(.hidden),
-#studentReportsView.tracker-section:not(.hidden),
-#section-history.tracker-section:not(.hidden) {
-    display: block !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-}
-
-#pointsView, #studentReportsView, #section-history {
-    min-height: 400px !important;
-    height: auto !important;
-    overflow: visible !important;
-    background: #f8fafc !important;
-}
-
-/* FIX: Make tracker sections take full width and height */
-#pointsView, #studentReportsView, #section-history {
-    min-height: 300px !important;
-    width: 100% !important;
-    display: block !important;
-    background: #f8fafc !important;
-}
-
-#pointsView:not(.hidden), 
-#studentReportsView:not(.hidden), 
-#section-history:not(.hidden) {
-    min-height: 300px !important;
-    display: block !important;
-}
-
-.points-main-tabs {
-    display: flex !important;
-    min-height: 50px !important;
-    height: auto !important;
-    overflow: visible !important;
-}
-
-.points-main-tab {
-    flex: 1 !important;
-    min-height: 44px !important;
-    height: auto !important;
-    display: block !important;
-}
-
-.tracker-section {
-    width: 100% !important;
-    min-height: 100px !important;
-}
-
-.tracker-section:not(.hidden) {
-    display: block !important;
-    width: 100% !important;
-    min-height: 300px !important;
-}
-
 #mainContent {
     width: 100%;
     min-height: 100vh;
-    display: block;
 }
 
-#mainContent > div {
-    width: 100%;
+#mainContent > div.tracker-section:not(.hidden) {
+    display: block !important;
+}
     min-height: 300px;
 }
