@@ -258,11 +258,11 @@
 
 <!-- Top Bar with Menu Icon -->
 <div class="top-bar">
-    <div class="top-bar-right">
-        <button class="menu-btn" onclick="toggleSidebar()">☰</button>
-    </div>
     <div class="top-bar-left">
         <h1 style="font-size: 20px; margin: 0; color: white;">📖 سجل متابعة القرآن</h1>
+    </div>
+    <div class="top-bar-right">
+        <button class="menu-btn" onclick="toggleSidebar()">☰</button>
     </div>
 </div>
 
@@ -285,65 +285,56 @@
     </div>
     
     <div class="sidebar-menu">
-    <!-- Return to Tracker -->
-    <div class="sidebar-item" id="sidebar-tracker" onclick="switchSection('highschool'); closeSidebar();" style="display: none;">
-        <span class="sidebar-icon">📖</span>
-        <div class="sidebar-text">
-            <div class="sidebar-title">سجل المتابعة</div>
-            <div class="sidebar-subtitle">العودة إلى صفحة الطلاب</div>
+        <!-- Reports -->
+        <div class="sidebar-item" onclick="navigateTo('reports')">
+            <span class="sidebar-icon">📊</span>
+            <div class="sidebar-text">
+                <div class="sidebar-title">التقارير</div>
+                <div class="sidebar-subtitle">التقارير اليومية والشهرية</div>
+            </div>
+        </div>
+        
+        <!-- Points -->
+        <div class="sidebar-item" onclick="navigateTo('points')">
+            <span class="sidebar-icon">⭐</span>
+            <div class="sidebar-text">
+                <div class="sidebar-title">النقاط</div>
+                <div class="sidebar-subtitle">أسبوعي | شهري | كل الوقت</div>
+            </div>
+        </div>
+        
+        <!-- Student Reports (NEW) -->
+        <div class="sidebar-item" onclick="navigateTo('studentReports')">
+            <span class="sidebar-icon">👤</span>
+            <div class="sidebar-text">
+                <div class="sidebar-title">تقارير الطلاب</div>
+                <div class="sidebar-subtitle">تقرير شهري لكل طالب</div>
+            </div>
+        </div>
+        
+        <!-- History (Admin Only) -->
+        <div class="sidebar-item admin-only hidden" id="sidebar-history" onclick="navigateTo('history')">
+            <span class="sidebar-icon">📜</span>
+            <div class="sidebar-text">
+                <div class="sidebar-title">سجل التغييرات</div>
+                <div class="sidebar-subtitle">سجل المعلمين</div>
+            </div>
+        </div>
+        
+        <!-- Divider -->
+        <div class="sidebar-divider"></div>
+        
+        <!-- Admin Panel -->
+        <div class="sidebar-item admin-only hidden" id="sidebar-admin" onclick="showAdminPanel()">
+            <span class="sidebar-icon">⚙️</span>
+            <div class="sidebar-text">
+                <div class="sidebar-title">لوحة التحكم</div>
+                <div class="sidebar-subtitle">إضافة وحذف الطلاب</div>
+            </div>
         </div>
     </div>
-    <div class="sidebar-divider" id="sidebar-tracker-divider" style="display: none;"></div>
+</div> 
 
-    <!-- Reports -->
-    <div class="sidebar-item" id="sidebar-reports" onclick="navigateTo('reports')">
-        <span class="sidebar-icon">📊</span>
-        <div class="sidebar-text">
-            <div class="sidebar-title">التقارير</div>
-            <div class="sidebar-subtitle">التقارير اليومية والشهرية</div>
-        </div>
-    </div>
-    
-    <!-- Points -->
-    <div class="sidebar-item" id="sidebar-points" onclick="navigateTo('points')">
-        <span class="sidebar-icon">⭐</span>
-        <div class="sidebar-text">
-            <div class="sidebar-title">النقاط</div>
-            <div class="sidebar-subtitle">أسبوعي | شهري | كل الوقت</div>
-        </div>
-    </div>
-    
-    <!-- Student Reports -->
-    <div class="sidebar-item" id="sidebar-studentreports" onclick="navigateTo('studentReports')">
-        <span class="sidebar-icon">👤</span>
-        <div class="sidebar-text">
-            <div class="sidebar-title">تقارير الطلاب</div>
-            <div class="sidebar-subtitle">تقرير شهري لكل طالب</div>
-        </div>
-    </div>
-    
-    <!-- History (Admin Only) -->
-    <div class="sidebar-item admin-only hidden" id="sidebar-history" onclick="navigateTo('history')">
-        <span class="sidebar-icon">📜</span>
-        <div class="sidebar-text">
-            <div class="sidebar-title">سجل التغييرات</div>
-            <div class="sidebar-subtitle">سجل المعلمين</div>
-        </div>
-    </div>
-    
-    <div class="sidebar-divider"></div>
-    
-       <!-- Admin Panel -->
-    <div class="sidebar-item admin-only hidden" id="sidebar-admin" onclick="showAdminPanel()">
-        <span class="sidebar-icon">⚙️</span>
-        <div class="sidebar-text">
-            <div class="sidebar-title">لوحة التحكم</div>
-            <div class="sidebar-subtitle">إضافة وحذف الطلاب</div>
-        </div>
-    </div>
-</div>    <!-- Closes sidebar-menu -->
-</div>    <!-- ✅ ADD THIS - Closes sidebar div -->
-    
 <div class="date-bar">
     <div class="date-content">
         <span class="date-item">📅 <span id="hijriDate">جاري التحميل...</span></span>
@@ -364,7 +355,6 @@
 
 <!-- Section Tabs - Always Visible -->
 
-<div id="mainContent">
 <div id="trackerView">
     <div class="section-tabs">
     <button class="section-tab active" id="section-highschool" onclick="switchSection('highschool')">🏫 ثانوي</button>
@@ -399,30 +389,31 @@
             
             <!-- High School Daily -->
             <div class="section-report">
-    <div class="section-header">
-        <h3>🏫 المرحلة الثانوية</h3>
-    </div>
-    <div id="daily-highschool" class="report-content"></div>
-    <button class="export-btn" onclick="exportDailyReport('highschool')" style="margin-top: 12px;">📄 تصدير PDF</button>
-</div>
+                <div class="section-header">
+                    <h3>🏫 المرحلة الثانوية</h3>
+                    <button class="export-btn" onclick="exportDailyReport('highschool')">📄 تصدير PDF</button>
+                </div>
+                <div id="daily-highschool" class="report-content"></div>
+            </div>
             
             <!-- Middle School Daily -->
-          <div class="section-report">
-    <div class="section-header">
-        <h3>🏫 المرحلة المتوسطة</h3>
-    </div>
-    <div id="daily-middleschool" class="report-content"></div>
-    <button class="export-btn" onclick="exportDailyReport('middleschool')" style="margin-top: 12px;">📄 تصدير PDF</button>
-</div>
+            <div class="section-report">
+                <div class="section-header">
+                    <h3>🏫 المرحلة المتوسطة</h3>
+                    <button class="export-btn" onclick="exportDailyReport('middleschool')">📄 تصدير PDF</button>
+                </div>
+                <div id="daily-middleschool" class="report-content"></div>
+            </div>
             
             <!-- Elementary Daily -->
-          <div class="section-report">
-    <div class="section-header">
-        <h3>🏫 المرحلة الابتدائية</h3>
-    </div>
-    <div id="daily-elementary" class="report-content"></div>
-    <button class="export-btn" onclick="exportDailyReport('elementary')" style="margin-top: 12px;">📄 تصدير PDF</button>
-</div>
+            <div class="section-report">
+                <div class="section-header">
+                    <h3>🏫 المرحلة الابتدائية</h3>
+                    <button class="export-btn" onclick="exportDailyReport('elementary')">📄 تصدير PDF</button>
+                </div>
+                <div id="daily-elementary" class="report-content"></div>
+            </div>
+        </div>
         
         <!-- ============================================ -->
         <!-- MONTHLY REPORTS SECTION -->
@@ -437,30 +428,31 @@
             
             <!-- High School Monthly -->
             <div class="section-report">
-    <div class="section-header">
-        <h3>🏫 المرحلة الثانوية</h3>
-    </div>
-    <div id="highschool-summary" class="report-content"></div>
-    <button class="export-btn" onclick="exportMonthlyReport('highschool')" style="margin-top: 12px;">📄 تصدير PDF</button>
-</div>
+                <div class="section-header">
+                    <h3>🏫 المرحلة الثانوية</h3>
+                    <button class="export-btn" onclick="exportMonthlyReport('highschool')">📄 تصدير PDF</button>
+                </div>
+                <div id="highschool-summary" class="report-content"></div>
+            </div>
             
             <!-- Middle School Monthly -->
-      <div class="section-report">
-    <div class="section-header">
-        <h3>🏫 المرحلة المتوسطة</h3>
-    </div>
-    <div id="middleschool-summary" class="report-content"></div>
-    <button class="export-btn" onclick="exportMonthlyReport('middleschool')" style="margin-top: 12px;">📄 تصدير PDF</button>
-</div>
+            <div class="section-report">
+                <div class="section-header">
+                    <h3>🏫 المرحلة المتوسطة</h3>
+                    <button class="export-btn" onclick="exportMonthlyReport('middleschool')">📄 تصدير PDF</button>
+                </div>
+                <div id="middleschool-summary" class="report-content"></div>
+            </div>
             
             <!-- Elementary Monthly -->
             <div class="section-report">
-    <div class="section-header">
-        <h3>🏫 المرحلة الابتدائية</h3>
-    </div>
-    <div id="elementary-summary" class="report-content"></div>
-    <button class="export-btn" onclick="exportMonthlyReport('elementary')" style="margin-top: 12px;">📄 تصدير PDF</button>
-</div>
+                <div class="section-header">
+                    <h3>🏫 المرحلة الابتدائية</h3>
+                    <button class="export-btn" onclick="exportMonthlyReport('elementary')">📄 تصدير PDF</button>
+                </div>
+                <div id="elementary-summary" class="report-content"></div>
+            </div>
+        </div>
         
         <!-- ============================================ -->
         <!-- KHATMA TOTAL SECTION -->
@@ -641,6 +633,8 @@
 </div>
 <!-- History Section (Admin Only) -->
 <div id="section-history" class="tracker-section hidden">
+<!-- History Section (Admin Only) -->
+<div id="section-history" class="tracker-section hidden">
     <div class="report-section">
         <h2 class="report-title">📜 سجل التغييرات - المشرف</h2>
         
@@ -688,12 +682,10 @@
         <button class="export-btn" onclick="exportHistoryPDF()" style="margin-top: 20px;">📄 تحميل PDF للسجل</button>
     </div>
 </div>
-</div>
-
 
 <button class="admin-btn" onclick="showAdminPanel()">⚙️</button>
 <div class="bottom-spacer"></div>
-
+<script src="quran-pages.js"></script>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="tracker.js"></script>
