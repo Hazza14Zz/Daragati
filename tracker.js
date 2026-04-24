@@ -318,6 +318,7 @@ function toggleSidebar() {
     overlay.classList.add('show');
     
     updateAdminVisibility();
+     updateSidebarTrackerVisibility();  // ✅ ADD THIS
 }
 
 function closeSidebar() {
@@ -334,6 +335,19 @@ function updateAdminVisibility() {
         adminElements.forEach(el => el.classList.remove('hidden'));
     } else {
         adminElements.forEach(el => el.classList.add('hidden'));
+    }
+}
+
+function updateSidebarTrackerVisibility() {
+    const trackerItem = document.getElementById('sidebar-tracker');
+    if (!trackerItem) return;
+    
+    const isOnTracker = ['highschool', 'middleschool', 'elementary'].includes(currentSection);
+    
+    if (isOnTracker) {
+        trackerItem.style.display = 'none';
+    } else {
+        trackerItem.style.display = 'flex';
     }
 }
 
@@ -1005,6 +1019,7 @@ function switchSection(section) {
         updateStudentDropdown();
         loadStudent(1);
     }
+      updateSidebarTrackerVisibility();  // ✅ ADD THIS
 }
 // ============================================================
 // SIMPLE STUDENT DROPDOWN
