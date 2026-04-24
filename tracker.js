@@ -2030,12 +2030,12 @@ function logTeacherAction(studentName, actionType, details) {
 function getActionSummary(data) {
     const parts = [];
     
-    // Hifz details
+    // Hifz details - NO page count
     if (data.hifz) {
-        parts.push(`حفظ: ${data.hifz.startSurahName} ${data.hifz.startVerse} → ${data.hifz.endSurahName} ${data.hifz.endVerse} (${data.hifz.pages} صفحة)`);
+        parts.push(`حفظ: ${data.hifz.startSurahName} ${data.hifz.startVerse} → ${data.hifz.endSurahName} ${data.hifz.endVerse}`);
     }
     
-    // Rabt details - show each surah range
+    // Rabt details
     if (data.rabt && data.rabt.length > 0) {
         const rabtDetails = data.rabt.map(r => 
             `${r.startSurahName} ${r.startVerse} → ${r.endSurahName} ${r.endVerse}`
@@ -2043,9 +2043,9 @@ function getActionSummary(data) {
         parts.push(`ربط: ${rabtDetails}`);
     }
     
-    // Murajaa details
+    // Murajaa details - NO page count
     if (data.murajaa) {
-        parts.push(`مراجعة: ${data.murajaa.startSurahName} ${data.murajaa.startVerse} → ${data.murajaa.endSurahName} ${data.murajaa.endVerse} (${data.murajaa.pages} صفحة)`);
+        parts.push(`مراجعة: ${data.murajaa.startSurahName} ${data.murajaa.startVerse} → ${data.murajaa.endSurahName} ${data.murajaa.endVerse}`);
     }
     
     // Attendance
