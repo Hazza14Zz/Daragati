@@ -2029,11 +2029,37 @@ function logTeacherAction(studentName, actionType, details) {
 
 function getActionSummary(data) {
     const parts = [];
-    if (data.hifz) parts.push(`حفظ: ${data.hifz.startSurahName} ${data.hifz.startVerse}→${data.hifz.endVerse}`);
-    if (data.rabt?.length) parts.push(`ربط: ${data.rabt.length} سور`);
-    if (data.murajaa) parts.push(`مراجعة: ${data.murajaa.startSurahName} ${data.murajaa.startVerse}→${data.murajaa.endVerse}`);
+    
+    // Hifz details
+    if (data.hifz) {
+        parts.push(`حفظ: ${data.hifz.startSurahName} ${data.hifz.startVerse} → ${data.hifz.endSurahName} ${data.hifz.endVerse} (${data.hifz.pages} صفحة)`);
+    }
+    
+    // Rabt details - show each surah range
+    if (data.rabt && data.rabt.length > 0) {
+        const rabtDetails = data.rabt.map(r => 
+            `${r.startSurahName} ${r.startVerse} → ${r.endSurahName} ${r.endVerse}`
+        ).join(' | ');
+        parts.push(`ربط: ${rabtDetails}`);
+    }
+    
+    // Murajaa details
+    if (data.murajaa) {
+        parts.push(`مراجعة: ${data.murajaa.startSurahName} ${data.murajaa.startVerse} → ${data.murajaa.endSurahName} ${data.murajaa.endVerse} (${data.murajaa.pages} صفحة)`);
+    }
+    
+    // Attendance
     parts.push(`حضور: ${data.attendance}`);
+    
+    // Quran/Mushaf
+    parts.push(`مصحف: ${data.hasQuran ? '✅' : '❌'}`);
+    
+    // Uniform
+    parts.push(`زي: ${data.hasUniform ? '✅' : '❌'}`);
+    
+    // Points
     if (data.points > 0) parts.push(`نقاط: ${data.points}`);
+    
     return parts.join(' | ') || 'تحديث البيانات';
 }
 
