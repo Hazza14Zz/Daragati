@@ -283,20 +283,17 @@
         <h3>القائمة</h3>
         <button class="sidebar-close" onclick="closeSidebar()">✕</button>
     </div>
-<div class="sidebar-menu">
-    <!-- Return to Tracker -->
-    <div class="sidebar-item" id="sidebar-tracker" onclick="switchSection('highschool'); closeSidebar();" style="display: none;">
-        <span class="sidebar-icon">📖</span>
-        <div class="sidebar-text">
-            <div class="sidebar-title">سجل المتابعة</div>
-            <div class="sidebar-subtitle">العودة إلى صفحة الطلاب</div>
-        </div>
-    </div>
-
-    <!-- Reports -->
-    <div class="sidebar-item" onclick="navigateTo('reports')">
     
     <div class="sidebar-menu">
+        <!-- Return to Tracker -->
+        <div class="sidebar-item" id="sidebar-tracker" onclick="switchSection('highschool'); closeSidebar();" style="display: none;">
+            <span class="sidebar-icon">📖</span>
+            <div class="sidebar-text">
+                <div class="sidebar-title">سجل المتابعة</div>
+                <div class="sidebar-subtitle">العودة إلى صفحة الطلاب</div>
+            </div>
+        </div>
+
         <!-- Reports -->
         <div class="sidebar-item" onclick="navigateTo('reports')">
             <span class="sidebar-icon">📊</span>
@@ -315,7 +312,7 @@
             </div>
         </div>
         
-        <!-- Student Reports (NEW) -->
+        <!-- Student Reports -->
         <div class="sidebar-item" onclick="navigateTo('studentReports')">
             <span class="sidebar-icon">👤</span>
             <div class="sidebar-text">
@@ -333,7 +330,6 @@
             </div>
         </div>
         
-        <!-- Divider -->
         <div class="sidebar-divider"></div>
         
         <!-- Admin Panel -->
@@ -345,7 +341,7 @@
             </div>
         </div>
     </div>
-</div> 
+</div>
 
 <div class="date-bar">
     <div class="date-content">
