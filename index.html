@@ -330,6 +330,17 @@
         </div>
         
         <div class="sidebar-divider"></div>
+
+        <!-- Settings -->
+<div class="sidebar-item admin-only hidden" id="sidebar-settings" onclick="navigateTo('settings')">
+    <span class="sidebar-icon">⚙️</span>
+    <div class="sidebar-text">
+        <div class="sidebar-title">الإعدادات</div>
+        <div class="sidebar-subtitle">إدارة الطلاب والبيانات</div>
+    </div>
+</div>
+
+<div class="sidebar-divider admin-only hidden"></div>
         
         <!-- Admin Panel -->
         <div class="sidebar-item admin-only hidden" id="sidebar-admin" onclick="showAdminPanel()">
@@ -636,6 +647,55 @@
             </button>
         </div>
         
+    </div>
+</div>
+    <!-- Settings View -->
+<div id="settingsView" class="tracker-section hidden">
+    <div class="reports-container">
+        <div class="report-category">
+            <h2 class="category-title">⚙️ الإعدادات</h2>
+            
+            <!-- Section Selector -->
+            <div class="section-tabs" style="display: flex; gap: 8px; margin-bottom: 20px;">
+                <button class="section-tab active" id="settings-highschool" onclick="switchSettingsSection('highschool')">🏫 ثانوي</button>
+                <button class="section-tab" id="settings-middleschool" onclick="switchSettingsSection('middleschool')">🏫 متوسط</button>
+                <button class="section-tab" id="settings-elementary" onclick="switchSettingsSection('elementary')">🏫 ابتدائي</button>
+            </div>
+            
+            <!-- Add Students -->
+            <div class="section-report">
+                <h3>➕ إضافة طلاب</h3>
+                <div style="display: flex; gap: 10px; align-items: center; margin-top: 10px;">
+                    <input type="number" id="addStudentCount" placeholder="عدد الطلاب" min="1" max="100" value="1" style="flex: 1; padding: 12px; border: 2px solid #e5e7eb; border-radius: 40px; font-size: 16px; direction: rtl;">
+                    <button onclick="addStudentsFromSettings()" style="background: #059669; color: white; padding: 12px 24px; border: none; border-radius: 40px; font-size: 16px; cursor: pointer;">إضافة</button>
+                </div>
+                <p id="settingsStudentCount" style="margin-top: 10px; color: #666;">العدد الحالي: 50</p>
+            </div>
+            
+            <!-- Delete Students -->
+            <div class="section-report">
+                <h3>🗑️ حذف طلاب</h3>
+                <div style="display: flex; gap: 10px; align-items: center; margin-top: 10px;">
+                    <input type="text" id="deleteStudentNumbers" placeholder="مثال: 5,10,20 أو 30-45" style="flex: 1; padding: 12px; border: 2px solid #e5e7eb; border-radius: 40px; font-size: 16px; direction: rtl;">
+                    <button onclick="deleteStudentsFromSettings()" style="background: #ef4444; color: white; padding: 12px 24px; border: none; border-radius: 40px; font-size: 16px; cursor: pointer;">حذف</button>
+                </div>
+            </div>
+            
+            <!-- Change Student Names -->
+            <div class="section-report">
+                <h3>✏️ تغيير أسماء الطلاب</h3>
+                <div id="studentNameList" style="max-height: 300px; overflow-y: auto; margin-top: 10px;"></div>
+            </div>
+            
+            <!-- Danger Zone -->
+            <div class="section-report" style="border: 2px solid #ef4444;">
+                <h3 style="color: #ef4444;">⚠️ منطقة الخطر</h3>
+                
+                <button onclick="deleteHistoryWithPassword()" style="background: #f59e0b; color: white; padding: 12px 24px; border: none; border-radius: 40px; font-size: 16px; cursor: pointer; margin: 8px 0; width: 100%;">🗑️ حذف سجل التغييرات</button>
+                
+                <button onclick="resetDataWithPassword()" style="background: #ef4444; color: white; padding: 12px 24px; border: none; border-radius: 40px; font-size: 16px; cursor: pointer; margin: 8px 0; width: 100%;">⚠️ حذف جميع البيانات</button>
+            </div>
+        </div>
     </div>
 </div>
 <!-- History Section (Admin Only) -->
