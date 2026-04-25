@@ -279,7 +279,7 @@ function logout() {
 // ✅ PASTE THE FUNCTION HERE
 function isAdmin() {
     const session = JSON.parse(sessionStorage.getItem('quranTrackerSession') || '{}');
-    return session.username === 'Admin.2123' || session.displayName === 'المدير';
+    return session.username === 'Admin.2123' || session.username === 'Tester10' || session.displayName === 'المدير';
 }
 
 function markDataChanged() {
