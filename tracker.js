@@ -666,16 +666,14 @@ function loadStudent(studentNum) {
         points: 0 
     };
     
-      if (saved) {
+          if (saved) {
         try { 
             const parsed = JSON.parse(saved);
-            // ✅ Only load name and attendance
+            // ✅ Only load name
             if (parsed.name && parsed.name !== '') {
                 data.name = parsed.name;
             }
-            if (parsed.attendance) {
-                data.attendance = parsed.attendance;
-            }
+            // ✅ Always start with حاضر
         } catch(e) {}
     }
     
@@ -994,8 +992,11 @@ function saveCurrentStudent() {
         document.getElementById('quranCheck').checked = false;
         document.getElementById('uniformCheck').checked = false;
         
-        // ✅ Clear points (empty, not 0)
+               // ✅ Clear points (empty, not 0)
         document.getElementById('pointsInput').value = '';
+        
+        // ✅ Reset attendance to حاضر
+        setAttendance('حاضر');
         
         // ✅ Reset searchable select display text
         document.querySelectorAll('.searchable-select-input').forEach(el => {
