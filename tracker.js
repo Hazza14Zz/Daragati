@@ -961,13 +961,38 @@ function saveCurrentStudent() {
     markDataChanged();  // ✅ ADD THIS LINE
     syncToCloud();
     
-    const btn = event.target;
+     const btn = event.target;
     if (btn) {
         btn.textContent = '✅ تم الحفظ!';
         setTimeout(() => btn.textContent = '💾 حفظ', 1500);
     }
+    
+    // ✅ Reset all task fields after save (keep only name and attendance)
+    setTimeout(() => {
+        // Reset hifz
+        document.getElementById('hifzStartSurah').value = '';
+        document.getElementById('hifzStartVerse').innerHTML = '<option value="">من آية</option>';
+        document.getElementById('hifzEndSurah').value = '';
+        document.getElementById('hifzEndVerse').innerHTML = '<option value="">إلى آية</option>';
+        
+        // Reset murajaa
+        document.getElementById('murajaaStartSurah').value = '';
+        document.getElementById('murajaaStartVerse').innerHTML = '<option value="">من آية</option>';
+        document.getElementById('murajaaEndSurah').value = '';
+        document.getElementById('murajaaEndVerse').innerHTML = '<option value="">إلى آية</option>';
+        
+        // Reset rabt container
+        document.getElementById('rabtContainer').innerHTML = '';
+        addRabtItem();
+        
+        // ✅ Uncheck mushaf and uniform
+        document.getElementById('quranCheck').checked = false;
+        document.getElementById('uniformCheck').checked = false;
+        
+        // ✅ Clear points (empty, not 0)
+        document.getElementById('pointsInput').value = '';
+    }, 500);
 }
-
 // ============================================================
 // NAVIGATION
 // ============================================================
