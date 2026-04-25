@@ -169,7 +169,7 @@ async function syncToCloud() {
         }    } catch (e) {
         console.error('Sync error:', e);
     }
-    setTimeout(() => { isOwnChange = false; }, 500);  // ✅ ADD THIS LINE
+    setTimeout(() => { isOwnChange = false; }, 2000);  // ✅ ADD THIS LINE
 }
 
 async function loadFromCloud() {
