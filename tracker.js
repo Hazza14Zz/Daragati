@@ -985,6 +985,10 @@ function saveCurrentStudent() {
         document.getElementById('murajaaStartVerse').innerHTML = '<option value="">من آية</option>';
         document.getElementById('murajaaEndSurah').value = '';
         document.getElementById('murajaaEndVerse').innerHTML = '<option value="">إلى آية</option>';
+        // Also reset the searchable select display text
+document.querySelectorAll('.searchable-select-input').forEach(el => {
+    el.textContent = 'اختر السورة';
+});
         
         // Reset rabt container
         document.getElementById('rabtContainer').innerHTML = '';
