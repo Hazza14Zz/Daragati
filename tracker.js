@@ -666,11 +666,16 @@ function loadStudent(studentNum) {
         points: 0 
     };
     
-    if (saved) {
+      if (saved) {
         try { 
             const parsed = JSON.parse(saved);
-            data = { ...data, ...parsed };
-            if (!data.name || data.name === '') data.name = `طالب ${studentNum}`;
+            // ✅ Only load name and attendance
+            if (parsed.name && parsed.name !== '') {
+                data.name = parsed.name;
+            }
+            if (parsed.attendance) {
+                data.attendance = parsed.attendance;
+            }
         } catch(e) {}
     }
     
@@ -735,12 +740,12 @@ function loadStudent(studentNum) {
     <button class="attendance-btn ${currentAttendance === 'معذور' ? 'active' : ''}" onclick="setAttendance('معذور')">⚠️ معذور</button>
 </div>
             <div class="checks-row">
-                <label class="check-item"><input type="checkbox" id="quranCheck" ${data.hasQuran ? 'checked' : ''}> 📚 مصحف</label>
-                <label class="check-item"><input type="checkbox" id="uniformCheck" ${data.hasUniform ? 'checked' : ''}> 👕 زي</label>
+                <label class="check-item"><input type="checkbox" id="quranCheck"> 📚 مصحف</label>
+<label class="check-item"><input type="checkbox" id="uniformCheck"> 👕 زي</label>
             </div>
             <div class="points-row">
                 <span class="points-label">⭐ نقاط</span>
-                <input type="number" id="pointsInput" class="points-input" min="0" max="100" value="${data.points || 0}">
+                <input type="number" id="pointsInput" class="points-input" min="0" max="100" value="">
             </div>
             <button class="save-btn" onclick="saveCurrentStudent()">💾 حفظ</button>
         </div>
