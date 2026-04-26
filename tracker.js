@@ -287,6 +287,18 @@ function markDataChanged() {
     console.log('📝 Data changed - pending sync');
 }
 
+function showToast(message, duration = 2500) {
+    const toast = document.createElement('div');
+    toast.className = 'toast';
+    toast.textContent = message;
+    document.body.appendChild(toast);
+    setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transition = 'opacity 0.3s';
+        setTimeout(() => toast.remove(), 300);
+    }, duration);
+}
+
 
 
 let surahsData = [];
@@ -2508,7 +2520,7 @@ function addStudentsFromSettings() {
     markDataChanged();
     syncToCloud();
     
-    alert(`✅ تمت إضافة ${count} طلاب!\nالعدد الآن: ${newCount}`);
+       showToast(`✅ تمت إضافة ${count} طلاب! العدد الآن: ${newCount}`);
     switchSettingsSection(settingsSection);
 }
 
@@ -2660,7 +2672,7 @@ function addMultipleStudents(sec) {
     
     markDataChanged();
     syncToCloud();
-    alert(`✅ تمت إضافة ${addCount} طلاب!\nالمرحلة: ${SECTION_NAMES[sec]}\nالعدد الآن: ${newCount}`); 
+       showToast(`✅ تمت إضافة ${addCount} طلاب! العدد الآن: ${newCount}`);
 }
 
 function deleteMultipleStudents(sec) { 
@@ -2746,7 +2758,7 @@ function deleteMultipleStudents(sec) {
     
     markDataChanged();
     syncToCloud();
-    alert(`✅ تم حذف ${uniqueNumbers.length} طالب بنجاح!\nالعدد الآن: ${newCount}`); 
+    showToast(`✅ تم حذف ${uniqueNumbers.length} طالب بنجاح! العدد الآن: ${newCount}`);
 }
 
 function deleteHistoryData() {
@@ -2838,7 +2850,7 @@ function resetAllData() {
     deleteAllHistoryFromCloud();
     
     setTimeout(() => {
-        alert("✅ تم حذف جميع البيانات والسجل ومزامنتها!\nسيتم تحديث الصفحة.");
+              showToast("✅ تم حذف جميع البيانات! جاري تحديث الصفحة...");
         location.reload();
     }, 1000);
 }// ============================================================
