@@ -1568,10 +1568,6 @@ function loadWeeklyPointsColumns() {
         
         students.sort((a, b) => b.points - a.points);
         
-        if (students.length === 0) {
-            container.innerHTML = '<div class="no-data">لا توجد نقاط</div>';
-            return;
-        }
         
         let html = `<table class="points-table"><thead><tr><th>#</th><th>الاسم</th><th>النقاط</th></tr></thead><tbody>`;
         students.forEach((s, idx) => {
@@ -1633,10 +1629,7 @@ function loadMonthlyPointsColumns() {
         
         students.sort((a, b) => b.points - a.points);
         
-        if (students.length === 0) {
-            container.innerHTML = '<div class="no-data">لا توجد نقاط</div>';
-            return;
-        }
+       
         
         let html = `<table class="points-table"><thead><tr><th>#</th><th>الاسم</th><th>النقاط</th></tr></thead><tbody>`;
         students.forEach((s, idx) => {
@@ -1676,10 +1669,7 @@ function loadAllTimePointsColumns() {
         
         students.sort((a, b) => b.points - a.points);
         
-        if (students.length === 0) {
-            container.innerHTML = '<div class="no-data">لا توجد نقاط</div>';
-            return;
-        }
+        
         
         let html = `<table class="points-table"><thead><tr><th>#</th><th>الاسم</th><th>النقاط</th></tr></thead><tbody>`;
         students.forEach((s, idx) => {
