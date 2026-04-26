@@ -241,6 +241,31 @@
 #authCheckOverlay.hidden {
     display: none !important;
 }
+        /* Scrollable Daily Reports - like Points section */
+.report-content {
+    max-height: 350px !important;
+    overflow-y: auto !important;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+}
+
+/* Make the table header sticky while scrolling */
+.report-content thead {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.report-content thead th {
+    background: #047857 !important;
+}
+
+/* For mobile - smaller max height */
+@media (max-width: 768px) {
+    .report-content {
+        max-height: 250px !important;
+    }
+}
        
     </style>
 </head>
