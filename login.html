@@ -91,6 +91,66 @@
     0%, 100% { opacity: 1; }
     50% { opacity: 0.85; }
 }
+        /* WhatsApp Contact Section */
+.whatsapp-contact {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: white;
+    padding: 14px 22px;
+    border-radius: 50px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.12);
+    z-index: 999;
+    text-decoration: none;
+    border: 2px solid #25D366;
+    transition: all 0.3s ease;
+}
+
+.whatsapp-contact:hover {
+    transform: translateX(-50%) scale(1.03);
+    box-shadow: 0 6px 25px rgba(37, 211, 102, 0.3);
+}
+
+.whatsapp-contact:active {
+    transform: translateX(-50%) scale(0.97);
+}
+
+.whatsapp-contact img {
+    width: 32px;
+    height: 32px;
+    flex-shrink: 0;
+}
+
+.whatsapp-contact .whatsapp-text {
+    font-family: 'Cairo', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    color: #065f46;
+    white-space: nowrap;
+}
+
+.whatsapp-contact .whatsapp-sub {
+    font-family: 'Cairo', sans-serif;
+    font-size: 12px;
+    font-weight: 400;
+    color: #6b7280;
+    white-space: nowrap;
+}
+
+/* Pulse animation */
+@keyframes whatsapp-pulse {
+    0% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.5); }
+    70% { box-shadow: 0 0 0 18px rgba(37, 211, 102, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0); }
+}
+
+.whatsapp-contact {
+    animation: whatsapp-pulse 2.5s infinite;
+}
     </style>
 </head>
 <body class="flex items-center justify-center p-4">
