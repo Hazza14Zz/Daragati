@@ -3474,11 +3474,7 @@ function savePMOperation() {
         return;
     }
     
-    const reason = reasonInput.value.trim();
-    if (!reason) {
-        showToast('⚠️ الرجاء كتابة سبب إضافة/خصم النقاط');
-        return;
-    }
+  
     
     const points = parseInt(document.getElementById('pmPointsInput').value) || currentPMPoints;
     if (points <= 0) {
@@ -3511,10 +3507,10 @@ function savePMOperation() {
     const operationSymbol = currentPMOperation === 'add' ? '➕' : '➖';
     const operationText = currentPMOperation === 'add' ? 'إضافة' : 'خصم';
     
-    logTeacherAction(
+        logTeacherAction(
         studentData.name,
         'إدارة النقاط',
-        `${operationSymbol} ${operationText} ${points} نقطة | ${reason} | ${oldPoints} → ${newPoints} | ${sectionNames[currentPMSection]}`
+        `${operationSymbol} ${operationText} ${points} نقطة | ${oldPoints} → ${newPoints} | ${sectionNames[currentPMSection]}`
     );
     
     markDataChanged();
