@@ -975,7 +975,7 @@ function saveCurrentStudent() {
     localStorage.setItem(`quran_${sid}`, JSON.stringify(data));    updateStudentDropdown();
     markDataChanged();  // ✅ ADD THIS LINE
     syncToCloud();
-    
+       showToast('✅ تم حفظ البيانات بنجاح!');
      const btn = event.target;
     if (btn) {
         btn.textContent = '✅ تم الحفظ!';
