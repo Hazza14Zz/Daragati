@@ -1266,37 +1266,79 @@ function loadReportsData() {
 }
 function loadDailyReport() {
     ['highschool', 'middleschool', 'elementary'].forEach(s => {
-        const c = document.getElementById(`daily-${s}`);  // This is correct - matches HTML
+        const c = document.getElementById(`daily-${s}`);
         if (!c) {
             console.error(`Container daily-${s} not found`);
             return;
         }
         
-        const st = [];
+        const count = parseInt(localStorage.getItem(`studentCount_${s}`) || '50');
+        
+        // Collect all saved data for today
+        const savedData = {};
         for (let i = 0; i < localStorage.length; i++) { 
             const k = localStorage.key(i); 
             if (k.startsWith(`quran_${s}-`)) { 
                 try { 
                     const d = JSON.parse(localStorage.getItem(k)); 
-                    if (d?.savedAt && new Date(d.savedAt).toISOString().split('T')[0] === currentReportDate) st.push(d); 
+                    if (d?.savedAt && new Date(d.savedAt).toISOString().split('T')[0] === currentReportDate) {
+                        const studentNum = parseInt(k.split('-').pop());
+                        savedData[studentNum] = d;
+                    }
                 } catch (e) {} 
             } 
         }
         
-        if (st.length === 0) { 
-            c.innerHTML = '<div class="empty-state"><div class="empty-icon">📋</div><div class="empty-text">لا توجد بيانات لهذا اليوم</div><div class="empty-sub">لم يتم تسجيل أي بيانات بعد</div></div>'; 
-            return; 
+        // Build table with ALL students
+        let h = '<table class="summary-table"><tr><th>#</th><th>الطالب</th><th>الحضور</th><th>حفظ</th><th>ربط</th><th>مراجعة</th><th>مصحف</th><th>زي</th><th>نقاط</th></tr>';
+        
+        for (let i = 1; i <= count; i++) {
+            const d = savedData[i]; // Will be undefined if no data saved for this student today
+            
+            if (d) {
+                // Student has saved data for today
+                const hifzText = d.hifz ? `${d.hifz.startSurahName || ''} ${d.hifz.startVerse} ← ${d.hifz.endSurahName || ''} ${d.hifz.endVerse}` : '-';
+                const rabtText = d.rabt?.length ? d.rabt.map(r => `${r.startSurahName || ''} ${r.startVerse} ← ${r.endSurahName || ''} ${r.endVerse}`).join('، ') : '-';
+                const murajaaText = d.murajaa ? `${d.murajaa.startSurahName || ''} ${d.murajaa.startVerse} ← ${d.murajaa.endSurahName || ''} ${d.murajaa.endVerse}` : '-';
+                const attendanceIcon = {'حاضر':'✅', 'متأخر':'🕐', 'غائب':'❌', 'معذور':'⚠️'}[d.attendance] || '';
+                const attendanceDisplay = attendanceIcon ? `${attendanceIcon} ${d.attendance}` : d.attendance;
+                h += `<tr>
+                    <td>${i}</td>
+                    <td>${d.name || '-'}</td>
+                    <td>${attendanceDisplay}</td>
+                    <td>${hifzText}</td>
+                    <td>${rabtText}</td>
+                    <td>${murajaaText}</td>
+                    <td>${d.hasQuran ? '✅' : '❌'}</td>
+                    <td>${d.hasUniform ? '✅' : '❌'}</td>
+                    <td>${d.points || 0}</td>
+                </tr>`;
+            } else {
+                // No data saved - show as absent with empty fields
+                // Get student name from localStorage
+                let name = `طالب ${i}`;
+                const savedAny = localStorage.getItem(`quran_${s}-${i}`);
+                if (savedAny) {
+                    try {
+                        const parsed = JSON.parse(savedAny);
+                        if (parsed.name) name = parsed.name;
+                    } catch(e) {}
+                }
+                
+                h += `<tr>
+                    <td>${i}</td>
+                    <td>${name}</td>
+                    <td>❌ غائب</td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td>❌</td>
+                    <td>❌</td>
+                    <td>0</td>
+                </tr>`;
+            }
         }
         
-        let h = '<table class="summary-table"><tr><th>#</th><th>الطالب</th><th>الحضور</th><th>حفظ</th><th>ربط</th><th>مراجعة</th><th>مصحف</th><th>زي</th><th>نقاط</th></tr>';
-        st.forEach((d, idx) => { 
-            const hifzText = d.hifz ? `${d.hifz.startSurahName || ''} ${d.hifz.startVerse} ← ${d.hifz.endSurahName || ''} ${d.hifz.endVerse}` : '-';
-            const rabtText = d.rabt?.length ? d.rabt.map(r => `${r.startSurahName || ''} ${r.startVerse} ← ${r.endSurahName || ''} ${r.endVerse}`).join('، ') : '-';
-            const murajaaText = d.murajaa ? `${d.murajaa.startSurahName || ''} ${d.murajaa.startVerse} ← ${d.murajaa.endSurahName || ''} ${d.murajaa.endVerse}` : '-';
-            const attendanceIcon = {'حاضر':'✅', 'متأخر':'🕐', 'غائب':'❌', 'معذور':'⚠️'}[d.attendance] || '';
-            const attendanceDisplay = attendanceIcon ? `${attendanceIcon} ${d.attendance}` : d.attendance;
-            h += `<tr><td>${idx+1}</td><td>${d.name || '-'}</td><td>${attendanceDisplay}</td><td>${hifzText}</td><td>${rabtText}</td><td>${murajaaText}</td><td>${d.hasQuran ? '✅' : '❌'}</td><td>${d.hasUniform ? '✅' : '❌'}</td><td>${d.points || 0}</td></tr>`; 
-        });
         c.innerHTML = h + '</table>';
     });
 }
