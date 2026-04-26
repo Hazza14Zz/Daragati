@@ -3496,7 +3496,7 @@ function savePMOperation() {
     if (currentPMOperation === 'add') {
         newPoints = oldPoints + points;
     } else {
-        newPoints = Math.max(0, oldPoints - points);
+        newPoints = oldPoints - points;
     }
     
     studentData.points = newPoints;
