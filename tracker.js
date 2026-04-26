@@ -3388,7 +3388,9 @@ function initPointsManagement() {
         btn.style.color = '#059669';
     });
     
-    loadPMStudentDropdown();
+        setTimeout(() => {
+        loadPMStudentDropdown();
+    }, 200);
 }
 
 function switchPMSection(section) {
