@@ -402,6 +402,9 @@ function navigateTo(page) {
         case 'points':
             switchSection('points');
             break;
+                    case 'pointsManagement':
+            switchSection('pointsManagement');
+            break;
         case 'studentReports':
             switchSection('studentReports');
             break;
@@ -1024,6 +1027,7 @@ function switchSection(section) {
     
     // Hide all sections
     document.querySelectorAll('.tracker-section').forEach(el => el.classList.add('hidden'));
+        document.getElementById('pointsManagementView')?.classList.add('hidden');
     
     // Show selected section
     if (section === 'reports') {
@@ -1039,7 +1043,16 @@ function switchSection(section) {
         document.getElementById('studentReportsView')?.classList.add('hidden');
         document.getElementById('section-history')?.classList.add('hidden');
         initPointsTab();
-      } else if (section === 'studentReports') {
+        } else if (section === 'pointsManagement') {
+        document.getElementById('pointsManagementView')?.classList.remove('hidden');
+        document.getElementById('trackerView').classList.add('hidden');
+        document.getElementById('reportsView').classList.add('hidden');
+        document.getElementById('pointsView').classList.add('hidden');
+        document.getElementById('studentReportsView')?.classList.add('hidden');
+        document.getElementById('section-history')?.classList.add('hidden');
+        document.getElementById('settingsView')?.classList.add('hidden');
+        initPointsManagement();
+    } else if (section === 'studentReports') {
         document.getElementById('studentReportsView')?.classList.remove('hidden');
         document.getElementById('trackerView').classList.add('hidden');
         document.getElementById('reportsView').classList.add('hidden');
@@ -3346,7 +3359,208 @@ function loadStudentReport() {
     document.getElementById('studentReportContent')?.classList.remove('hidden');
 }
 
+// ============================================================
+// POINTS MANAGEMENT TAB
+// ============================================================
+let currentPMSection = 'highschool';
+let currentPMOperation = 'add';
+let currentPMPoints = 1;
 
+function initPointsManagement() {
+    currentPMSection = 'highschool';
+    currentPMOperation = 'add';
+    currentPMPoints = 1;
+    
+    document.querySelectorAll('#pointsManagementView .student-report-tab').forEach(t => t.classList.remove('active'));
+    document.getElementById('pm-highschool')?.classList.add('active');
+    
+    document.getElementById('pmAddBtn').style.background = '#059669';
+    document.getElementById('pmAddBtn').style.color = 'white';
+    document.getElementById('pmRemoveBtn').style.background = '#f3f4f6';
+    document.getElementById('pmRemoveBtn').style.color = '#4b5563';
+    
+    document.getElementById('pmPointsInput').value = 1;
+    document.getElementById('pmReason').value = '';
+    document.getElementById('pmCurrentPointsValue').textContent = '0';
+    
+    document.querySelectorAll('.pm-point-btn').forEach(btn => {
+        btn.style.background = '#f0fdf4';
+        btn.style.color = '#059669';
+    });
+    
+    loadPMStudentDropdown();
+}
+
+function switchPMSection(section) {
+    currentPMSection = section;
+    document.querySelectorAll('#pointsManagementView .student-report-tab').forEach(t => t.classList.remove('active'));
+    document.getElementById(`pm-${section}`)?.classList.add('active');
+    loadPMStudentDropdown();
+    document.getElementById('pmCurrentPointsValue').textContent = '0';
+    document.getElementById('pmStudentSelect').value = '';
+    document.getElementById('pmReason').value = '';
+}
+
+function loadPMStudentDropdown() {
+    const select = document.getElementById('pmStudentSelect');
+    if (!select) return;
+    
+    const count = parseInt(localStorage.getItem(`studentCount_${currentPMSection}`) || '50');
+    let html = '<option value="">-- اختر طالب --</option>';
+    
+    for (let i = 1; i <= count; i++) {
+        const key = `quran_${currentPMSection}-${i}`;
+        const saved = localStorage.getItem(key);
+        let name = `طالب ${i}`;
+        let points = 0;
+        if (saved) {
+            try {
+                const d = JSON.parse(saved);
+                if (d.name) name = d.name;
+                points = parseInt(d.points) || 0;
+            } catch(e) {}
+        }
+        html += `<option value="${i}" data-points="${points}">${i} - ${name} (${points} ⭐)</option>`;
+    }
+    
+    select.innerHTML = html;
+    
+    select.onchange = function() {
+        const selectedOption = this.options[this.selectedIndex];
+        const points = selectedOption.getAttribute('data-points') || '0';
+        document.getElementById('pmCurrentPointsValue').textContent = points;
+    };
+}
+
+function setPMOperation(type) {
+    currentPMOperation = type;
+    const addBtn = document.getElementById('pmAddBtn');
+    const removeBtn = document.getElementById('pmRemoveBtn');
+    
+    if (type === 'add') {
+        addBtn.style.background = '#059669';
+        addBtn.style.color = 'white';
+        removeBtn.style.background = '#f3f4f6';
+        removeBtn.style.color = '#4b5563';
+    } else {
+        removeBtn.style.background = '#ef4444';
+        removeBtn.style.color = 'white';
+        addBtn.style.background = '#f3f4f6';
+        addBtn.style.color = '#4b5563';
+    }
+}
+
+function setPMPoints(points) {
+    currentPMPoints = points;
+    document.getElementById('pmPointsInput').value = points;
+    document.querySelectorAll('.pm-point-btn').forEach(btn => {
+        const btnPoints = parseInt(btn.textContent);
+        if (btnPoints === points) {
+            btn.style.background = '#059669';
+            btn.style.color = 'white';
+        } else {
+            btn.style.background = '#f0fdf4';
+            btn.style.color = '#059669';
+        }
+    });
+}
+
+function savePMOperation() {
+    const studentSelect = document.getElementById('pmStudentSelect');
+    const reasonInput = document.getElementById('pmReason');
+    
+    if (!studentSelect.value) {
+        showToast('⚠️ الرجاء اختيار طالب أولاً');
+        return;
+    }
+    
+    const reason = reasonInput.value.trim();
+    if (!reason) {
+        showToast('⚠️ الرجاء كتابة سبب إضافة/خصم النقاط');
+        return;
+    }
+    
+    const points = parseInt(document.getElementById('pmPointsInput').value) || currentPMPoints;
+    if (points <= 0) {
+        showToast('⚠️ الرجاء إدخال عدد نقاط صحيح');
+        return;
+    }
+    
+    const studentNum = parseInt(studentSelect.value);
+    const key = `quran_${currentPMSection}-${studentNum}`;
+    
+    let studentData = { name: `طالب ${studentNum}`, attendance: 'حاضر', hasQuran: false, hasUniform: false, points: 0 };
+    const saved = localStorage.getItem(key);
+    if (saved) {
+        try { studentData = JSON.parse(saved); } catch(e) {}
+    }
+    
+    const oldPoints = parseInt(studentData.points) || 0;
+    let newPoints;
+    if (currentPMOperation === 'add') {
+        newPoints = oldPoints + points;
+    } else {
+        newPoints = Math.max(0, oldPoints - points);
+    }
+    
+    studentData.points = newPoints;
+    studentData.pointsUpdatedAt = new Date().toISOString();
+    localStorage.setItem(key, JSON.stringify(studentData));
+    
+    const sectionNames = { highschool: 'ثانوي', middleschool: 'متوسط', elementary: 'ابتدائي' };
+    const operationSymbol = currentPMOperation === 'add' ? '➕' : '➖';
+    const operationText = currentPMOperation === 'add' ? 'إضافة' : 'خصم';
+    
+    logTeacherAction(
+        studentData.name,
+        'إدارة النقاط',
+        `${operationSymbol} ${operationText} ${points} نقطة | ${reason} | ${oldPoints} → ${newPoints} | ${sectionNames[currentPMSection]}`
+    );
+    
+    markDataChanged();
+    syncToCloud();
+    
+    showToast(`✅ تم ${operationText} ${points} نقطة ${currentPMOperation === 'add' ? 'لـ' : 'من'} ${studentData.name}`);
+    
+    document.getElementById('pmCurrentPointsValue').textContent = newPoints;
+    document.getElementById('pmReason').value = '';
+    document.getElementById('pmPointsInput').value = 1;
+    currentPMPoints = 1;
+    
+    document.querySelectorAll('.pm-point-btn').forEach(btn => {
+        btn.style.background = '#f0fdf4';
+        btn.style.color = '#059669';
+    });
+    
+    loadPMStudentDropdown();
+    setTimeout(() => {
+        document.getElementById('pmStudentSelect').value = studentNum;
+        document.getElementById('pmCurrentPointsValue').textContent = newPoints;
+    }, 100);
+    
+    const saveBtn = event.target;
+    if (saveBtn) {
+        saveBtn.textContent = '✅ تم الحفظ!';
+        saveBtn.style.background = '#047857';
+        setTimeout(() => {
+            saveBtn.textContent = '💾 حفظ';
+            saveBtn.style.background = '#059669';
+        }, 1500);
+    }
+}
+// Listen for manual points input in Points Management
+document.addEventListener('DOMContentLoaded', function() {
+    const pmPointsInput = document.getElementById('pmPointsInput');
+    if (pmPointsInput) {
+        pmPointsInput.addEventListener('input', function() {
+            currentPMPoints = parseInt(this.value) || 1;
+            document.querySelectorAll('.pm-point-btn').forEach(btn => {
+                btn.style.background = '#f0fdf4';
+                btn.style.color = '#059669';
+            });
+        });
+    }
+});
 
 window.onload = () => {
     subscribeToRealtimeChanges();
