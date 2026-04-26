@@ -2496,7 +2496,7 @@ function saveStudentName(num) {
     localStorage.setItem(`quran_${settingsSection}-${num}`, JSON.stringify(data));
     markDataChanged();
     syncToCloud();
-    alert(`✅ تم حفظ اسم الطالب ${num}: ${newName}`);
+    showToast(`✅ تم حفظ اسم الطالب ${num}: ${newName}`);
 }
 
 function addStudentsFromSettings() {
@@ -2576,7 +2576,7 @@ function deleteStudentsFromSettings() {
     markDataChanged();
     syncToCloud();
     
-    alert(`✅ تم حذف ${uniqueNumbers.length} طالب`);
+    showToast(`✅ تم حذف ${uniqueNumbers.length} طالب`);
     switchSettingsSection(settingsSection);
 }
 
@@ -2595,7 +2595,7 @@ function deleteHistoryWithPassword() {
     localStorage.removeItem('pendingHistoryLogs');
     allHistoryLogs = [];
     deleteAllHistoryFromCloud();
-    alert("✅ تم حذف جميع سجلات التغييرات");
+    showToast("✅ تم حذف جميع سجلات التغييرات");
 }
 
 function resetDataWithPassword() {
@@ -2769,7 +2769,7 @@ function deleteHistoryData() {
             '<tr><td colspan="5" style="text-align:center;">✅ تم حذف جميع السجلات</td></tr>';
     }
     
-    alert("✅ تم حذف جميع سجلات التغييرات بنجاح!");
+    showToast("✅ تم حذف جميع سجلات التغييرات بنجاح!");
 }
 async function deleteAllHistoryFromCloud() {
     try {
@@ -3103,7 +3103,7 @@ async function syncHistoryToCloud() {
         }
         
         localStorage.removeItem('pendingHistoryLogs');
-        alert(`✅ تم مزامنة ${pendingLogs.length} سجل بنجاح`);
+        showToast(`✅ تم مزامنة ${pendingLogs.length} سجل بنجاح`);
         
         // Reload history tab
         if (currentSection === 'history') {
