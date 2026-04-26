@@ -887,3 +887,24 @@ label, option, optgroup {
     from { opacity: 0; transform: translateX(-50%) translateY(20px); }
     to { opacity: 1; transform: translateX(-50%) translateY(0); }
 }
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: 40px 20px;
+}
+.empty-state .empty-icon {
+    font-size: 48px;
+    margin-bottom: 12px;
+    opacity: 0.5;
+}
+.empty-state .empty-text {
+    font-size: 16px;
+    font-weight: 600;
+    color: #6b7280;
+}
+.empty-state .empty-sub {
+    font-size: 13px;
+    color: #9ca3af;
+    margin-top: 4px;
+}
