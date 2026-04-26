@@ -1259,7 +1259,7 @@ function loadDailyReport() {
         }
         
         if (st.length === 0) { 
-            c.innerHTML = '<div class="no-data">لا توجد بيانات لهذا اليوم</div>'; 
+            c.innerHTML = '<div class="empty-state"><div class="empty-icon">📋</div><div class="empty-text">لا توجد بيانات لهذا اليوم</div><div class="empty-sub">لم يتم تسجيل أي بيانات بعد</div></div>'; 
             return; 
         }
         
@@ -1325,7 +1325,7 @@ function loadWeeklyPointsReport() {
         students.sort((a, b) => b.points - a.points);
         
         if (students.length === 0) {
-            container.innerHTML = '<div class="no-data">لا توجد نقاط هذا الأسبوع</div>';
+            container.innerHTML = '<div class="empty-state"><div class="empty-icon">⭐</div><div class="empty-text">لا توجد نقاط</div><div class="empty-sub">لم يتم تسجيل نقاط بعد</div></div>';
             return;
         }
         
@@ -1381,7 +1381,7 @@ function loadMonthlyPointsReport() {
         students.sort((a, b) => b.points - a.points);
         
         if (students.length === 0) {
-            container.innerHTML = '<div class="no-data">لا توجد نقاط هذا الشهر</div>';
+            container.innerHTML = '<div class="empty-state"><div class="empty-icon">⭐</div><div class="empty-text">لا توجد نقاط</div><div class="empty-sub">لم يتم تسجيل نقاط بعد</div></div>';
             return;
         }
         
@@ -1434,7 +1434,7 @@ function loadAllTimePointsReport() {
         students.sort((a, b) => b.points - a.points);
         
         if (students.length === 0) {
-            container.innerHTML = '<div class="no-data">لا توجد نقاط مسجلة</div>';
+            container.innerHTML = '<div class="empty-state"><div class="empty-icon">⭐</div><div class="empty-text">لا توجد نقاط</div><div class="empty-sub">لم يتم تسجيل نقاط بعد</div></div>';
             return;
         }
         
