@@ -1703,6 +1703,7 @@ function loadMonthlyPointsColumns() {
                         }
                     }
                 } catch (e) {}
+            }
             
                         students.push({ number: i, name: name, points: points });
         }
@@ -1719,6 +1720,7 @@ function loadMonthlyPointsColumns() {
         container.innerHTML = html;
     });
 }
+
 
 // All-Time Functions
 function loadAllTimePointsColumns() {
