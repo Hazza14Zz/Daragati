@@ -1812,13 +1812,14 @@ function getPDFStyles() {
             }
             
             /* Section Cards */
-            .section-card {
+                       .section-card {
                 background: white;
                 border-radius: 16px;
                 padding: 20px;
                 margin-bottom: 20px;
                 box-shadow: 0 2px 8px rgba(0,0,0,0.05);
                 border: 1px solid #e5e7eb;
+                page-break-inside: avoid;
             }
             .section-card h2 {
                 color: #065f46;
@@ -1923,13 +1924,14 @@ function getPDFStyles() {
             }
             
             /* Footer */
-            .pdf-footer {
+                        .pdf-footer {
                 text-align: center;
-                margin-top: 40px;
-                padding: 20px;
+                margin-top: 20px;
+                padding: 12px;
                 color: #6b7280;
                 font-size: 12px;
                 border-top: 1px solid #e5e7eb;
+                page-break-before: auto;
             }
             
             /* Print Button */
@@ -1972,14 +1974,14 @@ function getPDFStyles() {
             }
             
                        /* Print Optimization */
-            @media print {
+                         @media print {
                 * {
                     -webkit-print-color-adjust: exact !important;
                     print-color-adjust: exact !important;
                 }
                 body { 
                     background: white;
-                    padding: 20px;
+                    padding: 10px;
                 }
                 .print-btn { 
                     display: none !important; 
@@ -1987,14 +1989,19 @@ function getPDFStyles() {
                 .section-card {
                     break-inside: avoid;
                     box-shadow: none;
+                    page-break-after: auto;
                 }
                 table {
                     font-size: 12px;
                 }
+                .pdf-footer {
+                    margin-top: 15px;
+                    padding: 10px;
+                }
             }
             
             @page {
-                margin: 20px;
+                margin: 15px;
                 size: A4;
             }
         </style>
