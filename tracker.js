@@ -1686,7 +1686,7 @@ function loadMonthlyPointsColumns() {
             let points = 0;
             
             if (saved) {
-                               try {
+                try {
                     const data = JSON.parse(saved);
                     if (data.name) name = data.name;
                     if (data.savedAt) {
@@ -1695,7 +1695,6 @@ function loadMonthlyPointsColumns() {
                             points = parseInt(data.points) || 0;
                         }
                     }
-                    // Also check for points management updates this month
                     if (data.pointsUpdatedAt) {
                         const pmDate = new Date(data.pointsUpdatedAt);
                         if (pmDate.getFullYear() === year && pmDate.getMonth() === month) {
@@ -1705,12 +1704,10 @@ function loadMonthlyPointsColumns() {
                 } catch (e) {}
             }
             
-                        students.push({ number: i, name: name, points: points });
+            students.push({ number: i, name: name, points: points });
         }
         
         students.sort((a, b) => b.points - a.points);
-        
-       
         
         let html = `<table class="points-table"><thead><tr><th>#</th><th>الاسم</th><th>النقاط</th></tr></thead><tbody>`;
         students.forEach((s, idx) => {
@@ -1720,7 +1717,6 @@ function loadMonthlyPointsColumns() {
         container.innerHTML = html;
     });
 }
-
 
 // All-Time Functions
 function loadAllTimePointsColumns() {
