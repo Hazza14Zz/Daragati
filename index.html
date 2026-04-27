@@ -781,30 +781,18 @@
                 <h3>✏️ تغيير أسماء الطلاب</h3>
                 <div id="studentNameList" style="max-height: 300px; overflow-y: auto; margin-top: 10px;"></div>
             </div>
-            <!-- Add this in settingsView, after the "تغيير أسماء الطلاب" section -->
-<div class="section-report" style="margin-top: 20px;">
-    <h3>🏖️ إدارة العطل والإجازات</h3>
-    <p style="color: #666; font-size: 13px; margin-bottom: 12px;">تحديد أيام العطل لاستبعادها من التقارير</p>
-    
-    <!-- Date Range Inputs -->
-    <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 12px; flex-wrap: wrap;">
-        <label style="font-weight: 600;">📅 من:</label>
-        <input type="date" id="holidayStartDate" style="flex: 1; min-width: 130px; padding: 10px; border: 2px solid #e5e7eb; border-radius: 12px; font-size: 14px; direction: rtl;">
-        <label style="font-weight: 600;">📅 إلى:</label>
-        <input type="date" id="holidayEndDate" style="flex: 1; min-width: 130px; padding: 10px; border: 2px solid #e5e7eb; border-radius: 12px; font-size: 14px; direction: rtl;">
-    </div>
-    
-    <!-- Add Holiday Button -->
-    <button onclick="addHoliday()" style="width: 100%; padding: 12px; background: #f59e0b; color: white; border: none; border-radius: 40px; font-size: 16px; font-weight: 700; cursor: pointer; margin-bottom: 16px;">
-        ➕ إضافة عطلة
-    </button>
-    
-    <!-- Holidays List -->
-    <div id="holidaysList" style="max-height: 250px; overflow-y: auto;">
-        <p style="color: #999; text-align: center;">لا توجد عطل مسجلة</p>
-    </div>
-</div>
-            
+                               <!-- Halaqa ON/OFF Toggle -->
+            <div class="section-report" style="margin-bottom: 20px; background: #f8fafc;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <h3 style="margin: 0;">🔘 حالة الحلقة</h3>
+                        <span id="halaqaStatusLabel" style="font-size: 14px; font-weight: 600;">🟢 الحلقة قائمة</span>
+                    </div>
+                    <button id="halaqaToggleBtn" onclick="toggleHalaqa()" style="padding: 12px 24px; border: none; border-radius: 40px; font-size: 16px; font-weight: 700; cursor: pointer; background: #ef4444; color: white;">
+                        🔴 إيقاف الحلقة
+                    </button>
+                </div>
+            </div>    
             <!-- Danger Zone -->
             <div class="section-report" style="border: 2px solid #ef4444;">
                 <h3 style="color: #ef4444;">⚠️ منطقة الخطر</h3>
