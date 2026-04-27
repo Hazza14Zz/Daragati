@@ -1281,6 +1281,16 @@ function loadDailyReport() {
         });
         return;
     }
+        // Check if it's a holiday
+    if (isHolidayDate(currentReportDate)) {
+        ['highschool', 'middleschool', 'elementary'].forEach(s => {
+            const c = document.getElementById(`daily-${s}`);
+            if (c) {
+                c.innerHTML = '<div class="empty-state"><div class="empty-icon">🏖️</div><div class="empty-text">عطلة - لا توجد حلقة</div><div class="empty-sub">تم تعطيل الدراسة في هذا اليوم</div></div>';
+            }
+        });
+        return;
+    }
     
     ['highschool', 'middleschool', 'elementary'].forEach(s => {
         const c = document.getElementById(`daily-${s}`);
@@ -3356,6 +3366,13 @@ function loadStudentReport() {
         continue; // Skip Friday and Saturday
     }
     
+    // Skip holidays
+    const thisDate = new Date(year, month, day);
+    const thisDateStr = thisDate.toISOString().split('T')[0];
+    if (isHolidayDate(thisDateStr)) {
+        continue;
+    }
+       
     const found = studentData.find(d => d.day === day);
     
     if (found) {
@@ -3631,6 +3648,138 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 });
+// ============================================================
+// HOLIDAY MANAGEMENT
+// ============================================================
+
+function getHolidays() {
+    const saved = localStorage.getItem('quran_holidays');
+    return saved ? JSON.parse(saved) : [];
+}
+
+function saveHolidays(holidays) {
+    localStorage.setItem('quran_holidays', JSON.stringify(holidays));
+    markDataChanged();
+    syncToCloud();
+}
+
+function addHoliday() {
+    const startInput = document.getElementById('holidayStartDate');
+    const endInput = document.getElementById('holidayEndDate');
+    
+    const startDate = startInput?.value;
+    const endDate = endInput?.value || startDate;
+    
+    if (!startDate) {
+        showToast('⚠️ الرجاء اختيار تاريخ البداية');
+        return;
+    }
+    
+    if (endDate < startDate) {
+        showToast('⚠️ تاريخ النهاية يجب أن يكون بعد تاريخ البداية');
+        return;
+    }
+    
+    const holidays = getHolidays();
+    
+    // Check for overlap
+    const hasOverlap = holidays.some(h => {
+        return (startDate <= h.end && endDate >= h.start);
+    });
+    
+    if (hasOverlap) {
+        showToast('⚠️ يوجد تداخل مع عطلة مسجلة مسبقاً');
+        return;
+    }
+    
+    holidays.push({
+        id: Date.now(),
+        start: startDate,
+        end: endDate
+    });
+    
+    // Sort by start date
+    holidays.sort((a, b) => new Date(a.start) - new Date(b.start));
+    
+    saveHolidays(holidays);
+    
+    // Clear inputs
+    startInput.value = '';
+    endInput.value = '';
+    
+    // Refresh list
+    loadHolidaysList();
+    
+    // Reload reports if on reports page
+    if (currentSection === 'reports') {
+        loadDailyReport();
+    }
+    
+    showToast('✅ تم إضافة العطلة بنجاح');
+}
+
+function deleteHoliday(id) {
+    if (!confirm('هل أنت متأكد من حذف هذه العطلة؟')) return;
+    
+    let holidays = getHolidays();
+    holidays = holidays.filter(h => h.id !== id);
+    saveHolidays(holidays);
+    loadHolidaysList();
+    
+    // Reload reports if on reports page
+    if (currentSection === 'reports') {
+        loadDailyReport();
+    }
+    
+    showToast('✅ تم حذف العطلة');
+}
+
+function loadHolidaysList() {
+    const container = document.getElementById('holidaysList');
+    if (!container) return;
+    
+    const holidays = getHolidays();
+    
+    if (holidays.length === 0) {
+        container.innerHTML = '<p style="color: #999; text-align: center;">لا توجد عطل مسجلة</p>';
+        return;
+    }
+    
+    const months = ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'];
+    
+    let html = '';
+    holidays.forEach(h => {
+        const startD = new Date(h.start);
+        const endD = new Date(h.end);
+        const startStr = `${startD.getDate()} ${months[startD.getMonth()]}`;
+        const endStr = `${endD.getDate()} ${months[endD.getMonth()]}`;
+        
+        html += `
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px; background: #fffbeb; border: 1px solid #fcd34d; border-radius: 12px; margin-bottom: 8px;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <span style="font-size: 20px;">🏖️</span>
+                    <span style="font-weight: 600; color: #92400e;">${startStr} - ${endStr} ${startD.getFullYear()}</span>
+                    ${startStr !== endStr ? '' : '<span style="font-size: 12px; color: #b45309;">(يوم واحد)</span>'}
+                </div>
+                <button onclick="deleteHoliday(${h.id})" style="background: #ef4444; color: white; border: none; padding: 6px 14px; border-radius: 20px; cursor: pointer; font-size: 13px;">🗑️ حذف</button>
+            </div>
+        `;
+    });
+    
+    container.innerHTML = html;
+}
+
+function isHolidayDate(dateStr) {
+    const holidays = getHolidays();
+    return holidays.some(h => dateStr >= h.start && dateStr <= h.end);
+}
+
+// Call this when settings tab opens
+const origInitSettingsTab = initSettingsTab;
+initSettingsTab = function() {
+    origInitSettingsTab();
+    loadHolidaysList();
+};
 
 window.onload = () => {
     subscribeToRealtimeChanges();
