@@ -1047,7 +1047,7 @@ function switchSection(section) {
         document.getElementById('studentReportsView')?.classList.add('hidden');
         document.getElementById('section-history')?.classList.add('hidden');
         initPointsTab();
-        } else if (section === 'pointsManagement') {
+            } else if (section === 'pointsManagement') {
         document.getElementById('pointsManagementView')?.classList.remove('hidden');
         document.getElementById('trackerView').classList.add('hidden');
         document.getElementById('reportsView').classList.add('hidden');
@@ -1055,8 +1055,12 @@ function switchSection(section) {
         document.getElementById('studentReportsView')?.classList.add('hidden');
         document.getElementById('section-history')?.classList.add('hidden');
         document.getElementById('settingsView')?.classList.add('hidden');
-        initPointsManagement();
-    } else if (section === 'studentReports') {
+        // Delay to ensure DOM is visible before initializing
+        setTimeout(() => {
+            initPointsManagement();
+        }, 100);
+    } 
+    else if (section === 'studentReports') {
         document.getElementById('studentReportsView')?.classList.remove('hidden');
         document.getElementById('trackerView').classList.add('hidden');
         document.getElementById('reportsView').classList.add('hidden');
