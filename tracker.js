@@ -1281,16 +1281,16 @@ function loadDailyReport() {
         });
         return;
     }
-        // Check if it's a holiday
-    if (isHolidayDate(currentReportDate)) {
+     if (!isHalaqaOn()) {
         ['highschool', 'middleschool', 'elementary'].forEach(s => {
             const c = document.getElementById(`daily-${s}`);
             if (c) {
-                c.innerHTML = '<div class="empty-state"><div class="empty-icon">🏖️</div><div class="empty-text">عطلة - لا توجد حلقة</div><div class="empty-sub">تم تعطيل الدراسة في هذا اليوم</div></div>';
+                c.innerHTML = '<div class="empty-state"><div class="empty-icon">🏖️</div><div class="empty-text">لا توجد حلقة اليوم</div><div class="empty-sub">الحلقة متوقفة حالياً</div></div>';
             }
         });
         return;
     }
+       
     
     ['highschool', 'middleschool', 'elementary'].forEach(s => {
         const c = document.getElementById(`daily-${s}`);
@@ -2537,6 +2537,7 @@ let settingsSection = 'highschool';
 
 function initSettingsTab() {
     switchSettingsSection('highschool');
+        updateHalaqaButton();
 }
 
 function switchSettingsSection(section) {
@@ -3366,12 +3367,7 @@ function loadStudentReport() {
         continue; // Skip Friday and Saturday
     }
     
-    // Skip holidays
-    const thisDate = new Date(year, month, day);
-    const thisDateStr = thisDate.toISOString().split('T')[0];
-    if (isHolidayDate(thisDateStr)) {
-        continue;
-    }
+  
        
     const found = studentData.find(d => d.day === day);
     
@@ -3649,137 +3645,47 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 // ============================================================
-// HOLIDAY MANAGEMENT
+// HALAQA ON/OFF TOGGLE
 // ============================================================
 
-function getHolidays() {
-    const saved = localStorage.getItem('quran_holidays');
-    return saved ? JSON.parse(saved) : [];
+function isHalaqaOn() {
+    const status = localStorage.getItem('quran_halaqa_status');
+    return status !== 'off';
 }
 
-function saveHolidays(holidays) {
-    localStorage.setItem('quran_holidays', JSON.stringify(holidays));
+function toggleHalaqa() {
+    const currentStatus = isHalaqaOn();
+    const newStatus = currentStatus ? 'off' : 'on';
+    localStorage.setItem('quran_halaqa_status', newStatus);
     markDataChanged();
     syncToCloud();
-}
-
-function addHoliday() {
-    const startInput = document.getElementById('holidayStartDate');
-    const endInput = document.getElementById('holidayEndDate');
     
-    const startDate = startInput?.value;
-    const endDate = endInput?.value || startDate;
+    updateHalaqaButton();
     
-    if (!startDate) {
-        showToast('⚠️ الرجاء اختيار تاريخ البداية');
-        return;
-    }
-    
-    if (endDate < startDate) {
-        showToast('⚠️ تاريخ النهاية يجب أن يكون بعد تاريخ البداية');
-        return;
-    }
-    
-    const holidays = getHolidays();
-    
-    // Check for overlap
-    const hasOverlap = holidays.some(h => {
-        return (startDate <= h.end && endDate >= h.start);
-    });
-    
-    if (hasOverlap) {
-        showToast('⚠️ يوجد تداخل مع عطلة مسجلة مسبقاً');
-        return;
-    }
-    
-    holidays.push({
-        id: Date.now(),
-        start: startDate,
-        end: endDate
-    });
-    
-    // Sort by start date
-    holidays.sort((a, b) => new Date(a.start) - new Date(b.start));
-    
-    saveHolidays(holidays);
-    
-    // Clear inputs
-    startInput.value = '';
-    endInput.value = '';
-    
-    // Refresh list
-    loadHolidaysList();
-    
-    // Reload reports if on reports page
     if (currentSection === 'reports') {
         loadDailyReport();
     }
     
-    showToast('✅ تم إضافة العطلة بنجاح');
+    showToast(newStatus === 'off' ? '🔴 تم تعطيل الحلقة' : '🟢 تم تفعيل الحلقة');
 }
 
-function deleteHoliday(id) {
-    if (!confirm('هل أنت متأكد من حذف هذه العطلة؟')) return;
+function updateHalaqaButton() {
+    const btn = document.getElementById('halaqaToggleBtn');
+    const label = document.getElementById('halaqaStatusLabel');
+    if (!btn || !label) return;
     
-    let holidays = getHolidays();
-    holidays = holidays.filter(h => h.id !== id);
-    saveHolidays(holidays);
-    loadHolidaysList();
-    
-    // Reload reports if on reports page
-    if (currentSection === 'reports') {
-        loadDailyReport();
+    if (isHalaqaOn()) {
+        btn.style.background = '#ef4444';
+        btn.textContent = '🔴 إيقاف الحلقة';
+        label.textContent = '🟢 الحلقة قائمة';
+        label.style.color = '#059669';
+    } else {
+        btn.style.background = '#059669';
+        btn.textContent = '🟢 تشغيل الحلقة';
+        label.textContent = '🔴 الحلقة متوقفة';
+        label.style.color = '#ef4444';
     }
-    
-    showToast('✅ تم حذف العطلة');
 }
-
-function loadHolidaysList() {
-    const container = document.getElementById('holidaysList');
-    if (!container) return;
-    
-    const holidays = getHolidays();
-    
-    if (holidays.length === 0) {
-        container.innerHTML = '<p style="color: #999; text-align: center;">لا توجد عطل مسجلة</p>';
-        return;
-    }
-    
-    const months = ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'];
-    
-    let html = '';
-    holidays.forEach(h => {
-        const startD = new Date(h.start);
-        const endD = new Date(h.end);
-        const startStr = `${startD.getDate()} ${months[startD.getMonth()]}`;
-        const endStr = `${endD.getDate()} ${months[endD.getMonth()]}`;
-        
-        html += `
-            <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px; background: #fffbeb; border: 1px solid #fcd34d; border-radius: 12px; margin-bottom: 8px;">
-                <div style="display: flex; align-items: center; gap: 8px;">
-                    <span style="font-size: 20px;">🏖️</span>
-                    <span style="font-weight: 600; color: #92400e;">${startStr} - ${endStr} ${startD.getFullYear()}</span>
-                    ${startStr !== endStr ? '' : '<span style="font-size: 12px; color: #b45309;">(يوم واحد)</span>'}
-                </div>
-                <button onclick="deleteHoliday(${h.id})" style="background: #ef4444; color: white; border: none; padding: 6px 14px; border-radius: 20px; cursor: pointer; font-size: 13px;">🗑️ حذف</button>
-            </div>
-        `;
-    });
-    
-    container.innerHTML = html;
-}
-
-function isHolidayDate(dateStr) {
-    const holidays = getHolidays();
-    return holidays.some(h => dateStr >= h.start && dateStr <= h.end);
-}
-
-// Call this when settings tab opens
-const origInitSettingsTab = initSettingsTab;
-initSettingsTab = function() {
-    origInitSettingsTab();
-    loadHolidaysList();
-};
 
 window.onload = () => {
     subscribeToRealtimeChanges();
