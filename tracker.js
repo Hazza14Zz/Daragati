@@ -904,7 +904,7 @@ function setAttendance(val) {
 }
 
 function saveCurrentStudent() {
-    if (getHalaqaState() === 'paused') {
+        if (!isHalaqaActive()) {
         showToast('⏸️ الحلقة متوقفة - لا يمكن الحفظ');
         return;
     }
@@ -1285,15 +1285,16 @@ function loadDailyReport() {
         });
         return;
     }
-     if (!isHalaqaActive()) {
+        if (!isHalaqaActive()) {
         ['highschool', 'middleschool', 'elementary'].forEach(s => {
             const c = document.getElementById(`daily-${s}`);
             if (c) {
-                c.innerHTML = '<div class="empty-state"><div class="empty-icon">🏖️</div><div class="empty-text">لا توجد حلقة اليوم</div><div class="empty-sub">الحلقة متوقفة حالياً</div></div>';
+                c.innerHTML = '<div class="empty-state"><div class="empty-icon">🔒</div><div class="empty-text">الحلقة لم تبدأ بعد</div><div class="empty-sub">يرجى بدء الحلقة من الإعدادات</div></div>';
             }
         });
         return;
     }
+       
        
     
     ['highschool', 'middleschool', 'elementary'].forEach(s => {
@@ -3557,7 +3558,7 @@ function setPMPoints(points) {
 }
 
 function savePMOperation() {
-    if (getHalaqaState() === 'paused') {
+       if (!isHalaqaActive()) {
         showToast('⏸️ الحلقة متوقفة - لا يمكن إضافة نقاط');
         return;
     }
@@ -3661,7 +3662,8 @@ function getHalaqaState() {
 }
 
 function isHalaqaActive() {
-    return getHalaqaState() === 'running';
+    const state = getHalaqaState();
+    return state === 'running'; // Only 'running' = active
 }
 
 function startHalaqa() {
