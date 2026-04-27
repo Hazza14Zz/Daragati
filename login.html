@@ -91,7 +91,50 @@
     0%, 100% { opacity: 1; }
     50% { opacity: 0.85; }
 }
-       
+       /* New Version Announcement Banner */
+.announcement-banner {
+    background: linear-gradient(135deg, #059669 0%, #047857 100%);
+    color: white;
+    padding: 16px;
+    border-radius: 16px;
+    margin-bottom: 20px;
+    text-align: center;
+    box-shadow: 0 4px 15px rgba(5, 150, 105, 0.3);
+    animation: pulse-green 2s infinite;
+}
+
+.announcement-banner.hidden {
+    display: none !important;
+}
+
+.announcement-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+.announcement-icon {
+    font-size: 28px;
+}
+
+.announcement-text {
+    font-size: 16px;
+}
+
+.announcement-subtext {
+    font-size: 13px;
+    opacity: 0.9;
+    font-style: italic;
+}
+
+@keyframes pulse-green {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.95; transform: scale(1.02); }
+}
     </style>
 </head>
 <body class="flex items-center justify-center p-4">
@@ -117,6 +160,15 @@
         <span class="maintenance-icon">⚠️</span>
     </div>
     <div class="maintenance-subtext">Website under maintenance - Please do not login</div>
+</div>
+            <!-- Announcement Banner - Change 'enabled' to true/false -->
+<div id="announcementBanner" class="announcement-banner hidden">
+    <div class="announcement-content">
+        <span class="announcement-icon">✨</span>
+        <span class="announcement-text">النسخة الجديدة متاحة الآن!</span>
+        <span class="announcement-icon">✨</span>
+    </div>
+    <div class="announcement-subtext">تعرف على الميزات الجديدة في سجل متابعة الحلقات</div>
 </div>
             <form id="loginForm" onsubmit="return handleLogin(event)">
                 
@@ -196,9 +248,19 @@
 
     <script>
         // ============================================
+// ANNOUNCEMENT BANNER - CHANGE TO true/false
+// ============================================
+const SHOW_ANNOUNCEMENT = true;  // ← CHANGE TO true TO SHOW!
+
+if (SHOW_ANNOUNCEMENT) {
+    document.addEventListener('DOMContentLoaded', function() {
+        document.getElementById('announcementBanner').classList.remove('hidden');
+    });
+}
+        // ============================================
 // MAINTENANCE MODE - CHANGE THIS TO false TO HIDE BANNER
 // ============================================
-const MAINTENANCE_MODE = true;  // ← CHANGE TO false WHEN READY!
+const MAINTENANCE_MODE = false;  // ← CHANGE TO false WHEN READY!
 
 // Show/hide maintenance banner
 if (MAINTENANCE_MODE) {
