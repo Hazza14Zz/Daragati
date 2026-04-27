@@ -904,6 +904,10 @@ function setAttendance(val) {
 }
 
 function saveCurrentStudent() {
+    if (getHalaqaState() === 'paused') {
+        showToast('⏸️ الحلقة متوقفة - لا يمكن الحفظ');
+        return;
+    }
     const studentNum = currentStudentIndex + 1;
     const sid = `${currentSection}-${studentNum}`;
     
@@ -1281,7 +1285,7 @@ function loadDailyReport() {
         });
         return;
     }
-     if (!isHalaqaOn()) {
+     if (!isHalaqaActive()) {
         ['highschool', 'middleschool', 'elementary'].forEach(s => {
             const c = document.getElementById(`daily-${s}`);
             if (c) {
@@ -2537,7 +2541,7 @@ let settingsSection = 'highschool';
 
 function initSettingsTab() {
     switchSettingsSection('highschool');
-        updateHalaqaButton();
+        updateHalaqaButtons();
 }
 
 function switchSettingsSection(section) {
@@ -3553,6 +3557,10 @@ function setPMPoints(points) {
 }
 
 function savePMOperation() {
+    if (getHalaqaState() === 'paused') {
+        showToast('⏸️ الحلقة متوقفة - لا يمكن إضافة نقاط');
+        return;
+    }
     const studentSelect = document.getElementById('pmStudentSelect');
     const reasonInput = document.getElementById('pmReason');
     
@@ -3645,45 +3653,79 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 // ============================================================
-// HALAQA ON/OFF TOGGLE
+// HALAQA START/PAUSE/CONTINUE
 // ============================================================
 
-function isHalaqaOn() {
-    const status = localStorage.getItem('quran_halaqa_status');
-    return status !== 'off';
+function getHalaqaState() {
+    return localStorage.getItem('quran_halaqa_state') || 'not_started';
 }
 
-function toggleHalaqa() {
-    const currentStatus = isHalaqaOn();
-    const newStatus = currentStatus ? 'off' : 'on';
-    localStorage.setItem('quran_halaqa_status', newStatus);
+function isHalaqaActive() {
+    return getHalaqaState() === 'running';
+}
+
+function startHalaqa() {
+    localStorage.setItem('quran_halaqa_state', 'running');
     markDataChanged();
     syncToCloud();
-    
-    updateHalaqaButton();
-    
-    if (currentSection === 'reports') {
-        loadDailyReport();
-    }
-    
-    showToast(newStatus === 'off' ? '🔴 تم تعطيل الحلقة' : '🟢 تم تفعيل الحلقة');
+    updateHalaqaButtons();
+    showToast('🟢 تم بدء الحلقة');
+    if (currentSection === 'reports') loadDailyReport();
 }
 
-function updateHalaqaButton() {
-    const btn = document.getElementById('halaqaToggleBtn');
-    const label = document.getElementById('halaqaStatusLabel');
-    if (!btn || !label) return;
+function pauseHalaqa() {
+    if (!confirm('⚠️ إيقاف الحلقة؟\nلن يتمكن المعلمون من الحفظ.')) return;
+    localStorage.setItem('quran_halaqa_state', 'paused');
+    markDataChanged();
+    syncToCloud();
+    updateHalaqaButtons();
+    showToast('⏸️ تم إيقاف الحلقة');
+    if (currentSection === 'reports') loadDailyReport();
+}
+
+function continueHalaqa() {
+    localStorage.setItem('quran_halaqa_state', 'running');
+    markDataChanged();
+    syncToCloud();
+    updateHalaqaButtons();
+    showToast('▶️ تم متابعة الحلقة');
+    if (currentSection === 'reports') loadDailyReport();
+}
+
+function updateHalaqaButtons() {
+    const startBtn = document.getElementById('halaqaStartBtn');
+    const pauseBtn = document.getElementById('halaqaPauseBtn');
+    const continueBtn = document.getElementById('halaqaContinueBtn');
+    const label = document.getElementById('halaqaStartLabel');
+    const state = getHalaqaState();
     
-    if (isHalaqaOn()) {
-        btn.style.background = '#ef4444';
-        btn.textContent = '🔴 إيقاف الحلقة';
-        label.textContent = '🟢 الحلقة قائمة';
-        label.style.color = '#059669';
+    if (startBtn) startBtn.style.display = 'none';
+    if (pauseBtn) pauseBtn.style.display = 'none';
+    if (continueBtn) continueBtn.style.display = 'none';
+    
+    if (state === 'not_started') {
+        if (startBtn) startBtn.style.display = 'block';
+        if (label) { label.textContent = '⚪ الحلقة لم تبدأ بعد'; label.style.color = '#6b7280'; }
+    } else if (state === 'running') {
+        if (pauseBtn) pauseBtn.style.display = 'block';
+        if (label) { label.textContent = '🟢 الحلقة قائمة - التطبيق مفتوح'; label.style.color = '#059669'; }
+    } else if (state === 'paused') {
+        if (continueBtn) continueBtn.style.display = 'block';
+        if (label) { label.textContent = '⏸️ الحلقة متوقفة - التطبيق مقفل'; label.style.color = '#f59e0b'; }
+    }
+    
+    // Banner
+    let banner = document.getElementById('halaqaBanner');
+    if (state === 'paused') {
+        if (!banner) {
+            banner = document.createElement('div');
+            banner.id = 'halaqaBanner';
+            banner.style.cssText = 'background:#fef3c7;color:#92400e;text-align:center;padding:12px;border-radius:12px;margin-bottom:12px;font-weight:700;font-size:16px;border:2px solid #f59e0b;';
+            banner.textContent = '⏸️ الحلقة متوقفة مؤقتاً';
+            document.querySelector('.date-bar')?.insertAdjacentElement('afterend', banner);
+        }
     } else {
-        btn.style.background = '#059669';
-        btn.textContent = '🟢 تشغيل الحلقة';
-        label.textContent = '🔴 الحلقة متوقفة';
-        label.style.color = '#ef4444';
+        if (banner) banner.remove();
     }
 }
 
