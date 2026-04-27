@@ -1265,6 +1265,23 @@ function loadReportsData() {
     document.getElementById('grand-total-khatmah').textContent = grandKhatmah;
 }
 function loadDailyReport() {
+    // Check if selected date is in the future
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const selectedDate = new Date(currentReportDate);
+    selectedDate.setHours(0, 0, 0, 0);
+    
+    if (selectedDate > today) {
+        // Future date - show "no data" for all sections
+        ['highschool', 'middleschool', 'elementary'].forEach(s => {
+            const c = document.getElementById(`daily-${s}`);
+            if (c) {
+                c.innerHTML = '<div class="empty-state"><div class="empty-icon">📋</div><div class="empty-text">لا توجد بيانات لهذا اليوم</div><div class="empty-sub">لم يحن هذا اليوم بعد</div></div>';
+            }
+        });
+        return;
+    }
+    
     ['highschool', 'middleschool', 'elementary'].forEach(s => {
         const c = document.getElementById(`daily-${s}`);
         if (!c) {
@@ -1383,9 +1400,7 @@ function loadWeeklyPointsReport() {
                 } catch (e) {}
             }
             
-            if (weeklyPoints > 0) {
-                students.push({ number: i, name: name, points: weeklyPoints });
-            }
+                       students.push({ number: i, name: name, points: weeklyPoints });
         }
         
         // Sort by points descending
@@ -1440,9 +1455,7 @@ function loadMonthlyPointsReport() {
                 } catch (e) {}
             }
             
-            if (monthlyPoints > 0) {
-                students.push({ number: i, name: name, points: monthlyPoints });
-            }
+                        students.push({ number: i, name: name, points: monthlyPoints });
         }
         
         students.sort((a, b) => b.points - a.points);
@@ -1493,9 +1506,7 @@ function loadAllTimePointsReport() {
                 } catch (e) {}
             }
             
-            if (totalPoints > 0) {
-                students.push({ number: i, name: name, points: totalPoints });
-            }
+                    students.push({ number: i, name: name, points: totalPoints });
         }
         
         students.sort((a, b) => b.points - a.points);
@@ -1605,13 +1616,21 @@ function loadWeeklyPointsColumns() {
             let name = `طالب ${i}`;
             let points = 0;
             
-            if (saved) {
+                       if (saved) {
                 try {
                     const data = JSON.parse(saved);
                     if (data.name) name = data.name;
+                    // Check BOTH: daily saved records AND pointsUpdatedAt for PM changes
                     if (data.savedAt) {
                         const savedDate = new Date(data.savedAt);
                         if (savedDate >= weekStart && savedDate <= weekEnd) {
+                            points = parseInt(data.points) || 0;
+                        }
+                    }
+                    // Also check for points management updates this week
+                    if (data.pointsUpdatedAt) {
+                        const pmDate = new Date(data.pointsUpdatedAt);
+                        if (pmDate >= weekStart && pmDate <= weekEnd) {
                             points = parseInt(data.points) || 0;
                         }
                     }
@@ -1667,7 +1686,7 @@ function loadMonthlyPointsColumns() {
             let points = 0;
             
             if (saved) {
-                try {
+                               try {
                     const data = JSON.parse(saved);
                     if (data.name) name = data.name;
                     if (data.savedAt) {
@@ -1676,8 +1695,14 @@ function loadMonthlyPointsColumns() {
                             points = parseInt(data.points) || 0;
                         }
                     }
+                    // Also check for points management updates this month
+                    if (data.pointsUpdatedAt) {
+                        const pmDate = new Date(data.pointsUpdatedAt);
+                        if (pmDate.getFullYear() === year && pmDate.getMonth() === month) {
+                            points = parseInt(data.points) || 0;
+                        }
+                    }
                 } catch (e) {}
-            }
             
                         students.push({ number: i, name: name, points: points });
         }
