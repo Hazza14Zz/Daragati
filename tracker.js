@@ -3465,28 +3465,44 @@ function initPointsManagement() {
     currentPMOperation = 'add';
     currentPMPoints = 1;
     
-    document.querySelectorAll('#pointsManagementView .student-report-tab').forEach(t => t.classList.remove('active'));
-    document.getElementById('pm-highschool')?.classList.add('active');
+    // Reset UI - tab highlighting
+    setTimeout(() => {
+        document.querySelectorAll('#pointsManagementView .student-report-tab').forEach(t => t.classList.remove('active'));
+        const pmTab = document.getElementById('pm-highschool');
+        if (pmTab) pmTab.classList.add('active');
+    }, 50);
     
-    document.getElementById('pmAddBtn').style.background = '#059669';
-    document.getElementById('pmAddBtn').style.color = 'white';
-    document.getElementById('pmRemoveBtn').style.background = '#f3f4f6';
-    document.getElementById('pmRemoveBtn').style.color = '#4b5563';
+    // Reset buttons
+    setTimeout(() => {
+        const addBtn = document.getElementById('pmAddBtn');
+        const removeBtn = document.getElementById('pmRemoveBtn');
+        if (addBtn) { addBtn.style.background = '#059669'; addBtn.style.color = 'white'; }
+        if (removeBtn) { removeBtn.style.background = '#f3f4f6'; removeBtn.style.color = '#4b5563'; }
+    }, 50);
     
-    document.getElementById('pmPointsInput').value = 1;
-    document.getElementById('pmReason').value = '';
-    document.getElementById('pmCurrentPointsValue').textContent = '0';
+    // Reset inputs
+    setTimeout(() => {
+        const pointsInput = document.getElementById('pmPointsInput');
+        const reasonInput = document.getElementById('pmReason');
+        const currentPoints = document.getElementById('pmCurrentPointsValue');
+        if (pointsInput) pointsInput.value = 1;
+        if (reasonInput) reasonInput.value = '';
+        if (currentPoints) currentPoints.textContent = '0';
+    }, 50);
     
-    document.querySelectorAll('.pm-point-btn').forEach(btn => {
-        btn.style.background = '#f0fdf4';
-        btn.style.color = '#059669';
-    });
+    // Reset preset buttons
+    setTimeout(() => {
+        document.querySelectorAll('.pm-point-btn').forEach(btn => {
+            btn.style.background = '#f0fdf4';
+            btn.style.color = '#059669';
+        });
+    }, 50);
     
-        setTimeout(() => {
+    // Load students with extra delay
+    setTimeout(() => {
         loadPMStudentDropdown();
-    }, 500);
+    }, 600);
 }
-
 function switchPMSection(section) {
     currentPMSection = section;
     document.querySelectorAll('#pointsManagementView .student-report-tab').forEach(t => t.classList.remove('active'));
