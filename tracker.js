@@ -1058,7 +1058,7 @@ function switchSection(section) {
         // Delay to ensure DOM is visible before initializing
         setTimeout(() => {
             initPointsManagement();
-        }, 100);
+        }, 300);
     } 
     else if (section === 'studentReports') {
         document.getElementById('studentReportsView')?.classList.remove('hidden');
@@ -3484,7 +3484,7 @@ function initPointsManagement() {
     
         setTimeout(() => {
         loadPMStudentDropdown();
-    }, 200);
+    }, 500);
 }
 
 function switchPMSection(section) {
