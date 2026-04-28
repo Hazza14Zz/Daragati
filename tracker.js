@@ -3502,6 +3502,8 @@ function initPointsManagement() {
     setTimeout(() => {
         switchPMSection('highschool');
     }, 600);
+}
+
 function switchPMSection(section) {
     currentPMSection = section;
     document.querySelectorAll('#pointsManagementView .student-report-tab').forEach(t => t.classList.remove('active'));
