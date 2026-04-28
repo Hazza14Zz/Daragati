@@ -3498,11 +3498,10 @@ function initPointsManagement() {
         });
     }, 50);
     
-    // Load students with extra delay
+     // Load students by calling switchPMSection
     setTimeout(() => {
-        loadPMStudentDropdown();
+        switchPMSection('highschool');
     }, 600);
-}
 function switchPMSection(section) {
     currentPMSection = section;
     document.querySelectorAll('#pointsManagementView .student-report-tab').forEach(t => t.classList.remove('active'));
