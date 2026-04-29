@@ -1290,6 +1290,16 @@ function loadDailyReport() {
     today.setHours(0, 0, 0, 0);
     const selectedDate = new Date(currentReportDate);
     selectedDate.setHours(0, 0, 0, 0);
+     // Skip Friday (5) and Saturday (6)
+    if (selectedDate.getDay() === 5 || selectedDate.getDay() === 6) {
+        ['highschool', 'middleschool', 'elementary'].forEach(s => {
+            const c = document.getElementById(`daily-${s}`);
+            if (c) {
+                c.innerHTML = '<div class="empty-state"><div class="empty-icon">📴</div><div class="empty-text">عطلة نهاية الأسبوع</div><div class="empty-sub">الجمعة والسبت إجازة</div></div>';
+            }
+        });
+        return;
+    }
     
     if (selectedDate > today) {
         ['highschool', 'middleschool', 'elementary'].forEach(s => {
@@ -1348,6 +1358,10 @@ function loadDailyReport() {
                 } catch (e) {} 
             } 
         }
+        
+              // Get day name in Arabic
+        const weekdays = ['الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
+        const dayName = weekdays[selectedDate.getDay()];
         
         let h = '<table class="summary-table"><tr><th>#</th><th>الطالب</th><th>الحضور</th><th>حفظ</th><th>ربط</th><th>مراجعة</th><th>مصحف</th><th>زي</th><th>نقاط</th></tr>';
         
@@ -3766,10 +3780,11 @@ async function initHijriDate() {
 function updateDailyDateDisplay() {
     const display = document.getElementById('dailyDateDisplay');
     if (display && currentHijriDate) {
-        display.textContent = `${currentHijriDate.day} ${HIJRI_MONTHS[currentHijriDate.month - 1]} ${currentHijriDate.year}`;
+        const weekdays = ['الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
+        const dayName = weekdays[new Date(currentReportDate).getDay()];
+        display.textContent = `${dayName} - ${currentHijriDate.day} ${HIJRI_MONTHS[currentHijriDate.month - 1]} ${currentHijriDate.year}`;
     }
 }
-
 function changeHijriDate(delta) {
     if (!currentHijriDate) return;
     
