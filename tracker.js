@@ -1292,7 +1292,6 @@ function loadDailyReport() {
     selectedDate.setHours(0, 0, 0, 0);
     
     if (selectedDate > today) {
-        // Future date - show "no data" for all sections
         ['highschool', 'middleschool', 'elementary'].forEach(s => {
             const c = document.getElementById(`daily-${s}`);
             if (c) {
@@ -1301,7 +1300,25 @@ function loadDailyReport() {
         });
         return;
     }
-        if (!isHalaqaActive()) {
+    
+    // Check if date is before Halaqa start
+    const startDateStr = localStorage.getItem('quran_halaqa_start_date');
+    if (startDateStr) {
+        const startDate = new Date(startDateStr);
+        startDate.setHours(0, 0, 0, 0);
+        if (selectedDate < startDate) {
+            ['highschool', 'middleschool', 'elementary'].forEach(s => {
+                const c = document.getElementById(`daily-${s}`);
+                if (c) {
+                    c.innerHTML = '<div class="empty-state"><div class="empty-icon">📅</div><div class="empty-text">لم تبدأ الحلقة بعد في هذا التاريخ</div><div class="empty-sub">تم بدء الحلقة في تاريخ لاحق</div></div>';
+                }
+            });
+            return;
+        }
+    }
+    
+    // Check if Halaqa is not active
+    if (!isHalaqaActive()) {
         ['highschool', 'middleschool', 'elementary'].forEach(s => {
             const c = document.getElementById(`daily-${s}`);
             if (c) {
@@ -1310,20 +1327,15 @@ function loadDailyReport() {
         });
         return;
     }
-       
-       
     
+    // Normal report - show all students
     ['highschool', 'middleschool', 'elementary'].forEach(s => {
         const c = document.getElementById(`daily-${s}`);
-        if (!c) {
-            console.error(`Container daily-${s} not found`);
-            return;
-        }
+        if (!c) return;
         
         const count = parseInt(localStorage.getItem(`studentCount_${s}`) || '50');
-        
-        // Collect all saved data for today
         const savedData = {};
+        
         for (let i = 0; i < localStorage.length; i++) { 
             const k = localStorage.key(i); 
             if (k.startsWith(`quran_${s}-`)) { 
@@ -1337,56 +1349,24 @@ function loadDailyReport() {
             } 
         }
         
-        // Build table with ALL students
         let h = '<table class="summary-table"><tr><th>#</th><th>الطالب</th><th>الحضور</th><th>حفظ</th><th>ربط</th><th>مراجعة</th><th>مصحف</th><th>زي</th><th>نقاط</th></tr>';
         
         for (let i = 1; i <= count; i++) {
-            const d = savedData[i]; // Will be undefined if no data saved for this student today
-            
+            const d = savedData[i];
             if (d) {
-                // Student has saved data for today
                 const hifzText = d.hifz ? `${d.hifz.startSurahName || ''} ${d.hifz.startVerse} ← ${d.hifz.endSurahName || ''} ${d.hifz.endVerse}` : '-';
                 const rabtText = d.rabt?.length ? d.rabt.map(r => `${r.startSurahName || ''} ${r.startVerse} ← ${r.endSurahName || ''} ${r.endVerse}`).join('، ') : '-';
                 const murajaaText = d.murajaa ? `${d.murajaa.startSurahName || ''} ${d.murajaa.startVerse} ← ${d.murajaa.endSurahName || ''} ${d.murajaa.endVerse}` : '-';
                 const attendanceIcon = {'حاضر':'✅', 'متأخر':'🕐', 'غائب':'❌', 'معذور':'⚠️'}[d.attendance] || '';
                 const attendanceDisplay = attendanceIcon ? `${attendanceIcon} ${d.attendance}` : d.attendance;
-                h += `<tr>
-                    <td>${i}</td>
-                    <td>${d.name || '-'}</td>
-                    <td>${attendanceDisplay}</td>
-                    <td>${hifzText}</td>
-                    <td>${rabtText}</td>
-                    <td>${murajaaText}</td>
-                    <td>${d.hasQuran ? '✅' : '❌'}</td>
-                    <td>${d.hasUniform ? '✅' : '❌'}</td>
-                    <td>${d.points || 0}</td>
-                </tr>`;
+                h += `<tr><td>${i}</td><td>${d.name || '-'}</td><td>${attendanceDisplay}</td><td>${hifzText}</td><td>${rabtText}</td><td>${murajaaText}</td><td>${d.hasQuran ? '✅' : '❌'}</td><td>${d.hasUniform ? '✅' : '❌'}</td><td>${d.points || 0}</td></tr>`;
             } else {
-                // No data saved - show as absent with empty fields
-                // Get student name from localStorage
                 let name = `طالب ${i}`;
                 const savedAny = localStorage.getItem(`quran_${s}-${i}`);
-                if (savedAny) {
-                    try {
-                        const parsed = JSON.parse(savedAny);
-                        if (parsed.name) name = parsed.name;
-                    } catch(e) {}
-                }
-                
-                h += `<tr>
-                    <td>${i}</td>
-                    <td>${name}</td>
-                    <td>❌ غائب</td>
-                    <td>-</td>
-                    <td>-</td>
-                    <td>-</td>
-                    <td>❌</td>
-                    <td>❌</td>
-                    <td>0</td>
-                </tr>`;
+                if (savedAny) { try { const p = JSON.parse(savedAny); if (p.name) name = p.name; } catch(e) {} }
+                h += `<tr><td>${i}</td><td>${name}</td><td>❌ غائب</td><td>-</td><td>-</td><td>-</td><td>❌</td><td>❌</td><td>0</td></tr>`;
             }
         }
-        
         c.innerHTML = h + '</table>';
     });
 }
@@ -3697,6 +3677,7 @@ function isHalaqaActive() {
 
 function startHalaqa() {
     localStorage.setItem('quran_halaqa_state', 'running');
+    localStorage.setItem('quran_halaqa_start_date', new Date().toISOString().split('T')[0]); // Save start date
     markDataChanged();
     syncToCloud();
     updateHalaqaButtons();
@@ -3791,6 +3772,23 @@ function updateDailyDateDisplay() {
 
 function changeHijriDate(delta) {
     if (!currentHijriDate) return;
+    
+    // If trying to go backward (delta = -1), check if it's before Halaqa start
+    if (delta < 0) {
+        const startDateStr = localStorage.getItem('quran_halaqa_start_date');
+        if (startDateStr) {
+            const today = new Date();
+            const todayStr = today.toISOString().split('T')[0];
+            // Only allow going back if we're not at the start date
+            if (currentHijriDate.day === 1 && currentHijriDate.month === 1 && currentHijriDate.year === 1447) {
+                // Can't go before this
+            }
+            // Check if current displayed date is the start date - block going back
+            const dayBefore = new Date(currentHijriDate.day - 1);
+            // Simple check: if we're on the start date, don't go back
+        }
+    }
+    
     let newDay = currentHijriDate.day + delta;
     let newMonth = currentHijriDate.month;
     let newYear = currentHijriDate.year;
@@ -3806,7 +3804,29 @@ function changeHijriDate(delta) {
         newDay = 30;
     }
     
+    // Check if the new date is before Halaqa start
+    const startDateStr = localStorage.getItem('quran_halaqa_start_date');
+    if (startDateStr && delta < 0) {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const selectedGregorian = new Date(currentReportDate);
+        selectedGregorian.setDate(selectedGregorian.getDate() + delta);
+        const startDate = new Date(startDateStr);
+        startDate.setHours(0, 0, 0, 0);
+        
+        if (selectedGregorian < startDate) {
+            showToast('⚠️ لا يمكن العودة قبل تاريخ بدء الحلقة');
+            return; // Block going backward
+        }
+    }
+    
     currentHijriDate = { day: newDay, month: newMonth, year: newYear };
+    
+    // Update the Gregorian date too
+    const dt = new Date(currentReportDate);
+    dt.setDate(dt.getDate() + delta);
+    currentReportDate = dt.toISOString().split('T')[0];
+    
     updateDailyDateDisplay();
     loadDailyReport();
 }
