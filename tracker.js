@@ -310,12 +310,20 @@ let currentReportDate = new Date().toISOString().split('T')[0];
 let currentAttendance = 'حاضر';
 let currentPointsWeek = new Date();
 let currentPointsMonth = new Date();
+let currentHijriDate = null; 
+let hijriCalendarInstance = null;
 
 const SECTION_NAMES = { 
     highschool: 'ثانوي', 
     middleschool: 'متوسط', 
     elementary: 'ابتدائي' 
 };
+// Hijri Months
+const HIJRI_MONTHS = [
+    'محرم', 'صفر', 'ربيع الأول', 'ربيع الثاني',
+    'جمادى الأولى', 'جمادى الآخرة', 'رجب', 'شعبان',
+    'رمضان', 'شوال', 'ذو القعدة', 'ذو الحجة'
+];
 const ADMIN_PASSWORD = "224312";
 
 // ============================================================
@@ -640,7 +648,7 @@ function initApp() {
     updateStudentDropdown();
     loadStudent(currentStudentIndex + 1);
     
-    const months = ['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
+        const months = HIJRI_MONTHS;
     document.getElementById('currentMonthDisplay').textContent = `${months[currentReportMonth.getMonth()]} ${currentReportMonth.getFullYear()}`;
     
     // ADD THIS: Initialize daily date display
@@ -973,7 +981,11 @@ function saveCurrentStudent() {
         hifz: hifz, 
         rabt: rabt, 
         murajaa: murajaa, 
-        savedAt: new Date().toISOString() 
+            savedAt: new Date().toISOString(),
+        hijriDate: currentHijriDate ? `${currentHijriDate.day}-${currentHijriDate.month}-${currentHijriDate.year}` : '',
+        hijriMonth: currentHijriDate ? currentHijriDate.month : null,
+        hijriYear: currentHijriDate ? currentHijriDate.year : null,
+        hijriDay: currentHijriDate ? currentHijriDate.day : null
     };
     
     // ✅ ADD THIS LINE
@@ -1202,7 +1214,7 @@ function changeDate(d) {
 
 function loadReportsData() {
     const y = currentReportMonth.getFullYear(), m = currentReportMonth.getMonth();
-    const months = ['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
+      const months = HIJRI_MONTHS;
     document.getElementById('currentMonthDisplay').textContent = `${months[m]} ${y}`;
     
     const data = { 
@@ -1599,8 +1611,7 @@ function updateWeekDisplay() {
     const weekEnd = new Date(weekStart);
     weekEnd.setDate(weekStart.getDate() + 6);
     
-    const months = ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'];
-    const monthName = months[weekStart.getMonth()];
+      const monthName = HIJRI_MONTHS[weekStart.getMonth()];
     
     // Calculate week number
     const firstDayOfMonth = new Date(weekStart.getFullYear(), weekStart.getMonth(), 1);
@@ -1679,10 +1690,9 @@ function changePointsMonth(delta) {
 }
 
 function updatePointsMonthDisplay() {
-    const months = ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'];
-    const display = document.getElementById('currentPointsMonthDisplay');
+      const display = document.getElementById('currentPointsMonthDisplay');
     if (display) {
-        display.textContent = `${months[currentPointsMonth.getMonth()]} ${currentPointsMonth.getFullYear()}`;
+        display.textContent = `${HIJRI_MONTHS[currentPointsMonth.getMonth()]} ${currentPointsMonth.getFullYear()}`;
     }
 }
 
@@ -2094,8 +2104,7 @@ function exportDailyReport(l) {
 function exportMonthlyReport(l) { 
     const sectionName = SECTION_NAMES[l];
     const sectionEmoji = { highschool: '🏫', middleschool: '🏫', elementary: '🏫' }[l];
-    const months = ['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
-    const monthStr = `${months[currentReportMonth.getMonth()]} ${currentReportMonth.getFullYear()}`;
+       const monthStr = `${HIJRI_MONTHS[currentReportMonth.getMonth()]} ${currentReportMonth.getFullYear()}`;
     const gDate = getGregorianDate();
     const hDate = document.getElementById('hijriDate').textContent;
     const summaryHTML = document.getElementById(`${l}-summary`).innerHTML;
@@ -2176,8 +2185,7 @@ function exportMonthlyReport(l) {
 // GRAND TOTAL EXPORT - Beautiful Design
 // ============================================================
 function exportGrandTotal() {
-    const months = ['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
-    const monthStr = `${months[currentReportMonth.getMonth()]} ${currentReportMonth.getFullYear()}`;
+       const monthStr = `${HIJRI_MONTHS[currentReportMonth.getMonth()]} ${currentReportMonth.getFullYear()}`;
     const gDate = getGregorianDate();
     const hDate = document.getElementById('hijriDate').textContent;
     
@@ -3306,10 +3314,9 @@ function changeStudentReportMonth(delta) {
 }
 
 function updateStudentReportMonthDisplay() {
-    const months = ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'];
-    const display = document.getElementById('studentReportMonthDisplay');
+      const display = document.getElementById('studentReportMonthDisplay');
     if (display) {
-        display.textContent = `${months[currentStudentReportMonth.getMonth()]} ${currentStudentReportMonth.getFullYear()}`;
+        display.textContent = `${HIJRI_MONTHS[currentStudentReportMonth.getMonth()]} ${currentStudentReportMonth.getFullYear()}`;
     }
 }
 
@@ -3751,9 +3758,105 @@ function updateHalaqaButtons() {
         if (banner) banner.remove();
     }
 }
+// ============================================================
+// HIJRI DATE SYSTEM
+// ============================================================
 
-window.onload = () => {
+async function initHijriDate() {
+    try {
+        const today = new Date();
+        const response = await fetch(`https://api.aladhan.com/v1/gToH?date=${today.getDate()}-${today.getMonth()+1}-${today.getFullYear()}`);
+        const data = await response.json();
+        if (data.data && data.data.hijri) {
+            currentHijriDate = {
+                day: parseInt(data.data.hijri.day),
+                month: parseInt(data.data.hijri.month.number),
+                year: parseInt(data.data.hijri.year)
+            };
+            updateDailyDateDisplay();
+        }
+    } catch(e) {
+        currentHijriDate = { day: 1, month: 1, year: 1447 };
+        updateDailyDateDisplay();
+    }
+}
+
+function updateDailyDateDisplay() {
+    const display = document.getElementById('dailyDateDisplay');
+    if (display && currentHijriDate) {
+        display.textContent = `${currentHijriDate.day} ${HIJRI_MONTHS[currentHijriDate.month - 1]} ${currentHijriDate.year}`;
+    }
+}
+
+function changeHijriDate(delta) {
+    if (!currentHijriDate) return;
+    let newDay = currentHijriDate.day + delta;
+    let newMonth = currentHijriDate.month;
+    let newYear = currentHijriDate.year;
+    const daysInMonth = 30;
+    
+    if (newDay > daysInMonth) {
+        newDay = 1;
+        newMonth++;
+        if (newMonth > 12) { newMonth = 1; newYear++; }
+    } else if (newDay < 1) {
+        newMonth--;
+        if (newMonth < 1) { newMonth = 12; newYear--; }
+        newDay = 30;
+    }
+    
+    currentHijriDate = { day: newDay, month: newMonth, year: newYear };
+    updateDailyDateDisplay();
+    loadDailyReport();
+}
+
+function openHijriCalendar() {
+    const container = document.getElementById('hijriCalendarContainer');
+    if (container) {
+        container.style.display = 'block';
+        setTimeout(() => {
+            if (typeof ej !== 'undefined' && !hijriCalendarInstance) {
+                hijriCalendarInstance = new ej.calendars.Calendar({
+                    mode: 'Islamic',
+                    calendarMode: 'Islamic',
+                    value: new Date(),
+                    change: function(args) {
+                        const selected = args.value;
+                        convertGregorianToHijri(selected).then(hijri => {
+                            currentHijriDate = hijri;
+                            updateDailyDateDisplay();
+                            closeHijriCalendar();
+                            loadDailyReport();
+                        });
+                    }
+                });
+                hijriCalendarInstance.appendTo('#hijriDatePicker');
+            }
+        }, 200);
+    }
+}
+
+function closeHijriCalendar() {
+    const container = document.getElementById('hijriCalendarContainer');
+    if (container) container.style.display = 'none';
+}
+
+async function convertGregorianToHijri(date) {
+    try {
+        const response = await fetch(`https://api.aladhan.com/v1/gToH?date=${date.getDate()}-${date.getMonth()+1}-${date.getFullYear()}`);
+        const data = await response.json();
+        return {
+            day: parseInt(data.data.hijri.day),
+            month: parseInt(data.data.hijri.month.number),
+            year: parseInt(data.data.hijri.year)
+        };
+    } catch(e) {
+        return currentHijriDate || { day: 1, month: 1, year: 1447 };
+    }
+}
+
+window.onload = async () => {
+    await initHijriDate();
     subscribeToRealtimeChanges();
     loadQuranData();
 };
-
