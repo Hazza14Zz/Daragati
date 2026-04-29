@@ -2047,7 +2047,7 @@ function exportDailyReport(l) {
     
     const sectionName = SECTION_NAMES[l];
     const sectionEmoji = { highschool: '🏫', middleschool: '🏫', elementary: '🏫' }[l];
-    const dateStr = currentReportDate;
+    const dateStr = currentHijriDate ? `${currentHijriDate.day} ${HIJRI_MONTHS[currentHijriDate.month - 1]} ${currentHijriDate.year}` : currentReportDate;
     const gDate = getGregorianDate();
     const hDate = document.getElementById('hijriDate').textContent;
     
@@ -2104,7 +2104,8 @@ function exportDailyReport(l) {
 function exportMonthlyReport(l) { 
     const sectionName = SECTION_NAMES[l];
     const sectionEmoji = { highschool: '🏫', middleschool: '🏫', elementary: '🏫' }[l];
-       const monthStr = `${HIJRI_MONTHS[currentReportMonth.getMonth()]} ${currentReportMonth.getFullYear()}`;
+         const hijriYear = currentHijriDate ? currentHijriDate.year : currentReportMonth.getFullYear();
+    const monthStr = `${HIJRI_MONTHS[currentReportMonth.getMonth()]} ${hijriYear}`;
     const gDate = getGregorianDate();
     const hDate = document.getElementById('hijriDate').textContent;
     const summaryHTML = document.getElementById(`${l}-summary`).innerHTML;
